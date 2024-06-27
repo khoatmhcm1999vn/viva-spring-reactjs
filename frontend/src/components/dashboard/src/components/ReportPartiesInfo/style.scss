@@ -1,0 +1,30 @@
+.report-parties-info {
+  //   position: absolute;
+  width: 250px;
+  padding: 20px;
+  text-align: left;
+  background-color: var(--backgroundColor);
+  border-right: 1px solid #cdcdcd;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  .report-parties-id {
+    h3 {
+      margin-bottom: 0px !important;
+    }
+  }
+  .report-parties-owner,
+  .report-parties-admin,
+  .report-parties-target,
+  .report-parties-time {
+    border-bottom: 1px solid #cdcdcd;
+    padding: 10px 0;
+  }
+
+  .details {
+    font-style: italic;
+  }
+  .title {
+    margin-bottom: 10px !important;
+  }
+}

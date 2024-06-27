@@ -1,0 +1,129 @@
+.chatting-search-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  .title-container {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    border-bottom: 0.25px solid var(--lightColor);
+    .title-name {
+      width: 100%;
+      font-size: 14px;
+      font-weight: 900;
+      padding: 10px;
+    }
+    .next-btn {
+      position: absolute;
+      right: 5px;
+      top: 5px;
+      font-weight: 900;
+      color: var(--mainColor);
+      text-transform: capitalize;
+      &.Mui-disabled {
+        opacity: 0.5;
+      }
+    }
+  }
+  .chatting-search-input {
+    width: calc(100% - 30px);
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    padding: 10px 15px;
+    border-bottom: 0.25px solid var(--lightColor);
+    .send-to {
+      width: fit-content;
+      margin-top: 5px;
+      font-weight: 900;
+      font-size: 14px;
+    }
+    .send-to-users {
+      display: flex;
+      flex-direction: column;
+      .selected-tag-list {
+        display: flex;
+        flex-flow: row wrap;
+        gap: 5px;
+        margin-bottom: 5px;
+        max-height: 100px;
+        overflow-y: auto;
+        .selected-tag {
+          display: flex;
+          flex-direction: row;
+          padding: 5px;
+          background-color: var(--mainHoverColor);
+          border-radius: 5px;
+          .username {
+            padding: 0 10px;
+            color: var(--mainColor);
+          }
+          .delete-icon {
+            color: var(--mainColor);
+            font-size: 16px !important;
+            margin: auto 0;
+            &:hover {
+              cursor: pointer;
+            }
+          }
+        }
+      }
+      .chatting-search-text {
+        flex: 1;
+      }
+    }
+  }
+  .chatting-search-result {
+    flex: 1;
+    overflow: auto;
+    .suggested-label {
+      padding: 0px 15px;
+      font-weight: 900;
+      margin: 10px 0;
+    }
+    .search-result-item {
+      display: flex;
+      flex-direction: row;
+      gap: 20px;
+      padding: 10px 15px;
+      &:hover {
+        background-color: var(--lightColor);
+        cursor: pointer;
+      }
+      img {
+        width: 40px;
+        height: 40px;
+        border-radius: 40px;
+      }
+      .account-name {
+        flex: 1;
+        margin: auto 0;
+        .username {
+          font-weight: 900;
+        }
+      }
+      .check-btn {
+        width: 20px;
+        margin: auto 0;
+        svg {
+          color: var(--mainColor);
+        }
+      }
+    }
+    .loading-icon {
+      margin: auto;
+      padding: 10px;
+    }
+    .view-more {
+      &:hover {
+        text-decoration: underline;
+        cursor: pointer;
+      }
+      margin: 5px;
+    }
+    .no-data{
+      margin-top: 20px;
+    }
+  }
+}

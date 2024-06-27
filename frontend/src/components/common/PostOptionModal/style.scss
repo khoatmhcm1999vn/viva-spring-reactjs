@@ -1,0 +1,36 @@
+.post-option-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    overflow: hidden;
+    .action-btns {
+      display: flex;
+      flex-flow: column;
+      padding: 0;
+      gap: 0;
+      .delete-btn,
+      .report-btn {
+        text-transform: capitalize;
+        background-color: transparent;
+        color: rgb(237, 73, 86);
+        font-weight: 600;
+        padding: 10px;
+        border-top: 0.25px solid var(--lightColor);
+        width: 100%;
+        height: 50px;
+      }
+      .share-btn,
+      .copy-btn,
+      .cancel-btn {
+        text-transform: capitalize;
+        background-color: transparent;
+        color: var(--charColor);
+        border-top: 0.25px solid var(--lightColor);
+        padding: 10px;
+        width: 100%;
+        height: 50px;
+      }
+    }
+  }
+  

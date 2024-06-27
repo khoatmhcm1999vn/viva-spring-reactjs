@@ -1,0 +1,80 @@
+.notification-container {
+  display: grid;
+  grid-template-columns: repeat(15, 1fr);
+  padding: 5px 16px;
+  &.unread {
+    background-color: var(--mainHoverColor);
+  }
+  p,
+  strong {
+    font-size: 14px !important;
+    margin: 0;
+  }
+  cursor: pointer;
+  &:hover {
+    background-color: var(--hoverColor);
+  }
+  .present-image {
+    grid-column-start: 1;
+    grid-column-end: 2;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    img {
+      border-radius: 50px;
+    }
+  }
+  .notification-content {
+    padding: 12px 0;
+    grid-column-start: 3;
+    grid-column-end: 14;
+    margin-right: 5px;
+    .owner-activity {
+      .notification-activity {
+        width: 100% !important;
+      }
+      .message-activity {
+        display: flex;
+        justify-content: space-between;
+        .message-from-now {
+          color: var(--defaultColor) !important;
+          width: 30%;
+        }
+        .message-content {
+          font-size: 12px !important;
+          width: 60%;
+          white-space: nowrap;
+          overflow: hidden !important;
+          text-overflow: ellipsis;
+        }
+      }
+      .date-time {
+        font-size: 12px !important;
+        color: var(--defaultColor) !important;
+        &.notification-from-now {
+          width: 100% !important;
+        }
+      }
+    }
+  }
+  .noti-in-post {
+    grid-column-start: 14;
+    grid-column-end: 15;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    img {
+      margin: auto 10px;
+    }
+  }
+  .seen-dot {
+    grid-column-start: 15;
+    grid-column-end: 15;
+    width: 12px;
+    height: 12px;
+    border-radius: 12px;
+    background-color: var(--mainColor);
+    margin: auto;
+  }
+}

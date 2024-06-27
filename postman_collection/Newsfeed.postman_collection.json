@@ -1,0 +1,39 @@
+{
+	"info": {
+		"_postman_id": "d61260c8-9097-4303-a58c-8401dcc89908",
+		"name": "Newsfeed",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Newsfeed",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJhY2NvdW50SWQiOjIzLCJ1c2VybmFtZSI6InZpbmhodW5nIiwiZnVsbE5hbWUiOiJWaW5oIEh1bmciLCJyb2xlcyI6WyJVU0VSIl0sImF2YXRhciI6Imh0dHBzOi8vdml2YWNvbi1vYmplY3RzLnMzLWFwLXNvdXRoZWFzdC0xLmFtYXpvbmF3cy5jb20vMjAyMi0wNC0xM1QyMSUzQTE3JTNBMjYuMjQ1MzM2NTAwX0JsYW5rLUF2YXRhci5qcGciLCJpc3MiOiJWaXZhY29uX0tob2FfVHJ1Y19IdW5nIiwiZXhwIjoxNjUwNTk2MDA1fQ.MGtl_aEIwOfh24BlI4iQUAbdMn9_50zAaCcXABHQ0Vu-jsDkEUFmDPdd4J63mjixjPOHBiPlLk-XhhLfNSy5Gg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/v1/newsfeed",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"newsfeed"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

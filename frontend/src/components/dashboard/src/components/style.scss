@@ -1,0 +1,207 @@
+.sidebar-container {
+  grid-column-start: 1;
+  grid-column-end: 4;
+  box-shadow: 0px 2px 15px 2px rgb(0 0 0 / 20%),
+    0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%) !important;
+  position: fixed;
+  top: 0px;
+  left: 0;
+  bottom: 0;
+  background-color: var(--backgroundColor);
+  width: 250px;
+  .app-logo {
+    grid-column-start: 3;
+    grid-column-end: span 1;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--mainColor);
+    margin: 14px 0;
+    cursor: pointer;
+  }
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transition: all 300ms ease;
+    height: 100%;
+
+    .logo {
+      display: flex;
+      height: 5rem;
+      font-weight: bold;
+      font-size: 22px;
+      gap: 1rem;
+      align-items: center;
+      justify-content: center;
+      height: 4%;
+    }
+    .logo > span > span {
+      color: var(--pink);
+    }
+
+    .logo > img {
+      width: 3rem;
+      height: 3rem;
+    }
+  }
+  /* logo */
+  .bars {
+    display: none;
+  }
+
+  /* menu */
+  .menu {
+    margin-top: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    flex: 1;
+  }
+  .menuItem {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    height: 2.5rem;
+    margin-left: 2rem;
+    position: relative;
+    transition: all 300ms ease;
+    border-radius: 0.7rem;
+    font-size: 14px;
+    padding: 10px 0;
+    &.active {
+      font-weight: 900;
+      background-color: var(--mainHoverColor);
+      color: var(--mainColor);
+      margin: 0 16px;
+      &:before {
+        content: "";
+        width: 8px;
+        height: 100%;
+        background: var(--mainColor);
+        margin-right: calc(1rem - 8px);
+      }
+    }
+  }
+
+  .menuItem:hover {
+    cursor: pointer;
+  }
+
+  // .menu .menuItem:last-child {
+  //   position: absolute;
+  //   bottom: 2.3rem;
+  //   width: 100%;
+  // }
+  .admin-info {
+    margin-top: 10px;
+    .admin-info-line1 {
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+      padding: 20px 14px 0px 14px;
+      img {
+        border-radius: 30px;
+        box-shadow: 0px 2px 15px 2px rgb(0 0 0 / 20%),
+          0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%) !important;
+      }
+      .admin-name {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        p {
+          margin: 0px 10px;
+          &.username {
+            font-weight: 900;
+          }
+          &.fullname {
+            color: var(--defaultColor);
+          }
+        }
+      }
+      .admin-logout {
+        &:hover {
+          cursor: pointer;
+        }
+        margin: auto 0;
+      }
+    }
+    .admin-info-line2 {
+      padding: 20px;
+      .admin-role {
+        margin: 0px;
+        color: var(--defaultColor);
+        font-style: italic;
+      }
+    }
+    border-bottom: 1px solid var(--lightColor);
+    margin-bottom: 20px;
+  }
+
+  /* Tablets */
+  @media screen and (max-width: 1530px) {
+    grid-column-start: 1;
+    grid-column-end: 1;
+    width: 100px !important;
+    .menuItem > span {
+      display: none;
+    }
+    .logo {
+      display: none;
+    }
+    .app-logo {
+      display: none;
+    }
+    .admin-info {
+      .admin-info-line1 {
+        .admin-name,
+        .admin-logout {
+          display: none;
+        }
+      }
+      .admin-info-line2 {
+        .admin-role {
+          display: none;
+        }
+      }
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .sidebar-container {
+      grid-column-start: 1;
+      grid-column-end: 1;
+      width: 100px !important;
+    }
+    .sidebar {
+      position: fixed;
+      z-index: 9;
+      background: #ffe0e0;
+      width: 55%;
+      padding-right: 1rem;
+      height: 100%;
+    }
+    .menuItem > span {
+      display: block;
+    }
+    .logo {
+      display: flex;
+    }
+    .menu .menuItem:last-child {
+      position: relative;
+      margin-top: 6rem;
+    }
+    .bars {
+      display: flex;
+      position: fixed;
+      top: 2rem;
+      left: 60%;
+      background: #ffe0e0;
+      padding: 10px;
+      border-radius: 10px;
+      z-index: 9;
+    }
+    .close {
+      left: -60%;
+    }
+  }
+}

@@ -1,0 +1,12 @@
+.notification-number{
+    width: 20px;
+    height: 20px;
+    border-radius: 22px;
+    font-size: 12px !important;
+    font-weight: 900 !important;
+    background-color: var(--notificationColor);
+    color: var(--backgroundColor);
+    position: absolute;
+    right: -5px;
+    top: -5px;
+}

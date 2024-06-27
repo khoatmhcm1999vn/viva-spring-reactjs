@@ -1,0 +1,40 @@
+.user-setting-container {
+  display: flex;
+  flex-direction: row;
+  margin: auto !important;
+  margin-top: 100px !important;
+  width: 900px !important;
+  background-color: var(--backgroundColor);
+  border: 0.25px solid var(--lightColor);
+  .css-1gsv261 {
+    border: none;
+  }
+  .setting-content {
+    flex: 1;
+  }
+  .tabs-option-container {
+      height: 100%;
+    .MuiTabs-flexContainer {
+      display: flex;
+      flex-direction: column;
+      button {
+        text-transform: capitalize;
+        font-size: 14px;
+        font-weight: 300;
+        text-align: left;
+        justify-content: flex-start;
+        flex-direction: row;
+        padding-top: 20px;
+        padding-bottom: 20px;
+      }
+    }
+    .css-10d9dml-MuiTabs-indicator {
+      left: 0 !important;
+      background-color: var(--mainColor);
+    }
+    .Mui-selected {
+      color: var(--mainColor);
+      font-weight: 900 !important;
+    }
+  }
+}

@@ -1,0 +1,40 @@
+.bouncing-loader,
+.fixed-loader {
+  display: flex;
+  justify-content: center;
+  margin: auto 0;
+}
+
+.bouncing-loader > div {
+  width: 6px;
+  height: 6px;
+  margin: 0px 1px;
+  border-radius: 50%;
+  background-color: var(--defaultColor);
+  opacity: 1;
+  animation: bouncing-loader 0.4s infinite alternate;
+}
+
+.fixed-loader > div {
+  width: 6px;
+  height: 6px;
+  margin: 0px 1px;
+  border-radius: 50%;
+  background-color: var(--defaultColor);
+  opacity: 1;
+}
+
+@keyframes bouncing-loader {
+  to {
+    opacity: 0.4;
+    transform: translateY(-3px);
+  }
+}
+
+.bouncing-loader > div:nth-child(2) {
+  animation-delay: 0.4s;
+}
+
+.bouncing-loader > div:nth-child(3) {
+  animation-delay: 0.6s;
+}

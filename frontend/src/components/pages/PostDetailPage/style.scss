@@ -1,0 +1,14 @@
+.post-detail-page-container {
+  margin: auto !important;
+  margin-top: 100px !important;
+  width: 1240px !important;
+  height: 800px !important;
+  background-color: var(--backgroundColor);
+  border: 0.25px solid var(--lightColor);
+  .post-details-interation {
+    box-shadow: none !important;
+  }
+  .pop-up-container {
+    z-index: 1300 !important;
+  }
+}

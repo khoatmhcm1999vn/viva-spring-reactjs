@@ -1,0 +1,154 @@
+{
+  "navbar": {
+    "search": "Tìm kiếm",
+    "recent": "Hiện tại",
+    "clearAll": "Xóa tất cả",
+    "viewMore": "Xem thêm",
+    "noData": "Không tìm thấy",
+    "questionHeader": "Xóa lịch sử tìm kiếm?",
+    "questionWarning": "Nếu bạn xóa lịch sử tìm kiếm, bạn sẽ không thể quay trở về thao tác.",
+    "notNow": "Không phải bây giờ"
+  },
+  "signIn": {
+    "login": "Đăng nhập",
+    "userName": "Tên tài khoản",
+    "password": "Mật khẩu",
+    "haveNoAccount": "Không có tài khoản?",
+    "register": "Đăng ký",
+    "loginSuccessful": "Đăng nhập thành công",
+    "forgotPassword": "Quên mật khẩu"
+  },
+  "register": {
+    "register": "Đăng ký",
+    "fullName": "Tên đầy đủ",
+    "username": "Tên đăng nhập",
+    "password": "Mật khẩu",
+    "confirmPassword": "Xác nhận lại mật khẩu"
+  },
+  "follow": {
+    "followed": "Đã theo dõi",
+    "unfollowed": "Đã bỏ theo dõi"
+  },
+  "newFeed": {
+    "like": " lượt thích",
+    "addComment": "Thêm một bình luận",
+    "post": "Gửi",
+    "viewMoreComment": "Xem thêm nhiều bình luận",
+    "reply": "Phản hồi",
+    "hideReply": "Ẩn hết các phản hồi",
+    "viewReply": "Hiển thị hết các phản hồi"
+  },
+  "profile": {
+    "editInformation": "Sửa thông tin",
+    "post": "Bài viết",
+    "followerCount": "Người theo dõi",
+    "followingCount": "Đang theo dõi",
+    "follow": "Theo dõi",
+    "unfollow": "Bỏ theo dõi",
+    "cancel": "Hủy",
+    "message": "Nhắn tin",
+    "avatar": "Ảnh đại diện",
+    "emptyPostCaseCaption": "Hãy chia sẻ ảnh và các khoảnh khắc của bạn với chúng tôi",
+    "posts": "CÁC BÀI VIẾT",
+    "avatars": "ẢNH ĐẠI DIỆN",
+    "followers": "người theo dõi",
+    "following": "đang theo dõi",
+    "haveNoPost": "Hiện không có bài viết nào",
+    "changeAvatarSuccessfully": "Thay đổi ảnh đại diện thành công"
+  },
+  "createPost": {
+    "uploadImages": "Tải 1 hoặc nhiều ảnh lên",
+    "edit": "Chỉnh sửa",
+    "writeCaption": "Viết trạng thái",
+    "back": "Quay lại",
+    "next": "Kế tiếp",
+    "createNewPost": "Tạo bài viết mới",
+    "selectImage": "Vui lòng chọn ảnh từ máy tính của bạn",
+    "text": "Đoạn văn bản",
+    "deleteImage": "Bạn có chắc chắn muốn xóa các ảnh này?",
+    "confirm": "Xác nhận",
+    "no": "Không",
+    "yes": "Đồng ý",
+    "successfully": "Tạo bài đăng thành công"
+  },
+  "privacy": {
+    "public": "Công khai",
+    "onlyMe": "Chỉ mình tôi",
+    "follower": "Người theo dõi"
+  },
+  "settingUI": {
+    "profile": "Thông tin cá nhân",
+    "setting": "Cài đặt",
+    "logOut": "Đăng xuất"
+  },
+  "dashboard": {
+    "dashboard": "Thống kê"
+  },
+  "verify": {
+    "title": "Nhập mã bảo mật",
+    "checkCodeLabel": "Hãy kiểm tra email của bạn. Trong đó chứa mã xác nhận bao gồm 6 ký tự số.",
+    "sendTo": "Chúng tôi đã gửi mã xác nhận đến: ",
+    "resendCode": "Gửi lại mã",
+    "submit": "Xác nhận",
+    "cancel": "Hủy"
+  },
+  "findAccount": {
+    "title": "Tìm kiếm tài khoản của bạn",
+    "pleaseEnterLabel": "Hãy nhập địa chỉ email hoặc tên đăng nhập của bạn để tìm kiếm tài khoản.",
+    "emailOrUsernameInput": "Địa chỉ email hoặc tên đăng nhập",
+    "search": "Tìm kiếm",
+    "cancel": "Hủy",
+    "pleaseEnterCode": "Hãy nhập mã đã được gửi đến email của bạn"
+  },
+  "resetPassword": {
+    "title": "Khôi phục Mật khẩu",
+    "recievedCodeLabel": "Bạn muốn nhận mã xác nhận bằng cách nào để khôi phục mật khẩu?",
+    "optionViaEmail": "Gửi mã xác nhận qua email",
+    "notYou": "Không phải bạn?",
+    "continue": "Tiếp tục"
+  },
+  "changePassword": {
+    "oldPassword": "Mật khẩu cũ",
+    "newPassword": "Mật khẩu mới",
+    "confirmPassword": "Xác nhận lại mật khẩu",
+    "changePassword": "Thay đổi mật khẩu",
+    "pleaseChangePassword": "Hãy thay đổi Mật khẩu của bạn",
+    "cancel": "Hủy",
+    "changeSuccessfully": "Bạn đã đổi mật khẩu thành công"
+  },
+  "chatting": {
+    "active": "Đang hoạt động",
+    "yourMessages": "Tin nhắn của bạn",
+    "letSend": "Hãy chia sẻ hình ảnh và tin nhắn đến những người bạn của bạn.",
+    "sendMessage": "Gửi tin nhắn"
+  },
+  "report": {
+    "nudityContent": "Ảnh khỏa thân hoặc hoạt động tình dục",
+    "nudityDetailContent": "Ảnh, video và một số nội dung kỹ thuật số hiển thị cảnh quan hệ tình dục, bộ phận sinh dục và ảnh cận cảnh mông trần.\nHình ảnh thân mật nhạy cảm của người khác, bị chia sẻ khi chưa được phép.\nMột số ảnh có xuất hiện núm vú của phụ nữ. Tuy nhiên, chúng tôi cho phép đăng video về những vết sẹo sau phẫu thuật cắt bỏ ngực và cảnh phụ nữ đang chủ động cho con bú.\nCảnh khỏa thân trong ảnh chụp tranh vẽ và tác phẩm điêu khắc được chấp nhận.\nĐôi khi, chúng tôi có thể gỡ video có cảnh trẻ em khỏa thân hoặc bán khỏa thân.",
+    "violenceContent": "Bạo lực hoặc tổ chức nguy hiểm",
+    "violenceDetailContent": "Ảnh hoặc video quá bạo lực.\nBài viết xúi giục hành vi bạo lực hoặc tấn công bất kỳ ai dựa trên tôn giáo, dân tộc hoặc giới tính của họ.\nMối đe dọa cụ thể về gây tổn thương thân thể, trộm cắp, phá hoại hoặc thiệt hại tài chính.",
+    "suicideContent": "Tự tử hoặc tự gây thương tích",
+    "suicideDetailContent": "Bài viết cổ xúy hoặc khuyến khích hành vi tự gây thương tích, bao gồm tự tử và cắt rạch cơ thể.\nBình luận nêu tên nạn nhân của hành vi tự gây thương tích với ý đồ công kích hoặc chế nhạo họ.",
+    "terrorismContent": "Biểu tượng hoặc ngôn từ gây thù ghét",
+    "terrorismDetailContent": "Ảnh/video về biểu tượng hoặc ngôn từ gây thù ghét.\nBài viết có chú thích khuyến khích bạo lực hoặc tấn công bất kỳ ai dựa trên đặc điểm của họ.\nMối đe dọa cụ thể về tổn thương thân thể, trộm cắp hoặc phá hoại.",
+    "spamContent": "Đây là spam",
+    "spamDetailContent": "Ảnh/video về liên quan đến spam.\nBài viết có những nội dung liên quan đến spam",
+    "otherContent": "Khác",
+    "otherDetailContent": "",
+
+    "thankYou": "Cảm ơn bạn đã cho chúng tôi biết",
+    "sendReport": "Gửi báo cáo",
+    "whyReport": "Tại sao bạn báo cáo bài viết này?"
+  },
+  "footer": {
+    "resources": "Nguồn",
+    "about": "Giới thiệu",
+    "careers": "Việc làm",
+    "contact": "Liên hệ",
+    "admin": "Quản trị viên",
+    "legal": "Vi phạm",
+    "privacy": "Riêng tư",
+    "terms": "Điều khoản",
+    "language": "Ngôn ngữ"
+  }
+}

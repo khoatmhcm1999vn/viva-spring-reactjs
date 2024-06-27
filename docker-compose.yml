@@ -1,0 +1,21 @@
+version: '3.1'
+
+services:
+
+  db:
+    image: postgres:14
+    container_name: postgres_14
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: Admin123*
+      TZ: 'UTC'
+      PGTZ: 'UTC'
+    ports:
+      - 5432:5432
+
+  adminer:
+    image: adminer:4
+    container_name: adminer_multiple_db
+    restart: always
+    ports:
+      - 8900:8080

@@ -1,0 +1,27 @@
+.username-container-on-page {
+  position: relative;
+  width: fit-content;
+  flex: 1;
+  text-align: left;
+  .username-content {
+    color: var(--charColor);
+    font-weight: 600;
+    &:hover {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  }
+}
+.username-container-on-modal {
+  width: fit-content;
+  flex: 1;
+  text-align: left;
+  .username-content {
+    color: var(--charColor);
+    font-weight: 600;
+    &:hover {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  }
+}

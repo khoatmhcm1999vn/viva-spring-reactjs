@@ -1,0 +1,93 @@
+{
+	"info": {
+		"_postman_id": "205c12cc-fdfe-41e3-bf39-c7dfa91a0bfe",
+		"name": "Attachments",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Upload multiple files to cloud storage",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJ1c2VybmFtZSI6Imh1bmdkb2FuIiwiaXNzIjoiSW5ub3ZhdGlvbl9OZXdfUHJvamVjdCIsImV4cCI6MTY0MTQ0NTc2OH0.-cCrTssZZy3fdqg6HBL5SVYbEDWGFZtMQu3EntVc0-Ebj1-tW35BKVcnxZJu5LZh_du05fCx1A8weiz6-RoSzQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "files",
+							"type": "file",
+							"src": "/D:/spring-boot-authentication-spring-security-architecture.png"
+						},
+						{
+							"key": "files",
+							"type": "file",
+							"src": "/D:/QHung_white.jpg"
+						},
+						{
+							"key": "files",
+							"type": "file",
+							"src": "/D:/portrait.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8080/api/v1/attachments",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"attachments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Upload an files to cloud storage",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJ1c2VybmFtZSI6Imh1bmdkb2FuIiwiaXNzIjoiSW5ub3ZhdGlvbl9OZXdfUHJvamVjdCIsImV4cCI6MTY0MDI1MTIwMn0.LdR4JKbKu3Bbu4mDP-fCCvZnRLp_v7aHY8kFfTJ2nshCO-Vyc4OEX-7nwFLZVF2tQvTQnBGCccWrQJwCva0tdw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "file",
+					"file": {}
+				},
+				"url": {
+					"raw": "localhost:8080/api/v1/attachment",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"attachment"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

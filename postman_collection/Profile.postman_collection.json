@@ -1,0 +1,156 @@
+{
+	"info": {
+		"_postman_id": "a270b60a-06c1-4b25-9b27-0ca1cde916a2",
+		"name": "Profile",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get page of outline posts of an profile by username",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJ1c2VybmFtZSI6Imh1bmdkb2FuIiwiaXNzIjoiVml2YWNvbl9LaG9hX1RydWNfSHVuZyIsImV4cCI6MTY0OTg1NTYyNX0.RZ-nNxbBOsXwPi7zr5b49-O_3_EkThIwkYKz5Rb5H5GiSgKBi7tP93zoiUxxI5ZZbfptst0I-JPOFQ5PN6tQQQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/v1/profile/1/outline-post?limit=9",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"profile",
+						"1",
+						"outline-post"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "9"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get a page of avatar of an profile",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJ1c2VybmFtZSI6Imh1bmdkb2FuIiwiaXNzIjoiVml2YWNvbl9LaG9hX1RydWNfSHVuZyIsImV4cCI6MTY0OTg1NTYyNX0.RZ-nNxbBOsXwPi7zr5b49-O_3_EkThIwkYKz5Rb5H5GiSgKBi7tP93zoiUxxI5ZZbfptst0I-JPOFQ5PN6tQQQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/v1/profile/1/avatar",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"profile",
+						"1",
+						"avatar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get a profile by username",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJ1c2VybmFtZSI6Imh1bmdkb2FuIiwiaXNzIjoiVml2YWNvbl9LaG9hX1RydWNfSHVuZyIsImV4cCI6MTY0OTg2MTc4N30.5Tj8C5PrFXkl-V_vtomZ6iXZNBoo5H79-KRN1yo_tJENe-JT5D-xf5MWpFkJ9mLpQ1XTBBYYnyJJtL6Pt2Uu5g",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/v1/profile/1?limit",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"profile",
+						"1"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": null
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Upload avatar",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJ1c2VybmFtZSI6Imh1bmdkb2FuIiwiaXNzIjoiVml2YWNvbl9LaG9hX1RydWNfSHVuZyIsImV4cCI6MTY0OTg2Mjc0Nn0.ru3B83w18mnNr3fRgLnZYpLgcCyjYb8gkqyJAIAVd9EFPq15-6SRP4yweZ5L0ERekEjYI10BMjZnvvT3cZ2gIg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"actualName\": \"272205323_4927332657326798_3776136439423965886_n.jpg\",\r\n    \"uniqueName\": \"2022-04-01T22:15:53.303388500_272205323_4927332657326798_3776136439423965886_n.jpg\",\r\n    \"url\": \"https://vivacon-objects.s3-ap-southeast-1.amazonaws.com/2022-04-01T22%3A15%3A53.303388500_272205323_4927332657326798_3776136439423965886_n.jpg\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/v1/profile/avatar",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"profile",
+						"avatar"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

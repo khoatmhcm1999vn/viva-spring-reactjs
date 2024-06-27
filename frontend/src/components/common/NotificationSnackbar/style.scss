@@ -1,0 +1,24 @@
+.MuiSnackbarContent-root {
+  background-color: white !important;
+  color: var(--typeColor) !important;
+  .MuiSnackbarContent-message {
+    margin: auto !important;
+    font-weight: 900 !important;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    text-align: center;
+    p {
+      width: 100%;
+    }
+    padding: 0;
+    .snackbar-icon {
+      color: var(--typeColor) !important;
+      margin: auto 0;
+    }
+    .snackbar-content {
+      white-space: break-spaces;
+    }
+  }
+}

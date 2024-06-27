@@ -1,0 +1,57 @@
+.report-admin-modal {
+  position: relative;
+  .profile-container {
+    margin: 20px auto 0 auto !important;
+  }
+  .header {
+    height: 50px;
+    position: initial;
+    background-color: transparent;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 20%),
+      0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%);
+  }
+  button {
+    text-transform: capitalize;
+  }
+  .rejected-btn {
+    position: absolute;
+    right: 100px;
+    top: 10px;
+    font-weight: 900;
+    color: var(--backgroundColor);
+    background-color: var(--notificationColor);
+  }
+  .approved-btn {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    color: var(--backgroundColor);
+    font-weight: 900;
+    background-color: var(--mainColor);
+  }
+  .cancel-btn {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    color: var(--charColor);
+  }
+  .title {
+    margin: auto;
+    font-weight: 900;
+  }
+}
+.MuiTooltip-tooltip {
+  white-space: break-spaces;
+  font-size: 12px !important;
+  padding: 10px !important;
+}
+
+.MuiPagination-root {
+  margin: 20px auto;
+}
+
+.Table {
+}

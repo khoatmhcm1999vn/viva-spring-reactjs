@@ -1,0 +1,55 @@
+.followed-btn-container {
+  .followed-btn {
+    margin-left: 20px;
+    margin-right: 20px;
+    text-transform: capitalize;
+    color: var(--charColor);
+    font-weight: 900;
+    padding: 0px 9px;
+    border: 0.5px solid var(--lightColor);
+    border-radius: 5px;
+    margin: 0px 5px;
+    width: 100%;
+    p {
+      margin: 0;
+      height: auto !important;
+    }
+    &.followed {
+      color: var(--charColor);
+      background-color: var(--backgroundColor);
+      &:hover {
+        background-color: var(--backgroundColor);
+      }
+    }
+    &.unfollowed {
+      color: var(--backgroundColor);
+      background-color: var(--mainColor);
+      &:hover {
+        background-color: var(--mainColor);
+      }
+    }
+  }
+}
+// .followed-btn {
+//   margin-left: 20px;
+//   margin-right: 20px;
+//   text-transform: capitalize;
+//   color: var(--charColor);
+//   font-weight: 900;
+//   padding: 0px 9px;
+//   border: 0.5px solid var(--lightColor);
+//   border-radius: 5px;
+//   margin: 0px 5px;
+//   p {
+//     margin: 0;
+//     height: auto !important;
+//   }
+//   &.followed {
+//     color: var(--charColor);
+//     background-color: var(--backgroundColor);
+//   }
+//   &.unfollowed {
+//     color: var(--backgroundColor);
+//     background-color: var(--mainColor);
+//   }
+// }

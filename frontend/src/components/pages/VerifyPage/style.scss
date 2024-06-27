@@ -1,0 +1,51 @@
+.verify-container {
+  margin: auto !important;
+  margin-top: 100px !important;
+  width: 550px;
+  background-color: var(--backgroundColor) !important;
+  box-shadow: 0px 2px 15px 2px rgb(0 0 0 / 20%),
+    0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%) !important;
+  border-radius: 5px;
+  .title {
+    font-size: 18px;
+    font-weight: 900;
+    padding: 20px;
+    border-bottom: 0.25px solid var(--lightColor);
+  }
+  .label {
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+  .verify-number-group {
+    padding: 20px;
+    input {
+      width: 50px;
+      height: 50px;
+      border-radius: 10px;
+      margin-left: 10px;
+      font-size: 30px;
+      text-align: center;
+    }
+  }
+  .action-btns {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: calc(100% - 40px);
+    padding-bottom: 20px;
+    .submit-btn {
+      background-color: var(--mainColor);
+      text-transform: capitalize;
+      color: var(--backgroundColor);
+      font-weight: 600;
+    }
+    .resend-btn {
+      color: var(--defaultColor);
+      text-transform: capitalize;
+      text-decoration: underline;
+      &:hover {
+        background-color: transparent;
+      }
+    }
+  }
+}

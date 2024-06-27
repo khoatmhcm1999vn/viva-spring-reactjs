@@ -1,0 +1,47 @@
+.AppGlass {
+  position: relative;
+}
+.Table {
+  padding-top: 50px;
+}
+.change-reports-type {
+  position: absolute;
+  top: 0;
+  left: 250px;
+  background-color: var(--backgroundColor);
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  border-bottom: 1px solid #cdcdcd;
+  .request-type,
+  .done-type {
+    color: var(--charColor);
+    opacity: 0.5;
+    border-radius: 0;
+    text-transform: capitalize;
+    font-size: 14px;
+    padding: 14px;
+    &.active {
+      opacity: 1;
+      font-weight: 900;
+    }
+    .icon {
+      font-size: 20px;
+      margin: auto 5px;
+    }
+  }
+  .done-type {
+    &.active {
+      .icon {
+        color: var(--onlineColor);
+      }
+    }
+  }
+  .request-type {
+    &.active {
+      .icon {
+        color: var(--mainColor);
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+.pop-up-container {
+  z-index: var(--popUpZIndex);
+  width: var(--popUpWidth);
+  height: var(--popUpHeight);
+  position: absolute;
+  //   background-color: blue;
+  border: 0.25px solid var(--lightColor);
+  top: var(--positionTop);
+  left: var(--positionLeft);
+  // top: 20px;
+  // left: 0px;
+  background-color: var(--backgroundColor) !important;
+  border-radius: 14px !important;
+  border: 0.5px solid var(--lightColor);
+}

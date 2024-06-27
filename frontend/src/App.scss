@@ -1,0 +1,64 @@
+@import "./styles/colors.scss";
+.page-content {
+  margin: auto;
+  &.fullWidth {
+    width: 100%;
+  }
+  &.notFullWidth {
+    margin-top: 80px;
+    width: 100%;
+    min-height: calc(100vh - 350px);
+  }
+  &.notFullWidthAdmin {
+    margin-top: 0px;
+    width: 100%;
+    min-height: calc(100vh - 350px);
+  }
+}
+:root {
+  font-family: "-apple-system,BlinkMacSystemFont", "Segoe UI", "Roboto",
+    "Helvetica", "Arial", "sans-serif" !important;
+  font-size: 14px;
+  background-color: rgba(250, 250, 250, 1);
+}
+
+.status-badge {
+  position: absolute;
+  bottom: -3px;
+  right: -3px;
+  width: 12px;
+  height: 12px;
+  border-radius: 20px;
+  border: 2px solid var(--backgroundColor);
+  &.online-status {
+    background-color: var(--onlineColor) !important;
+  }
+}
+
+.limit-text {
+  display: inline-block !important;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden !important;
+  text-overflow: ellipsis;
+}
+
+.error-textfield {
+  color: var(--notificationColor);
+  font-size: 12px !important;
+  padding: 5px 0;
+}
+
+.pop-up-container {
+  animation: showAnimation 0s 0.75s forwards;
+  visibility: hidden;
+  .MuiCardContent-root{
+    padding: 0 !important;
+  }
+
+  @keyframes showAnimation {
+    to {
+      visibility: visible;
+    }
+  }
+}

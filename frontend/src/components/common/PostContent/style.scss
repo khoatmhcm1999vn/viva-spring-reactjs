@@ -1,0 +1,60 @@
+.owner-container {
+  height: 40px;
+  margin-bottom: 20px !important;
+  display: flex;
+  // position: relative;
+  .avatar {
+    border-radius: 100px;
+    border: solid 0.5px var(--lightColor);
+  }
+  .right-content {
+    min-width: 100px;
+    margin-left: 10px;
+  }
+
+  .post-time {
+    font-size: 13px;
+    color: var(--defaultColor);
+  }
+  .pop-up-container {
+    .MuiCardContent-root {
+      padding: 0 !important;
+    }
+  }
+}
+
+.post-images {
+  margin: auto;
+  padding: 0px;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  padding-bottom: 20px !important;
+  cursor: pointer;
+  aspect-ratio: 1 / 1;
+  .details-carousel {
+    width: 100%;
+    height: 100%;
+    position: initial;
+    .css-1f8sh1y {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      height: 100% !important;
+      img {
+        width: 100%;
+        height: 100%;
+        aspect-ratio: 1 / 1;
+      }
+    }
+    .css-1m9128y {
+      position: absolute;
+      bottom: -8px;
+    }
+  }
+  img {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1 / 1;
+  }
+}

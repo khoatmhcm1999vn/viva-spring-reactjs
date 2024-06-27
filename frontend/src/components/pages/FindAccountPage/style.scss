@@ -1,0 +1,93 @@
+//Step-01
+.find-account-container {
+  margin: auto !important;
+  margin-top: 100px !important;
+  width: 500px;
+  background-color: var(--backgroundColor) !important;
+  box-shadow: 0px 2px 15px 2px rgb(0 0 0 / 20%),
+    0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%) !important;
+  border-radius: 5px;
+  .title {
+    font-size: 18px;
+    font-weight: 900;
+    padding: 20px;
+    border-bottom: 0.25px solid var(--lightColor);
+  }
+  .label {
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+  .email-input {
+    width: calc(100% - 40px);
+    margin: auto;
+  }
+  .error-textfield {
+    width: fit-content;
+    margin-left: 32px;
+  }
+}
+//
+//Step-02
+.reset-password-container {
+  margin: auto !important;
+  margin-top: 100px !important;
+  width: 500px;
+  background-color: var(--backgroundColor) !important;
+  box-shadow: 0px 2px 15px 2px rgb(0 0 0 / 20%),
+    0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%) !important;
+  border-radius: 5px;
+  .title {
+    font-size: 18px;
+    font-weight: 900;
+    padding: 20px;
+    border-bottom: 0.25px solid var(--lightColor);
+  }
+  .label {
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+  .option-container {
+    padding: 10px 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    .option-primary-label {
+    }
+    .option-foreign-label {
+      font-size: 12px;
+    }
+    .user-info-container {
+      text-align: center;
+      .user-avatar {
+        img {
+          margin: auto;
+          width: 50px;
+          height: 50px;
+          border-radius: 50px;
+        }
+      }
+    }
+  }
+}
+
+.action-btns {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  padding: 20px;
+  gap: 10px;
+  .cancel-btn {
+    color: var(--charColor);
+    text-transform: capitalize;
+  }
+  .search-btn {
+    color: var(--backgroundColor);
+    background-color: var(--mainColor);
+    text-transform: capitalize;
+    font-weight: 600;
+    &:hover{
+      background-color: var(--mainColor);
+    }
+  }
+}
+//

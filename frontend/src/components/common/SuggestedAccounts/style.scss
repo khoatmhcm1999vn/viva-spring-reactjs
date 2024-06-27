@@ -1,0 +1,124 @@
+.suggested-accounts-container {
+  position: fixed;
+  left: calc(50vw - 325px - 348px);
+  z-index: 2;
+  width: 300px;
+  //   padding: 16px;
+
+  .suggested-accounts {
+    overflow: hidden;
+    background-color: var(--backgroundColor);
+    border-radius: 4px;
+    box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%),
+      0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
+    text-align: center;
+    .mini-profile {
+      padding-bottom: 5px;
+      border-bottom: 0.25px solid var(--lightColor);
+      .background {
+        height: 120px;
+        overflow: hidden;
+      }
+      .avatar {
+        margin: auto;
+        margin-top: -50px;
+        width: 100px;
+        img {
+          border-radius: 100px;
+          box-shadow: 1px 2px 4px 0.5px rgba(0, 0, 0, 1);
+          width: 100px;
+        }
+      }
+      .username {
+        padding: 5px;
+        font-size: 16px;
+        font-weight: 900;
+        &:hover {
+          cursor: pointer;
+          text-decoration: underline;
+        }
+      }
+      .fullname {
+        padding: 5px;
+      }
+    }
+    .information {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      text-align: center;
+      margin: 14px 0;
+      .posts,
+      .following,
+      .followers {
+        flex: 1;
+        padding: 10px;
+        font-size: 12px;
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        strong {
+          font-size: 14px;
+        }
+      }
+      .posts,
+      .following {
+        border-right: 0.25px solid var(--lightColor);
+      }
+    }
+    .rest {
+      border-top: 0.25px solid var(--lightColor);
+    }
+  }
+  .suggested-account-list {
+    .title {
+      font-size: 14px;
+      font-weight: 900;
+      margin: 20px 0;
+    }
+    .suggest-list {
+      .suggest-item {
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        justify-content: space-between;
+        margin: 16px 0;
+        .right-content {
+          flex: 1;
+        }
+        img {
+          border-radius: 30px;
+        }
+        .username {
+          font-weight: 900;
+          &:hover {
+            cursor: pointer;
+            text-decoration: underline;
+          }
+        }
+        .details {
+          font-size: 12px;
+          color: var(--defaultColor);
+          margin: 0;
+        }
+        button {
+          padding: 0;
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 1375px) {
+  .suggested-accounts-container {
+    position: initial;
+    width: 650px;
+    margin: auto !important;
+    margin-bottom: 10px !important;
+    .posts,
+    .following,
+    .followers {
+      display: initial !important;
+    }
+  }
+}

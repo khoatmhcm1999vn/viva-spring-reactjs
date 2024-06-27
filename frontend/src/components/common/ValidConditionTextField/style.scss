@@ -1,0 +1,38 @@
+.valid-condition {
+  position: absolute;
+  background-color: var(--lightColor);
+  border-radius: 5px;
+  width: 150px;
+  font-size: 12px !important;
+  padding: 10px;
+  box-shadow: 0px 2px 15px 2px rgb(0 0 0 / 20%),
+    0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%) !important;
+  right: -40px;
+  top: 2px;
+  z-index: 2;
+  text-align: left;
+  .condition-text {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    gap: 5px;
+    &.right {
+      color: var(--onlineColor);
+      font-weight: 900;
+    }
+    &.wrong {
+      color: var(--defaultColor);
+    }
+    p {
+      margin: 0;
+    }
+    .icon {
+      width: 16px;
+      text-align: center;
+      .MuiSvgIcon-root {
+        margin: auto;
+        font-size: 16px;
+      }
+    }
+  }
+}

@@ -1,0 +1,154 @@
+{
+  "navbar": {
+    "search": "Search",
+    "recent": "Recent",
+    "clearAll": "Clear all",
+    "viewMore": "View more",
+    "noData": "No data",
+    "questionHeader": "Clear search history?",
+    "questionWarning": "If you clear your search history, you won't be able to undo this.",
+    "notNow": "Not now"
+  },
+  "signIn": {
+    "login": "Log in",
+    "userName": "Username",
+    "password": "Password",
+    "haveNoAccount": "Don't have an account?",
+    "register": "Register",
+    "loginSuccessful": "Login successfully",
+    "forgotPassword": "Forgot password"
+  },
+  "register": {
+    "register": "Register",
+    "fullName": "Full name",
+    "username": "Username",
+    "password": "Password",
+    "confirmPassword": "Confirm password"
+  },
+  "follow": {
+    "followed": "Followed",
+    "unfollowed": "Unfollowed"
+  },
+  "newFeed": {
+    "like": "like",
+    "addComment": "Add a comment",
+    "post": "Post",
+    "viewMoreComment": "View more comments",
+    "reply": "Reply",
+    "hideReply": "Hide all replies",
+    "viewReply": "View replies"
+  },
+  "profile": {
+    "editInformation": "Edit information",
+    "post": "Post",
+    "followerCount": "Follower",
+    "followingCount": "Following",
+    "follow": "Follow",
+    "unfollow": "Unfollow",
+    "cancel": "Cancel",
+    "message": "Message",
+    "avatar": "Avatar",
+    "emptyPostCaseCaption": "Start capturing and sharing your moments with us",
+    "posts": "POSTS",
+    "avatars": "AVATAR",
+    "followers": "followers",
+    "following": "following",
+    "haveNoPost": "No Posts Yet",
+    "changeAvatarSuccessfully": "Changed Avatar Successfully"
+  },
+  "createPost": {
+    "uploadImages": "Upload image(s)",
+    "edit": "Edit",
+    "writeCaption": "Write caption",
+    "back": "Back",
+    "next": "Next",
+    "createNewPost": "Create new post",
+    "selectImage": "Select image from computer",
+    "text": "Text",
+    "deleteImage": "This action can delete all images on draft. Are you sure?",
+    "confirm": "Confirm",
+    "no": "No",
+    "yes": "Yes",
+    "successfully": "Create a post successfully"
+  },
+  "privacy": {
+    "public": "Public",
+    "onlyMe": "Only me",
+    "follower": "Follower"
+  },
+  "settingUI": {
+    "profile": "Profile",
+    "setting": "Setting",
+    "logOut": "Log out"
+  },
+  "dashboard": {
+    "dashboard": "Dashboard"
+  },
+  "verify": {
+    "title": "Enter security code",
+    "checkCodeLabel": "Please check your emails for a message with your code. Your code is 6 numbers long",
+    "sendTo": "We send code to: ",
+    "resendCode": "Resend code",
+    "submit": "Submit",
+    "cancel": "Cancel"
+  },
+  "findAccount": {
+    "title": "Find Your Account",
+    "pleaseEnterLabel": "Please enter your email address or username to search for your account.",
+    "emailOrUsernameInput": "Email address or username",
+    "search": "Search",
+    "cancel": "Cancel",
+    "pleaseEnterCode": "Please enter code was sent in your email"
+  },
+  "resetPassword": {
+    "title": "Reset Your Password",
+    "recievedCodeLabel": "How do you want to receive the code to reset your password?",
+    "optionViaEmail": "Send code via email",
+    "notYou": "Not you?",
+    "continue": "Continue"
+  },
+  "changePassword": {
+    "oldPassword": "Old Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "changePassword": "Change Password",
+    "pleaseChangePassword": "Please change your Password",
+    "cancel": "Cancel",
+    "changeSuccessfully": "You have changed password successfully"
+  },
+  "chatting": {
+    "active": "Active",
+    "yourMessages": "Your Messages",
+    "letSend": "Send private photos and messages to a friend or group.",
+    "sendMessage": "Send Message"
+  },
+  "report": {
+    "nudityContent": "Nudity or sexual activity",
+    "nudityDetailContent": "Photos, videos and some digitally-created content that show sexual intercourse, genitals, and close-ups of fully-nude buttocks.\nIntimate images of others that were shared without permission.\nSome photos of female nipples, but videos of post-mastectomy scarring and women actively breastfeeding are allowed.\nNudity in photos of paintings and sculptures is OK.\nThere are times when we may remove videos that show nude or partially-nude children.",
+    "violenceContent": "Violence or dangerous organizations",
+    "violenceDetailContent": "Photos or videos of extreme graphic violence.\nPosts that encourage violence or attacks on anyone based on their religious, ethnic or sexual background.\nSpecific threats of physical harm, theft, vandalism or financial harm.",
+    "suicideContent": "Suicide or self-injury",
+    "suicideDetailContent": "Posts encouraging or promoting self-injury, which includes suicide and cutting.\nComments identifying victims of self-injury if the post attacks or makes fun of them.",
+    "terrorismContent": "Hate speech or symbols",
+    "terrorismDetailContent": "Photos or videos of hate speech or symbols.\nPosts with captions that encourage violence or attack anyone based on who they are.\nSpecific threats of physical harm, theft or vandalism.",
+    "spamContent": "It's spam",
+    "spamDetailContent": "Photos or videos relate to spam, Posts with\nPost contain the content relate to spam",
+    "otherContent": "Other",
+    "otherDetailContent": "",
+
+    "thankYou": "Thank you for letting me know",
+    "sendReport": "Send a report",
+    "whyReport": "Why you report this post?"
+  },
+  "footer": {
+    "resources": "Resources",
+    "about": "About",
+    "careers": "Careers",
+    "contact": "Contact",
+    "admin": "Admin",
+    "legal": "Legal",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "language": "Language"
+  }
+}

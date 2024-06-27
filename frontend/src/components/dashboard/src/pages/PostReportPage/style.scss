@@ -1,0 +1,21 @@
+.report-admin-modal {
+  position: relative;
+  .post-details-container {
+    margin: 20px auto 0 auto !important;
+    width: 1000px !important;
+    height: 700px !important;
+    background-color: var(--backgroundColor);
+    border: 0.25px solid var(--lightColor);
+    .post-details-interation {
+      box-shadow: none !important;
+    }
+  }
+  .report-total-space {
+    display: flex;
+    flex-direction: row;
+    margin-top: 10px;
+  }
+}
+h3 {
+  padding: 10px 0;
+}

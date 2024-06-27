@@ -1,0 +1,94 @@
+.images-list-container {
+  .Mui-selected {
+    color: var(--charColor) !important;
+    .tab-icon {
+      color: var(--charColor) !important;
+    }
+  }
+  .MuiTabs-indicator {
+    background-color: var(--charColor) !important;
+  }
+  .css-8z7n5c-MuiImageList-root {
+    overflow: unset !important;
+  }
+  .MuiBox-root {
+    padding: 0 !important;
+    .MuiImageListItem-root {
+      cursor: pointer;
+      &:hover {
+        &::after {
+          content: "";
+          position: absolute;
+          background-color: rgba(0, 0, 0, 0.3);
+          width: 100%;
+          height: 100%;
+        }
+        .post-action-btns {
+          display: flex !important;
+          justify-content: center;
+          align-items: center;
+          flex-direction: row;
+        }
+      }
+    }
+  }
+  .tab-container {
+    margin: 0;
+    display: flex;
+    flex-direction: row;
+
+    .tab-icon {
+      font-size: 20px;
+      justify-content: center;
+      margin: auto;
+      margin-right: 5px;
+    }
+    .tab-label {
+    }
+  }
+  .multi-images-icon {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    color: var(--backgroundColor) !important;
+  }
+  .post-action-btns {
+    position: absolute;
+    display: none !important;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    flex-wrap: wrap;
+    z-index: 1;
+    .number-of-action {
+      display: flex;
+      flex-direction: row;
+      margin: 0 20px;
+      p {
+        color: var(--backgroundColor) !important;
+        font-weight: 900;
+      }
+      .action-icon {
+        margin-right: 10px !important;
+        align-self: center;
+        justify-content: center;
+        margin: auto;
+        color: var(--backgroundColor) !important;
+      }
+    }
+  }
+  .no-data-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    .start-post-text {
+      font-weight: 900;
+      font-size: 18px;
+      margin: auto;
+    }
+  }
+  .image-item {
+    width: 100% !important;
+    // height: 100% !important;
+  }
+}

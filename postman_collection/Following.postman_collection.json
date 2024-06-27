@@ -1,0 +1,93 @@
+{
+	"info": {
+		"_postman_id": "27471f15-3e69-49cd-8d14-29b408124103",
+		"name": "Following",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Follow other account",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/v1/following/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"following",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Unfollow other account",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/v1/following/2",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"following",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List of followers of an account",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/v1/follower/2",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"follower",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List of accounts that a specific account follow (Following)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/v1/following/2",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"following",
+						"2"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

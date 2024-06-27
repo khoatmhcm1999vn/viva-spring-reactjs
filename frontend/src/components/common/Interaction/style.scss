@@ -1,0 +1,58 @@
+.interaction-container {
+  margin-top: 10px !important;
+  svg {
+    font-size: 28px;
+    margin-right: 10px;
+    color: var(--charColor) !important;
+    cursor: pointer;
+  }
+  :not(button) > svg:not([color]) {
+    color: var(--charColor) !important;
+  }
+  .like-icon {
+    color: var(--notificationColor) !important;
+  }
+  .unlike-icon {
+    color: var(--charColor) !important;
+  }
+}
+.number-of-likes {
+  font-size: 14px;
+  font-weight: 900 !important;
+  margin: 8px 0 !important;
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.post-caption {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  .owner-name {
+    &:hover {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  }
+  .hashtag-part {
+    color: var(--mainColor);
+    display: initial;
+    &:hover {
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  }
+  // margin: 10px 0 !important;
+}
+.follow-container {
+  .view-more {
+    margin-bottom: 10px;
+    cursor: pointer;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

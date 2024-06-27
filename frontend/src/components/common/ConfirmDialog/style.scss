@@ -1,0 +1,11 @@
+.yes-btn,
+.yes-btn:hover {
+  background-color: var(--mainColor) !important;
+  font-weight: 900 !important;
+  color: var(--backgroundColor) !important;
+}
+.no-btn,
+.no-btn:hover {
+  background-color: var(--backgroundColor) !important;
+  color: var(--charColor) !important;
+}

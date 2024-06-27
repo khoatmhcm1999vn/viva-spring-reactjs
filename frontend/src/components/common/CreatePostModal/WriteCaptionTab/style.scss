@@ -1,0 +1,67 @@
+.write-caption-container {
+  .owner-container {
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    img {
+      border-radius: 40px;
+    }
+    .right-container {
+      margin-left: 10px;
+      .MuiFormControl-root {
+        font-size: 14px !important;
+        .MuiSelect-select {
+          padding-top: 3px;
+          padding-bottom: 0px;
+          font-size: 12px;
+        }
+      }
+      .owner-name{
+          margin-left: 10px;
+      }
+    }
+  }
+  .caption-input {
+    position: relative;
+    margin: 0 0px;
+    width: calc(100% - 45px);
+    height: 200px;
+    padding: 20px;
+    background-color: var(--backgroundColor);
+    border: 1px solid var(--defaultColor);
+    border-radius: 20px;
+    margin: 20px 0;
+    .MuiInputBase-root {
+      width: 100%;
+    }
+    .different-text-icon {
+      svg {
+        font-size: 28px;
+      }
+      position: absolute;
+      right: 10px;
+      bottom: 0px;
+    }
+  }
+}
+.MuiOutlinedInput-root {
+  border-radius: 5px !important;
+}
+.item-select,
+.MuiSelect-select {
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: row;
+  justify-content: flex-start;
+
+  .item-label {
+    font-size: 13px !important;
+    width: 70%;
+  }
+  .item-icon {
+    width: 25px;
+    svg {
+      font-size: 18px;
+    }
+  }
+}

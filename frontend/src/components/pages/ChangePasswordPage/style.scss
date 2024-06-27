@@ -1,0 +1,100 @@
+.change-password-container {
+  margin: auto !important;
+  width: 90%;
+  padding: 20px;
+  .user-mini-info {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    margin: auto;
+    .avatar {
+      width: 120px;
+      text-align: right;
+      img {
+        width: 40px;
+        height: 40px;
+        border-radius: 40px;
+        margin: auto;
+        margin-right: 0;
+      }
+    }
+    .right-action {
+      text-align: left;
+      .username {
+        font-weight: 900;
+      }
+      .change-profile-photo {
+        font-weight: 900;
+        color: var(--mainColor);
+      }
+    }
+  }
+  .field-container {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    margin: 10px 0;
+    .field-title {
+      width: 120px !important;
+      text-align: right;
+      font-weight: 900;
+      margin: 5px auto;
+      font-size: 14px;
+    }
+    .field-content {
+      flex: 1;
+      text-align: left;
+      .field-item {
+        position: relative;
+        .password-score {
+          font-size: 12px !important;
+        }
+      }
+      .confirm-btn {
+        margin-top: 10px;
+        background-color: var(--mainColor);
+        color: var(--backgroundColor);
+        font-weight: 900;
+        text-transform: capitalize;
+      }
+      .field-input-text {
+        width: 70%;
+        input {
+          padding: 8px 12px;
+        }
+      }
+      .field-input-checkbox {
+        color: var(--mainColor);
+      }
+      .MuiInputBase-multiline {
+        padding: 0;
+        .MuiOutlinedInput-input {
+          padding: 5px 10px;
+          &#bio {
+            height: 60px !important;
+          }
+        }
+      }
+    }
+  }
+  .submit-btn {
+    margin-top: 10px;
+    position: relative;
+    background-color: var(--mainColor);
+    color: var(--backgroundColor);
+    font-weight: 900;
+    text-transform: capitalize;
+    width: 130px;
+    height: 34px;
+    &:hover {
+      background-color: var(--mainColor) !important;
+    }
+  }
+  .forgot-password-link {
+    cursor: pointer;
+    margin-top: 20px;
+    color: var(--mainColor);
+    font-weight: 900;
+    text-transform: capitalize;
+  }
+}

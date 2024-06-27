@@ -1,0 +1,45 @@
+.MuiStepper-root {
+  width: 70% !important;
+  margin: auto;
+  margin-top: 10px;
+  .MuiStepIcon-root {
+    font-size: 20px !important;
+    font-weight: 900 !important;
+    &.Mui-active {
+      color: var(--mainColor) !important;
+    }
+  }
+  .MuiStepLabel-labelContainer {
+    .Mui-completed, .Mui-disabled {
+      opacity: 0.5;
+    }
+    .Mui-active {
+      font-weight: 900;
+      opacity: 1 !important;
+    }
+  }
+  .MuiLinearProgress-root {
+    position: absolute;
+    top: 10px;
+    height: 2px;
+    left: calc(-50% + 24px);
+    right: calc(50% + 24px);
+    background-color: var(--lightColor);
+    .MuiLinearProgress-bar {
+      background-color: var(--mainColor);
+    }
+  }
+
+  .Mui-completed {
+    .MuiSvgIcon-root {
+      color: var(--mainColor) !important;
+    }
+  }
+  .Mui-disabled, .Mui-completed{
+    color: var(--charColor)
+  }
+  .MuiStepLabel-labelContainer {
+    color: var(--charColor) !important;
+    font-size: 16px !important;
+  }
+}

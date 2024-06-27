@@ -1,0 +1,136 @@
+.notification-list-container {
+  position: absolute;
+  top: 60px;
+  right: 50px;
+  border: solid 0.25px transparent;
+  width: 400px;
+  height: 450px;
+  animation: appearNotification 0.2s;
+  .no-notification {
+    font-size: 16px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    justify-content: center;
+    margin-top: 50px;
+    .MuiSvgIcon-root {
+      margin: auto;
+    }
+  }
+  &.left {
+    right: 30px;
+  }
+  &.right {
+    right: 0px;
+  }
+  .notification-list-content {
+    position: relative;
+    .header {
+      position: absolute;
+      top: 0;
+      height: 60px;
+      background-color: var(--backgroundColor);
+      width: calc(100% - 32px);
+      padding: 16px 16px 8px 16px;
+      border-bottom: 0.25px solid var(--lightColor);
+      .title {
+        font-weight: 900;
+        height: 30px;
+      }
+      .filter-btn-group {
+        height: 30px;
+        button {
+          font-size: 12px !important;
+          text-transform: capitalize;
+          font-weight: 900;
+          width: auto;
+          padding: 5px;
+        }
+      }
+    }
+    .notification-list {
+      overflow: auto;
+      margin-top: 68px;
+      height: calc(450px - 92px);
+    }
+    .MuiCardContent-root {
+      padding: 16px 0;
+    }
+    width: 400px;
+    height: 450px;
+    border-radius: 10px;
+    background-color: var(--backgroundColor);
+    border: solid 0.25px var(--lightColor);
+    &::after,
+    &::before {
+      content: "";
+      display: block;
+      position: absolute;
+      top: -24px !important;
+      width: 0px;
+      height: 0px;
+      border-style: solid;
+    }
+    &::after {
+      border-color: transparent transparent var(--backgroundColor) transparent;
+      border-width: 12px;
+      top: -23.25px !important;
+    }
+    &::before {
+      border-color: transparent transparent var(--defaultColor) transparent;
+      border-width: 12.25px;
+    }
+    &.right {
+      &::before {
+        right: 20px;
+      }
+      &::after {
+        right: 20.45px;
+      }
+    }
+    &.left {
+      &::before {
+        right: 48px;
+      }
+      &::after {
+        right: 48.45px;
+      }
+    }
+  }
+
+  &.animation-change {
+    &.left {
+      animation: rightToLeft 0.2s;
+    }
+    &.right {
+      animation: leftToRight 0.2s;
+    }
+  }
+
+  @keyframes appearNotification {
+    0% {
+      top: 50px;
+    }
+    100% {
+      top: 60px;
+    }
+  }
+
+  @keyframes leftToRight {
+    0% {
+      right: 30px;
+    }
+    100% {
+      right: 0px;
+    }
+  }
+
+  @keyframes rightToLeft {
+    0% {
+      right: 0px;
+    }
+    100% {
+      right: 30px;
+    }
+  }
+}

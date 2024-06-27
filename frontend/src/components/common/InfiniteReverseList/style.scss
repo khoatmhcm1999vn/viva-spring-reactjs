@@ -1,0 +1,16 @@
+.reverse-loading-more-icon {
+  // position: absolute;
+  font-size: 14px;
+  margin: 0 auto;
+}
+.unread-message {
+  position: absolute;
+  bottom: 60px;
+  padding: 5px 10px;
+  font-size: 12px;
+  border-radius: 5px;
+  margin-left: px;
+  color: var(--mainColor);
+  background-color: var(--mainHoverColor);
+  z-index: 1;
+}

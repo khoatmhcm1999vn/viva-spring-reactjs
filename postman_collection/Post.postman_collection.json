@@ -1,0 +1,104 @@
+{
+	"info": {
+		"_postman_id": "9ab47aea-9c8c-41bf-9094-a702fd82621c",
+		"name": "Post",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get all post",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJ1c2VybmFtZSI6IkhVTkdET0FOIiwiaXNzIjoiVml2YWNvbl9LaG9hX1RydWNfSHVuZyIsImV4cCI6MTY0ODk3MTYxMn0.wNEG-0dwaVSnf1tFxUApcdY8U9HE5CHsrOSK6kYn_BmfWa8OZuZpFzDUpnY_fp-V7VYUZmkYM7H9GMrrAfOtWg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/v1/post?author=2&page=1&limit=2",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"post"
+					],
+					"query": [
+						{
+							"key": "author",
+							"value": "2"
+						},
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "limit",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create post",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJ1c2VybmFtZSI6IkhVTkdET0FOIiwiaXNzIjoiVml2YWNvbl9LaG9hX1RydWNfSHVuZyIsImV4cCI6MTY0ODgzNTQ2NX0.t40W4xkeZrEExPejVZe_KlaCCQQfBisfZZ1tqKyixuq3KuSZuDJB1qcorTKlt026FmZLFk0ZbFZRdZngmdsc6w",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"caption\": \"Hello this is caption\",\r\n    \"privacy\": \"FOLLOWER\",\r\n    \"attachments\": [\r\n        {\r\n            \"actualName\": \"272205323_4927332657326798_3776136439423965886_n.jpg\",\r\n            \"uniqueName\": \"2022-04-01T22:15:53.303388500_272205323_4927332657326798_3776136439423965886_n.jpg\",\r\n            \"url\": \"https://vivacon-objects.s3-ap-southeast-1.amazonaws.com/2022-04-01T22%3A15%3A53.303388500_272205323_4927332657326798_3776136439423965886_n.jpg\"\r\n        },\r\n        {\r\n            \"actualName\": \"spring-boot-authentication-spring-security-architecture.png\",\r\n            \"uniqueName\": \"2022-04-01T22:15:53.593384100_spring-boot-authentication-spring-security-architecture.png\",\r\n            \"url\": \"https://vivacon-objects.s3-ap-southeast-1.amazonaws.com/2022-04-01T22%3A15%3A53.593384100_spring-boot-authentication-spring-security-architecture.png\"\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/v1/post",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"post"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

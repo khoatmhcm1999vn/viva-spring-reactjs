@@ -1,0 +1,82 @@
+.nav-container {
+  background-color: var(--backgroundColor) !important;
+  color: var(--mainColor) !important;
+  display: grid !important;
+  grid-template-columns: repeat(12, 1fr);
+  align-items: center;
+  height: 70px;
+  box-shadow: none !important;
+  border: 0.25px solid var(--lightColor);
+
+  .app-logo {
+    grid-column-start: 3;
+    grid-column-end: span 1;
+    font-size: 20px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .change-language-container {
+    min-width: 100px;
+    margin: 0 32px 0 0;
+    border: none !important;
+    .icon {
+      margin: auto 0 auto 5px;
+      color: var(--defaultColor);
+    }
+    .MuiOutlinedInput-root {
+      display: flex;
+      flex-direction: row-reverse;
+      justify-content: space-around;
+      border: none !important;
+      .MuiSelect-select {
+        padding: 8px;
+      }
+      .MuiOutlinedInput-notchedOutline {
+        border: none;
+      }
+    }
+  }
+
+  .app-user {
+    grid-column-start: 10;
+    grid-column-end: 10;
+    display: flex;
+    justify-content: flex-start;
+    margin-left: 14px;
+    button {
+      padding: 5px !important;
+      &:hover {
+        background-color: var(--lightColor) !important;
+      }
+    }
+    .profile-avatar {
+      &:hover {
+        cursor: pointer;
+      }
+    }
+    .MuiButton-root,
+    .profile-avatar {
+      padding: 0 !important;
+      margin: auto 0 !important;
+      border-radius: 100px;
+      width: 45px;
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
+      .user-avatar {
+        img {
+          border-radius: 100px;
+        }
+        width: 45px;
+        height: 45px;
+      }
+      .user-name {
+        text-transform: capitalize;
+        margin-left: 5px;
+        color: var(--charColor);
+        font-weight: 900;
+      }
+    }
+  }
+}

@@ -1,0 +1,36 @@
+.upload-image-tab-container {
+  height: 200px;
+  vertical-align: middle;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  .upload-image {
+    height: 300px !important;
+    .select-image-txt {
+      height: 30px !important;
+    }
+    .fileUploader {
+      .fileContainer {
+        padding: 0 !important;
+        margin: 0 !important;
+        border: none !important;
+        box-shadow: none;
+        .chooseFileButton {
+          background-color: transparent;
+          color: var(--charColor) !important;
+          .upload-image-icon {
+            margin: auto;
+            cursor: pointer;
+            color: var(--charColor) !important;
+            &:hover {
+              opacity: 0.3;
+            }
+          }
+          &:hover {
+            background-color: transparent !important;
+          }
+        }
+      }
+    }
+  }
+}

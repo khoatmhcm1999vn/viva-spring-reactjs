@@ -1,0 +1,113 @@
+{
+	"info": {
+		"_postman_id": "5b21e7d2-b33f-4bfb-844f-964270a6b47a",
+		"name": "Like",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Account Who Likes A Post",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJ1c2VybmFtZSI6Imh1bmdkb2FuIiwiaXNzIjoiVml2YWNvbl9LaG9hX1RydWNfSHVuZyIsImV4cCI6MTY1MDAzOTg2Mn0.veRREc2X7z93h8AhYG4aKLf8fupkuGGHionyhVoHvZ2N5vWCoG-bIKgIhsPsGKCP1sQwFbZ86nf3y8GxfFEsOA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8300/api/v1/like/post/2?page=0&limit=2",
+					"host": [
+						"localhost"
+					],
+					"port": "8300",
+					"path": [
+						"api",
+						"v1",
+						"like",
+						"post",
+						"2"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "limit",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Like a post",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJ1c2VybmFtZSI6Imh1bmdkb2FuIiwiaXNzIjoiVml2YWNvbl9LaG9hX1RydWNfSHVuZyIsImV4cCI6MTY1MDAzOTg2Mn0.veRREc2X7z93h8AhYG4aKLf8fupkuGGHionyhVoHvZ2N5vWCoG-bIKgIhsPsGKCP1sQwFbZ86nf3y8GxfFEsOA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8300/api/v1/like/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8300",
+					"path": [
+						"api",
+						"v1",
+						"like",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Unlike a post",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJ1c2VybmFtZSI6Imh1bmdkb2FuIiwiaXNzIjoiVml2YWNvbl9LaG9hX1RydWNfSHVuZyIsImV4cCI6MTY1MDAzOTg2Mn0.veRREc2X7z93h8AhYG4aKLf8fupkuGGHionyhVoHvZ2N5vWCoG-bIKgIhsPsGKCP1sQwFbZ86nf3y8GxfFEsOA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:8300/api/v1/like/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8300",
+					"path": [
+						"api",
+						"v1",
+						"like",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

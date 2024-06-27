@@ -1,0 +1,67 @@
+.custom-modal-container {
+  height: 100%;
+  width: 100%;
+  vertical-align: middle;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  .MuiBackdrop-root {
+    background-color: var(--charColor);
+    opacity: 0.8 !important;
+  }
+  .custom-modal-card {
+    background-color: var(--backgroundColor);
+    max-width: var(--modalWidth);
+    max-height: var(--modalHeight);
+    width: 100%;
+    height: 100%;
+    vertical-align: middle;
+    text-align: center;
+    border-radius: var(--radius) !important;
+    overflow: hidden;
+    animation: appearCustomModal 0.5s;
+    .MuiCardContent-root {
+      padding: 0;
+      height: 100%;
+    }
+    .custom-modal-header {
+      height: 50px;
+      position: initial;
+      background-color: transparent;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      padding: 0 !important;
+      .btn-container {
+        color: var(--charColor) !important;
+        margin: 5px;
+        border-radius: 15px;
+        text-transform: capitalize;
+        &.hidden {
+          visibility: hidden;
+        }
+        &:hover {
+          color: var(--charColor) !important;
+          background-color: var(--lightColor) !important;
+        }
+      }
+      .title {
+        margin: auto;
+        color: var(--charColor);
+        font-weight: 900;
+      }
+    }
+    @keyframes appearCustomModal {
+      0% {
+        margin-top: -50px;
+        opacity: 0.5;
+      }
+      100% {
+        margin-top: 0;
+        opacity: 1;
+      }
+    }
+  }
+}

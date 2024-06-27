@@ -1,0 +1,127 @@
+.report-detail-modal {
+  display: none;
+  position: absolute;
+}
+.custom-modal-container {
+  .report-modal-step1 {
+    overflow: auto;
+    height: calc(100% - 50px);
+    .report-question {
+      font-weight: 900;
+      text-align: left;
+      padding: 10px 20px;
+    }
+    .report-content {
+      text-align: left;
+      .report-item {
+        border-bottom: 0.25px solid var(--lightColor);
+        padding: 20px;
+        cursor: pointer;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        p {
+          margin: auto 0;
+        }
+      }
+    }
+  }
+  .report-modal-step2 {
+    position: relative;
+    height: 100%;
+    .report-header {
+      height: 50px;
+      position: initial;
+      background-color: transparent;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 20%),
+        0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%);
+      p {
+        font-weight: 900;
+        margin: auto;
+      }
+      .back-btn {
+        position: absolute;
+        top: 10px;
+        left: 0;
+        width: 30px;
+        height: 30px;
+        display: initial;
+        text-align: left;
+        color: var(--charColor);
+      }
+    }
+    .report-question {
+      font-weight: 900;
+      font-size: 16px;
+      padding: 10px 20px;
+      text-align: left;
+    }
+    .reason-list-container {
+      text-align: left;
+      margin: 10px;
+      li {
+        padding: 0 10px;
+        margin-bottom: 10px;
+      }
+    }
+    .submit-btn {
+      width: calc(100% - 40px);
+      background-color: var(--mainColor);
+      color: var(--backgroundColor);
+      text-transform: capitalize;
+      font-weight: 900;
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+    }
+  }
+  .report-modal-step3 {
+    position: relative;
+    height: 100%;
+    .action-complete-icon {
+      width: 50px;
+      height: 50px;
+      margin: auto;
+      margin-top: 20px;
+    }
+    .action-complete-label {
+      margin: auto;
+      font-weight: 900;
+      font-size: 16px;
+    }
+    .thank-you-label {
+      margin: auto;
+      color: var(--defaultColor);
+      padding: 10px 20px;
+    }
+    .other-action-btns {
+      display: flex;
+      flex-direction: column;
+      button {
+        text-transform: initial;
+        width: 100%;
+        padding: 10px 20px;
+      }
+      .block-action {
+        border-bottom: 0.25px solid var(--lightColor);
+        color: var(--notificationColor);
+      }
+      .unfollow-action {
+        color: var(--charColor);
+      }
+    }
+    .close-btn {
+      width: calc(100% - 40px);
+      background-color: var(--mainColor);
+      color: var(--backgroundColor);
+      text-transform: capitalize;
+      font-weight: 900;
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+    }
+  }
+}

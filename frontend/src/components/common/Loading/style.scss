@@ -1,0 +1,89 @@
+.init-loading-container {
+  display: table;
+  width: 100vw;
+  height: 100vh;
+  .progress {
+    display: table-cell;
+    width: 250px;
+    vertical-align: middle;
+    .MuiLinearProgress-root {
+      margin: auto;
+      width: 250px;
+      background-color: var(--backgroundColor);
+      height: 10px;
+      border-radius: 10px;
+    }
+    .MuiLinearProgress-bar {
+      background-color: var(--mainColor);
+    }
+    .logo {
+      text-align: center;
+      margin: auto;
+      margin-bottom: 50px;
+      position: relative;
+      width: 250px;
+      .frag01 {
+        box-shadow: 1px;
+      }
+      .frag02 {
+        position: absolute;
+        right: 50px;
+        bottom: -10px;
+        animation: bounce 1.4999s infinite;
+      }
+      .shadow {
+        position: absolute;
+        background-color: var(--lightColor) !important;
+        height: 10px;
+        width: 30px;
+        right: 60px;
+        bottom: -30px;
+        border-radius: 50%;
+        animation: shrink 1.5s infinite;
+        z-index: -1;
+      }
+    }
+    @keyframes bounce {
+      10% {
+        height: 50px;
+        width: 50px;
+      }
+      50% {
+        height: 45px;
+        width: 53px;
+        transform: translateY(30px);
+      }
+      70% {
+        height: 40px;
+        width: 57px;
+      }
+    }
+    @keyframes shrink {
+      50% {
+        transform: scaleX(1.5);
+      }
+    }
+  }
+}
+
+.loading-container {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  z-index: 1301;
+  left: 0;
+  top: 0;
+  text-align: center;
+  align-items: center;
+  vertical-align: middle;
+  background-color: var(--darkBackground);
+  .spinner-icon {
+    position: fixed;
+    top: calc(50% - 18px);
+    left: calc(50% - 18px);
+    path {
+      border: 1px solid black;
+    }
+  }
+  overflow: hidden;
+}

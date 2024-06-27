@@ -1,0 +1,94 @@
+.modal-container {
+  height: 100%;
+  width: 100%;
+  vertical-align: middle;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  .MuiBackdrop-root {
+    background-color: var(--charColor);
+    opacity: 0.8 !important;
+  }
+  .create-post-container {
+    background-color: var(--backgroundColor);
+    border-radius: 14px !important;
+    width: 900px;
+    height: 900px;
+    vertical-align: middle;
+    text-align: center;
+    animation: appearModal 0.5s;
+    .MuiCardContent-root {
+      padding: 0;
+      height: 100%;
+    }
+    .create-post-header {
+      height: 50px;
+      position: initial;
+      background-color: var(--backgroundColor);
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      padding: 0 !important;
+      .btn-container {
+        color: var(--charColor) !important;
+        margin: 5px;
+        border-radius: 15px;
+        text-transform: capitalize;
+        &.hidden {
+          visibility: hidden;
+        }
+        &:hover {
+          color: var(--charColor) !important;
+          background-color: var(--lightColor) !important;
+        }
+      }
+      .title {
+        margin: auto;
+        color: var(--charColor);
+        font-weight: 900;
+      }
+    }
+    .tab-container {
+      margin-top: 10px;
+      width: 100%;
+      height: 80%;
+      &#simple-tabpanel-1,
+      &#simple-tabpanel-0 {
+        .MuiBox-root,
+        .MuiTypography-root {
+          height: 100%;
+        }
+      }
+    }
+
+    @keyframes appearModal {
+      0% {
+        margin-top: -50px;
+        opacity: 0.5;
+      }
+      100% {
+        margin-top: 0px;
+        opacity: 1;
+      }
+    }
+  }
+}
+.forbidden-list-container {
+  overflow: auto;
+  height: calc(450px - 50px);
+  .forbidden-image-container {
+    display: flex;
+    flex-direction: row;
+    padding: 10px;
+    border: 0.25px solid var(--lightColor);
+    .forbidden-image {
+      border-radius: 5px;
+    }
+    .forbidden-reason {
+      text-align: left;
+      font-style: italic;
+    }
+  }
+}

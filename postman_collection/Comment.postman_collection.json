@@ -1,0 +1,167 @@
+{
+	"info": {
+		"_postman_id": "a960a0e6-3a83-4d85-b45a-b056e38f8238",
+		"name": "Comment",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get First Level Comment",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJ1c2VybmFtZSI6Imh1bmdkb2FuIiwiaXNzIjoiVml2YWNvbl9LaG9hX1RydWNfSHVuZyIsImV4cCI6MTY0OTc3Njc4Mn0.T2PHB_aM5vJj3s_8vTqtt9MAM1tyX2gpYo6bVvkJpdISz2qe93KZYiZhbM0lezVkvPWwsGuN-yRKhEcvJF8c2w",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8300/api/v1/post/2/first-level-comment?page=0&limit=2",
+					"host": [
+						"localhost"
+					],
+					"port": "8300",
+					"path": [
+						"api",
+						"v1",
+						"post",
+						"2",
+						"first-level-comment"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "limit",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Child Comment Of Parent Comment",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJ1c2VybmFtZSI6Imh1bmdkb2FuIiwiaXNzIjoiVml2YWNvbl9LaG9hX1RydWNfSHVuZyIsImV4cCI6MTY0OTc3Njc4Mn0.T2PHB_aM5vJj3s_8vTqtt9MAM1tyX2gpYo6bVvkJpdISz2qe93KZYiZhbM0lezVkvPWwsGuN-yRKhEcvJF8c2w",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8300/api/v1/post/2/comment/2/child-comment?page=0&limit=2",
+					"host": [
+						"localhost"
+					],
+					"port": "8300",
+					"path": [
+						"api",
+						"v1",
+						"post",
+						"2",
+						"comment",
+						"2",
+						"child-comment"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "limit",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Comment a post",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJhY2NvdW50SWQiOjEsInVzZXJuYW1lIjoiaHVuZ2RvYW4iLCJmdWxsTmFtZSI6Ikh1bmcgRG9hbiIsInJvbGVzIjpbIlVTRVIiXSwiYXZhdGFyIjoiaHR0cHM6Ly92aXZhY29uLW9iamVjdHMuczMtYXAtc291dGhlYXN0LTEuYW1hem9uYXdzLmNvbS8yMDIyLTA0LTAxVDIyJTNBMTUlM0E1My4zMDMzODg1MDBfMjcyMjA1MzIzXzQ5MjczMzI2NTczMjY3OThfMzc3NjEzNjQzOTQyMzk2NTg4Nl9uLmpwZyIsImlzcyI6IlZpdmFjb25fS2hvYV9UcnVjX0h1bmciLCJleHAiOjE2NTAwNDc5MDR9.TScTEUc_jClZzybACrfjP8YafSbk_Ck7BHrs6DXpBJ22B_1394to36tZWyiHSFCfLKVmiaD3RY2DjW95GJZJjw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"content\": \"abc\",\r\n    \"parentCommentId\": 2,\r\n    \"postId\": 2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8300/api/v1/comment",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8300",
+					"path": [
+						"api",
+						"v1",
+						"comment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete a comment for a post",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJhY2NvdW50SWQiOjEsInVzZXJuYW1lIjoiaHVuZ2RvYW4iLCJmdWxsTmFtZSI6Ikh1bmcgRG9hbiIsInJvbGVzIjpbIlVTRVIiXSwiYXZhdGFyIjoiaHR0cHM6Ly92aXZhY29uLW9iamVjdHMuczMtYXAtc291dGhlYXN0LTEuYW1hem9uYXdzLmNvbS8yMDIyLTA0LTAxVDIyJTNBMTUlM0E1My4zMDMzODg1MDBfMjcyMjA1MzIzXzQ5MjczMzI2NTczMjY3OThfMzc3NjEzNjQzOTQyMzk2NTg4Nl9uLmpwZyIsImlzcyI6IlZpdmFjb25fS2hvYV9UcnVjX0h1bmciLCJleHAiOjE2NTAwNDc5MDR9.TScTEUc_jClZzybACrfjP8YafSbk_Ck7BHrs6DXpBJ22B_1394to36tZWyiHSFCfLKVmiaD3RY2DjW95GJZJjw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8300/api/v1/comment/18",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8300",
+					"path": [
+						"api",
+						"v1",
+						"comment",
+						"18"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

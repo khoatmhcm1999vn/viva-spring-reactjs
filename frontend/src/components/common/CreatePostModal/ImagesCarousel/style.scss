@@ -1,0 +1,112 @@
+.list-images-container {
+  position: relative;
+  .rec-slider-container {
+    background-color: transparent;
+    opacity: 1 !important;
+  }
+  .rec-carousel-item {
+    width: 152px !important;
+    .rec-item-wrapper {
+      justify-content: flex-start;
+    }
+  }
+  .rec-dot {
+    display: none;
+  }
+  .rec-arrow {
+    background-color: transparent !important;
+    color: var(--defaultColor) !important;
+    border: none !important;
+    height: 100%;
+    border-radius: 0px;
+    box-shadow: none;
+    opacity: 0.5;
+    &:hover:not(:disabled) {
+      border: none;
+
+      background-color: var(--lightColor) !important;
+      opacity: 0.5;
+    }
+    &:disabled {
+      opacity: 0.2;
+    }
+  }
+  .image-item-container {
+    width: 150px !important;
+    height: 150px !important;
+    position: absolute;
+    &.isSelected {
+      .represent-item {
+        transform: scale(1.2);
+        transition: all 0.2s linear;
+      }
+      opacity: 0.5;
+      overflow: hidden;
+      z-index: 999;
+    }
+
+    &:hover {
+      .represent-item {
+        transform: scale(1.2);
+        transition: all 0.2s linear;
+      }
+      .remove-icon {
+        display: block !important;
+      }
+      opacity: 0.5;
+      overflow: hidden;
+      z-index: 999;
+    }
+    .remove-icon {
+      display: none;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      opacity: 0.7;
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--lightColor) !important;
+      border: 2.5px solid var(--lightColor) !important;
+      border-radius: 24px;
+      z-index: 1;
+      cursor: pointer;
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+  .add-image-container {
+    width: 142px;
+    height: 142px;
+    border: 4px dashed var(--charColor);
+    border-radius: 10px;
+    margin-right: 15px;
+    opacity: 0.1;
+    cursor: pointer;
+    .fileContainer {
+      border: none;
+      box-shadow: none;
+      padding: 0;
+      margin: 0;
+      img,
+      p {
+        display: none;
+      }
+      button {
+        background-color: transparent;
+        height: 100px;
+        margin-top: calc(50% - 50px);
+        padding: 0;
+        .add-icon {
+          font-size: 100px;
+          color: var(--charColor);
+          transition: all 0.2s linear;
+        }
+      }
+    }
+
+    &:hover {
+      opacity: 0.2;
+    }
+  }
+}

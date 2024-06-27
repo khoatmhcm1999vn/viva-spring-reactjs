@@ -1,0 +1,177 @@
+.profile-container {
+  margin: auto !important;
+  margin-top: 100px !important;
+  width: 900px !important;
+  .info-container {
+    margin-bottom: 40px !important;
+    display: flex;
+    .user-avatar-container {
+      width: 40%;
+      .user-avatar {
+        position: relative;
+        width: 150.5px;
+        height: 150.5px;
+        border-radius: 150px;
+        margin: auto;
+        overflow: hidden;
+        &:hover {
+          .change-user-avatar-btn {
+            display: block;
+            bottom: 0;
+          }
+        }
+        .change-user-avatar {
+          width: 0.1px;
+          height: 0.1px;
+          opacity: 0;
+          overflow: hidden;
+          position: absolute;
+          z-index: -1;
+        }
+        .change-user-avatar-btn {
+          display: none;
+          position: absolute;
+          background-color: rgba(0, 0, 0, 0.3);
+          width: 100%;
+          height: 30px;
+          color: white;
+          font-weight: 900;
+          text-transform: capitalize;
+          &:hover {
+            cursor: pointer;
+          }
+        }
+        img {
+          width: 150px;
+          height: 150px;
+          border-radius: 150px;
+          border: 0.25px solid var(--lightColor);
+        }
+        .change-avatar-loading {
+          position: absolute;
+          left: calc(50% - 10px);
+          top: calc(50% - 10px);
+        }
+      }
+    }
+    .info-details {
+      flex: 1;
+      .info-detail-line1 {
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: flex-start;
+        .user-name {
+          font-size: 28px;
+          margin: auto 0;
+        }
+        .action-btns {
+          display: flex;
+          flex-direction: row;
+          justify-content: flex-end;
+          margin-left: 50px;
+          height: 70%;
+          .profile-more-actions {
+            .profile-more-icon {
+              cursor: pointer;
+            }
+          }
+          .edit-btn,
+          .message-btn,
+          .followed-btn,
+          .show-suggested-users {
+            margin-left: 20px;
+            margin-right: 20px;
+            text-transform: capitalize;
+            color: var(--charColor);
+            font-weight: 900;
+            padding: 0px 9px;
+            border: 0.5px solid var(--lightColor);
+            border-radius: 5px;
+            margin: 0px 5px;
+            p {
+              margin: 0;
+              height: auto !important;
+            }
+            &.followed {
+              color: var(--charColor);
+              background-color: var(--backgroundColor);
+            }
+            &.unfollowed {
+              color: var(--backgroundColor);
+              background-color: var(--mainColor);
+            }
+          }
+          .show-suggested-users{
+            padding: 0 !important;
+            min-width: 40px;
+          }
+          .edit-icon {
+            align-self: center;
+            font-size: 28px;
+            color: var(--defaultColor);
+          }
+        }
+      }
+      .info-detail-line2 {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        margin-bottom: 10px;
+        .number-of-container {
+          margin-right: 20px;
+          cursor: pointer;
+        }
+      }
+      .info-detail-line3 {
+        .full-name {
+          font-size: 18px;
+          font-weight: 900;
+        }
+      }
+    }
+  }
+}
+.custom-modal-container {
+  .follow-container {
+    width: 100%;
+    height: 350px;
+    overflow-y: auto;
+  }
+
+  .unfollow-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    .unfollow-user-info {
+      img {
+        border-radius: 100px;
+        margin: 20px 0;
+      }
+      .confirm-question {
+        font-size: 14px;
+      }
+    }
+    .action-btns {
+      display: flex;
+      flex-flow: column;
+      .unfollow-btn {
+        text-transform: capitalize;
+        background-color: transparent;
+        color: rgb(237, 73, 86);
+        font-weight: 600;
+        padding: 10px;
+        border-top: 0.25px solid var(--lightColor);
+        width: 100%;
+      }
+      .cancel-btn {
+        text-transform: capitalize;
+        background-color: transparent;
+        color: var(--charColor);
+        border-top: 0.25px solid var(--lightColor);
+        padding: 10px;
+        width: 100%;
+      }
+    }
+  }
+}

@@ -1,0 +1,60 @@
+:root {
+  --yellow: linear-gradient(180deg, #f8d49a -146.42%, #fad79d -46.42%);
+  --orange: #fca61f;
+  --black: #242d49;
+  --gray: #788097;
+  --purple: linear-gradient(180deg, #bb67ff 0%, #c484f3 100%);
+  --pink: #ff919d;
+  --glass: rgba(255, 255, 255, 0.54);
+  --boxShadow: 0px 19px 60px rgb(0 0 0 / 8%);
+  --smboxShadow: -79px 51px 60px rgba(0, 0, 0, 0.08);
+  --activeItem: #d0e1ffb2;
+}
+
+.Dashboard {
+  /* padding: 0.5rem 3.5rem; */
+  color: var(--black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Inter", sans-serif;
+  border-radius: 5px;
+  border: 0.25px solid var(--lightColor);
+  margin: auto !important;
+  background-color: var(--backgroundColor);
+
+  .AppGlass {
+    display: grid;
+    height: 100%;
+    min-height: 100vh;
+    width: 100%;
+    background: var(--glass);
+    grid-template-columns: repeat(24, 1fr);
+    overflow: hidden;
+    position: relative;
+  }
+
+  select {
+    border-radius: 20px;
+    padding: 2px 10px;
+    background-color: var(--backgroundColor);
+    cursor: pointer;
+    color: var(--charColor);
+    border: 0.25px solid var(--lightColor);
+    box-shadow: 1px 2px 4px rgb(0 0 0 / 25%) !important;
+    margin: 10px 0;
+  }
+
+  @media screen and (max-width: 1200px) {
+    .AppGlass {
+      grid-template-columns: repeat(28, 1fr);
+      overflow-y: scroll;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .AppGlass {
+      grid-template-columns: repeat(28, 1fr);
+    }
+  }
+}

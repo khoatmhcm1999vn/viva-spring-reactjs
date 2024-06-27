@@ -1,0 +1,46 @@
+.follow-item-container {
+  .follow-item {
+    display: flex;
+    flex-direction: row;
+    margin: 10px 0;
+    // position: relative;
+    padding: 0 20px;
+    .follow-avatar {
+      width: 15%;
+      .avatar-container {
+        width: 35px;
+        height: 35px;
+        border-radius: 35px;
+        // position: relative;
+        img {
+          border-radius: 35px;
+          margin: auto;
+        }
+      }
+    }
+    .follow-name {
+      width: 60%;
+      text-align: left;
+      margin-left: 10px;
+      cursor: pointer;
+      .username-container {
+        // position: relative;
+        width: fit-content;
+      }
+      .username,
+      .fullName {
+        font-size: 14px;
+        width: fit-content;
+      }
+      .username {
+        font-weight: 900;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+      .fullName {
+        color: var(--defaultColor);
+      }
+    }
+  }
+}

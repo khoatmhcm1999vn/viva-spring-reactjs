@@ -1,0 +1,237 @@
+{
+	"info": {
+		"_postman_id": "93b8e710-9233-4ab8-9a7e-9fcdb1999983",
+		"name": "Authentication",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJhY2NvdW50SWQiOjgsInVzZXJuYW1lIjoiaHVuZ2RvYW43ODM2MjJmZjE5LWM0YzQtNDBhYy1hMWQ1LTY2NmJhYzIzZmUzMSIsImZ1bGxOYW1lIjoiVmluaCBIdW5nIiwicm9sZXMiOlsiVVNFUiJdLCJhdmF0YXIiOiJodHRwczovL3ZpdmFjb24tb2JqZWN0cy5zMy1hcC1zb3V0aGVhc3QtMS5hbWF6b25hd3MuY29tLzIwMjItMDQtMTNUMjElM0ExNyUzQTI2LjI0NTMzNjUwMF9CbGFuay1BdmF0YXIuanBnIiwiaXNzIjoiVml2YWNvbl9LaG9hX1RydWNfSHVuZyIsImV4cCI6MTY1MDI0OTMzNX0.6Ur8hCsRgVWWzOf-JvhydO-LJ4_aMw8mt-9fPCxrNrfC3EQk6_FSJ-2OkgrpreP1y1Rec1oyxClk_82bwWQu5A",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\" : \"vinhhung\",\r\n    \"password\": \"Admin1234*5\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/v1/login",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Refresh-token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"refreshToken\": \"04694004-2077-4b94-a398-3ba6a8e65038\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/v1/refresh-token",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"refresh-token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Confirm verification token",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "470908"
+				},
+				"url": {
+					"raw": "localhost:8080/api/v1/account/verification_token",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"account",
+						"verification_token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Registration",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\":\"hungdoan426@gmail.com\",\r\n    \"fullName\" : \"Vinh Hung\",\r\n    \"username\" : \"vinhhung\",\r\n    \"password\": \"Admin123*\",\r\n    \"matchingPassword\": \"Admin123*\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/v1/registration",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"registration"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Resend verification token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "hungdoan426@gmail.com",
+					"options": {
+						"raw": {
+							"language": "text"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/v1/account/verification_token",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"account",
+						"verification_token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Forgot Password",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"verificationToken\" : \"054203\",\r\n    \"oldPassword\" : \"Admin123*\",\r\n    \"newPassword\" : \"Admin1234*\",\r\n    \"matchingNewPassword\" : \"Admin1234*\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/v1/account/password",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"account",
+						"password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Change Password",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJhY2NvdW50SWQiOjIzLCJ1c2VybmFtZSI6InZpbmhodW5nIiwiZnVsbE5hbWUiOiJWaW5oIEh1bmciLCJyb2xlcyI6WyJVU0VSIl0sImF2YXRhciI6Imh0dHBzOi8vdml2YWNvbi1vYmplY3RzLnMzLWFwLXNvdXRoZWFzdC0xLmFtYXpvbmF3cy5jb20vMjAyMi0wNC0xM1QyMSUzQTE3JTNBMjYuMjQ1MzM2NTAwX0JsYW5rLUF2YXRhci5qcGciLCJpc3MiOiJWaXZhY29uX0tob2FfVHJ1Y19IdW5nIiwiZXhwIjoxNjUwNTk1ODc3fQ.wz4vho1KccY4nymlVPr5tm-pCc2lXtelyfgBPTipK9DyKhrcMCXgXapojMAGOnIeV_wOiiSamh9UOR-VVaYgnQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"oldPassword\" : \"Admin1234*\",\r\n    \"newPassword\" : \"Admin1234*5\",\r\n    \"matchingNewPassword\" : \"Admin1234*5\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/v1/account/password",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"account",
+						"password"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
