@@ -62,7 +62,7 @@ public class Constants {
     public static final String DELETE_SUCCESSFULLY = "Delete Successfully";
     public static final String UPDATE_SUCCESSFULLY = "Update successfully";
     public static final String EMPTY_FILE_UPLOAD_MESSAGE = "The file which has been uploaded is empty";
-    public static final String ERROR_WHEN_UPLOAD_TO_S3 = " encounter some error when upload to S3!";
+    public static final String ERROR_WHEN_UPLOAD_TO_S3 = " encounter some error when upload to cloudinary!";
     public static final String RECORD_NOT_FOUND = "The request resource is not found ! Please check your bad request !";
     public static final String NOT_VALID_IMAGE_EXTENSION = "This received image has a invalid extension type";
     public static final String FETCHING_SUCCESSFULLY = "Fetching successfully";
