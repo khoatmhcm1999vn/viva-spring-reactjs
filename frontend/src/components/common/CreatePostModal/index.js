@@ -99,7 +99,7 @@ const CreatePostModal = (props) => {
       await Promise.all(
         attachments.map(async (img) => {
           const res = await detectImages(img);
-          console.log({ res });
+          //console.log({ res });
           const checkedImage = handleCheckImageRange(img.url, res.data);
           if (checkedImage.maliciousRange.length > 0) {
             resultCheckedImages.push(checkedImage);

@@ -73,7 +73,7 @@ export default function PostReportPage() {
   const { t: trans } = useTranslation();
 
   useEffect(() => {
-    console.log("refetch");
+    //console.log("refetch");
     fetchListPostReport(page, limit);
   }, [page]);
 
@@ -340,7 +340,11 @@ export default function PostReportPage() {
             isDone={reportType === "done"}
           />
           <Typography component="div" className="report-total-space">
-            <ReportPartiesInfo item={showPostReportModal.item} reportName="Post" reportType={reportType}/>
+            <ReportPartiesInfo
+              item={showPostReportModal.item}
+              reportName="Post"
+              reportType={reportType}
+            />
             <PostReportModal
               title={showPostReportModal.reportMessage}
               index={showPostReportModal.index}

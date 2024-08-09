@@ -59,9 +59,9 @@ const Navbar = () => {
   }, [language]);
 
   useEffect(() => {
-    moment().locale(language)
-    console.log(moment().localeData())
-  }, [language])
+    moment().locale(language);
+    //console.log(moment().localeData())
+  }, [language]);
 
   return (
     <AppBar className="nav-container" postion="sticky">

@@ -67,11 +67,11 @@ const NewsfeedInfiniteList = (props) => {
           if (entries[0].isIntersecting && hasMore) {
             setPageNumber((prevPageNumber) => prevPageNumber + 1);
           }
-          console.log("entries and hasmore: ", {
-            entries: entries[0].isIntersecting,
-            hasMore,
-            isUseTrendingApi,
-          });
+          // console.log("entries and hasmore: ", {
+          //   entries: entries[0].isIntersecting,
+          //   hasMore,
+          //   isUseTrendingApi,
+          // });
           if (entries[0].isIntersecting && !hasMore && !isUseTrendingApi) {
             setUseTrendingApi(true);
             // setPageNumber(0);

@@ -100,7 +100,7 @@ const OverallDashboard = () => {
     );
   }, [limit, timeSection]);
 
-  console.log(topTrendingHashTag);
+  //console.log(topTrendingHashTag);
 
   return (
     <div className="dashboard-general-container">

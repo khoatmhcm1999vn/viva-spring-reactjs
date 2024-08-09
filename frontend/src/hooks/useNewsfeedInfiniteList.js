@@ -51,7 +51,7 @@ const useNewsfeedInfiniteList = (
             res.data.content,
             dataList
           );
-          console.log({differenceContent, dataList, dataRes: res.data.content});
+          //console.log({differenceContent, dataList, dataRes: res.data.content});
           setDataList((prevDataList) => {
             return [...new Set([...prevDataList, ...differenceContent])];
           });

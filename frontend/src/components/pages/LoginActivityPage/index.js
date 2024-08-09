@@ -73,7 +73,7 @@ const LoginActivityPage = () => {
               type: "SUCCESS",
             });
             handleGetCurrentUserLocation();
-            handleCloseDeleteLocationDialog()
+            handleCloseDeleteLocationDialog();
           }, 1000);
         }
       })
@@ -165,7 +165,7 @@ const LoginActivityPage = () => {
 };
 
 const GoogleMapExample = ({ currentLocation }) => {
-  console.log({ currentLocation });
+  //console.log({ currentLocation });
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAP_KEY,
@@ -186,7 +186,7 @@ const GoogleMapExample = ({ currentLocation }) => {
   }, []);
 
   const handleChange = (e) => {
-    console.log("map", e);
+    //console.log("map", e);
   };
 
   useEffect(() => {

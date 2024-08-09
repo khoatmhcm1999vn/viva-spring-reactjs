@@ -128,7 +128,7 @@ const LoginPage = () => {
                 open: true,
                 content:
                   condition === 1003
-                    ? "This account is logged in on new deivce, please verify it."
+                    ? "This account is logged in on new device, please verify it."
                     : "This account is not active, please verify it.",
                 type: "SUCCESS",
               });

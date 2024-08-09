@@ -55,7 +55,7 @@ const UserActivity = () => {
   const [chartConfig, setChartConfig] = useState({
     series: [
       {
-        name: 'No. users',
+        name: "No. users",
         data: [],
       },
     ],
@@ -104,7 +104,7 @@ const UserActivity = () => {
   };
   useEffect(async () => {
     handleGetLatestLoginLocationOfAllUsers();
-    console.log("test scale:", colorScale(38));
+    //console.log("test scale:", colorScale(38));
   }, []);
 
   // const handleGroupMarkers = async () => {
@@ -135,7 +135,7 @@ const UserActivity = () => {
 
   useEffect(() => {
     if (group.length > 0) {
-      console.log("Group", group);
+      //console.log("Group", group);
     }
   }, [group]);
 
@@ -226,7 +226,9 @@ const UserActivity = () => {
           </Typography>
 
           <Typography component="div" className="user-logged-in-hours chart">
-            <Typography className="header">User average logged-in minutes</Typography>
+            <Typography className="header">
+              User average logged-in minutes
+            </Typography>
             <Typography className="chart-content">
               <ReactApexChart
                 options={areaChartConfig.options}
@@ -263,7 +265,7 @@ const UserActivity = () => {
                             const cur = group.find(
                               (s) => s.country === geo.properties.NAME
                             );
-                            console.log({ cur });
+                            //console.log({ cur });
                             return (
                               <Geography
                                 key={geo.rsmKey}
@@ -272,7 +274,7 @@ const UserActivity = () => {
                                 // fill={"#EEE"}
                                 stroke="#D6D6DA"
                                 onMouseEnter={() => {
-                                  console.log({ group });
+                                  //console.log({ group });
                                   const { NAME, POP_EST } = geo.properties;
                                   setTooltipContent(
                                     `${NAME} — ${
