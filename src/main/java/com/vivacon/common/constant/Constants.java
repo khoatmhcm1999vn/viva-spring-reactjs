@@ -8,6 +8,11 @@ public class Constants {
     public static final String API_V1 = "/api/v1";
     public static final List<String> URL_WHITELIST = List.of(
             "/v2/api-docs",
+            // Springfox 3 phuc vu spec o /v3/api-docs, khong con /v2/api-docs.
+            // Thieu hai dong nay thi trang /swagger-ui mo duoc nhung khong tai duoc
+            // spec (401), nen danh sach API hien trong.
+            "/v3/api-docs",
+            "/v3/api-docs/**",
             "/swagger-resources",
             "/swagger-resources/**",
             "/configuration/ui",
