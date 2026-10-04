@@ -27,6 +27,14 @@ public interface AccountService {
 
     Account activeAccount(String verificationCode);
 
+    /**
+     * Kich hoat tai khoan ma khong can ma xac thuc email.
+     *
+     * Chi duoc goi khi vivacon.verification.bypass bat len, dung cho moi truong dev
+     * khong gui duoc email.
+     */
+    Account activateWithoutVerification(Account account);
+
     Account resendVerificationToken(String email);
 
     Account forgotPassword(ForgotPasswordRequest forgotPasswordRequest);

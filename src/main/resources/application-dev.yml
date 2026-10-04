@@ -33,6 +33,21 @@ spring:
       location: ${java.io.tmpdir}
 
 vivacon:
+  verification:
+    # BO QUA xac thuc email khi dang ky / dang nhap.
+    #
+    # Bat vi hien khong gui duoc email: Microsoft da chan basic auth, va Graph thi
+    # chua co credential (app registration tren Azure dang vuong van de tai khoan).
+    # Khong co co che nay thi tai khoan moi vinh vien ket o STILL_NOT_ACTIVE va
+    # /login tra 403 kem body 1002.
+    #
+    # Tac dong: tai khoan moi duoc tao thang o trang thai ACTIVE, va tai khoan dang
+    # ket se duoc kich hoat ngay khi dang nhap.
+    #
+    # CANH BAO: day la noi long mot bien phap xac thuc. Khi bat, bat ky ai cung dang
+    # ky duoc bang email cua nguoi khac ma khong can chung minh quyen so huu.
+    # CHI dung o dev. Profile prod dat false tuong minh.
+    bypass: true
   jwt:
     # CANH BAO: ai co secret_salt la tu ky duoc JWT hop le cho bat ky user nao,
     # ke ca ADMIN. Day la bi mat quan trong nhat trong file nay.

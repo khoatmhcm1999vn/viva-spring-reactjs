@@ -24,6 +24,7 @@ import com.vivacon.service.SettingService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -66,6 +67,17 @@ public class AuthenticationController {
     private ApplicationEventPublisher applicationEventPublisher;
 
     private SettingService settingService;
+
+    /**
+     * Bo qua buoc xac thuc email khi dang nhap.
+     *
+     * Can rieng o day, khong chi o luc dang ky: nhung tai khoan DA dang ky truoc do
+     * dang ket o STILL_NOT_ACTIVE thi sua luc dang ky khong cuu duoc.
+     *
+     * Mac dinh FALSE. Chi bat o profile dev.
+     */
+    @Value("${vivacon.verification.bypass:false}")
+    private boolean bypassEmailVerification;
 
     @Autowired
     public AuthenticationController(AuthenticationManager authenticationManager,
@@ -113,6 +125,14 @@ public class AuthenticationController {
                 return ResponseEntity.status(403).body(1001);
             }
             case STILL_NOT_ACTIVE: {
+                if (bypassEmailVerification) {
+                    // Khong gui duoc email nen nguoi dung khong bao gio nhan duoc ma 6 so.
+                    // Kich hoat luon tai day thay vi tra 1002, de nhung tai khoan dang
+                    // ket cung dang nhap duoc. Khong publish event gui mail nua.
+                    accountService.activateWithoutVerification(account);
+                    return ResponseEntity.ok(generateAuthenticationResponse(userDetail.getUsername(),
+                            userDetail.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList())));
+                }
                 applicationEventPublisher.publishEvent(new StillNotActiveAccountLoginEvent(this, account));
                 return ResponseEntity.status(403).body(1002);
             }

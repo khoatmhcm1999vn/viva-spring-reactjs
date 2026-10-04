@@ -32,6 +32,11 @@ spring:
       location: ${java.io.tmpdir}
 
 vivacon:
+  verification:
+    # Dat false TUONG MINH. Bat len tren production se cho phep bat ky ai dang ky
+    # bang email cua nguoi khac ma khong can chung minh quyen so huu.
+    # Chi duoc bat o profile dev khi khong gui duoc email.
+    bypass: false
   jwt:
     # CANH BAO: ai co secret_salt la tu ky duoc JWT hop le cho bat ky user nao,
     # ke ca ADMIN. Day la bi mat quan trong nhat trong file nay.
