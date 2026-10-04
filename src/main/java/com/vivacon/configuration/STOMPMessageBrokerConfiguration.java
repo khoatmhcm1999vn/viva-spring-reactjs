@@ -29,8 +29,10 @@ import org.springframework.util.MimeTypeUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
+import org.springframework.web.socket.config.annotation.StompWebSocketEndpointRegistration;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.vivacon.common.constant.Constants.STOMP_AUTHORIZATION_HEADER;
@@ -94,9 +96,37 @@ public class STOMPMessageBrokerConfiguration implements WebSocketMessageBrokerCo
             logger.info("WebSocket chap nhan origin: {}", String.join(", ", allowedOrigins));
         }
 
-        registry.addEndpoint("/ws")
-                .setAllowedOrigins(allowedOrigins)
-                .withSockJS();
+        // Tach lam hai nhom. setAllowedOrigins SO KHOP NGUYEN VAN: dua
+        // "https://*.vercel.app" vao day thi no di so sanh ca dau * voi header
+        // Origin va khong bao gio khop, nen preview URL cua Vercel se bi 403 o
+        // buoc bat tay - trong khi CORS cua HTTP lai cho qua. Mot nua chay mot nua
+        // chet la kieu loi ton thoi gian nhat.
+        // Pattern phai di qua setAllowedOriginPatterns (co tu Spring 5.3).
+        List<String> exact = new ArrayList<>();
+        List<String> patterns = new ArrayList<>();
+        if (allowedOrigins != null) {
+            for (String origin : allowedOrigins) {
+                String trimmed = origin.trim();
+                if (trimmed.isEmpty()) {
+                    continue;
+                }
+                if (trimmed.contains("*")) {
+                    patterns.add(trimmed);
+                } else {
+                    exact.add(trimmed);
+                }
+            }
+        }
+
+        StompWebSocketEndpointRegistration endpoint = registry.addEndpoint("/ws");
+        if (!exact.isEmpty()) {
+            endpoint.setAllowedOrigins(exact.toArray(new String[0]));
+        }
+        if (!patterns.isEmpty()) {
+            endpoint.setAllowedOriginPatterns(patterns.toArray(new String[0]));
+            logger.info("WebSocket chap nhan them cac pattern origin: {}", String.join(", ", patterns));
+        }
+        endpoint.withSockJS();
     }
 
     /**

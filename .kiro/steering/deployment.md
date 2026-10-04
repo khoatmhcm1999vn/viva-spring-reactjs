@@ -560,17 +560,100 @@ preflight to demand `Access-Control-Allow-Credentials: true` and a specific, non
 HTTPS is still required, for the mixed-content and `wss` reasons above. Just not for
 this reason.
 
+#### The tunnel is up
+
+`docker-compose.tunnel.yml` adds a `cloudflared` service. It is a **separate file on
+purpose** and has to be named explicitly:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.tunnel.yml up -d
+```
+
+Exposing a stack to the internet should be a deliberate act, not something the default
+`up` does.
+
+**No `sudo` was needed.** `cloudflare/cloudflared` is an official image and the VM user
+is already in the `docker` group, so unlike the Docker install itself this needed
+nothing by hand.
+
+The tunnel points at **`http://frontend:80`**, the nginx container, not at the backend.
+nginx already proxies `/api` and `/ws`, so a single hostname serves static files, the
+API and the WebSocket with no additional configuration.
+
+Measured, from Windows over public HTTPS through Cloudflare's edge: `/` and `/newsfeed`
+return index.html, `/api/v1/post` returns 401, `/api/v1/account/check?username=admin`
+returns the admin account, and the certificate is a valid TLS 1.3 cert from Google
+Trust Services for `trycloudflare.com`. The edge connection negotiated QUIC to
+`sin07`, and cloudflared's own precheck confirmed both UDP and HTTP/2 paths work, so
+VMware's NAT does not block UDP 7844.
+
+##### Two traps, both already paid for
+
+**`cloudflared` has no shell.** The image is distroless with
+`ENTRYPOINT ["cloudflared", "--no-autoupdate"]`. The first version of the compose file
+wrapped the command in `sh -c '...'`, which meant the entire string was handed to
+*cloudflared as arguments*. It replied "You did not specify any valid additional
+argument to the cloudflared tunnel command" and restarted forever — `--url` was right
+there in the file and never reached the program. Pass plain argv instead; the command
+now comes from `TUNNEL_COMMAND`, defaulting to `tunnel --url http://frontend:80`.
+
+**A quick tunnel's hostname changes every time the container is recreated.** This bit
+immediately: a `docker compose up -d` recreated `cloudflared`, and `.env` was left
+pointing at `department-providence-lay-talked...` while the tunnel was actually serving
+`span-arising-conjunction-administration...`. Two rules follow:
+
+- Read the hostname from the **running container's logs**, never from a saved file.
+- Restart only what needs restarting — `up -d backend`, not `up -d`. Recreating
+  `cloudflared` changes the hostname, which invalidates the origin list *and* forces a
+  Vercel rebuild, since `REACT_APP_*` is baked in at build time.
+
+##### The WebSocket needed the same pattern fix as CORS
+
+Allowing `https://*.vercel.app` for CORS was not enough. Spring's
+`setAllowedOrigins` compares the `Origin` header **literally**, so an entry containing
+`*` simply never matches; patterns have to go through `setAllowedOriginPatterns`.
+Left alone, Vercel would have produced the worst kind of bug: the API works, the page
+loads, and only chat and notifications are dead.
+
+`STOMPMessageBrokerConfiguration` now splits the list the same way `corsFilter` does.
+Measured through the tunnel:
+
+| `Origin` | `/ws/info` | CORS preflight |
+|---|---|---|
+| the tunnel hostname itself | 200 | — |
+| `https://vivacon-demo.vercel.app` | 200 | allowed |
+| `https://abc-git-main-x.vercel.app` (preview shape) | 200 | — |
+| `https://evil.example.com` | 403 | refused |
+| `https://vercel.app.evil.com` | **403** | **refused** |
+
+That last row is the one worth keeping. A naive implementation that merely looked for
+the substring `vercel.app` would have accepted an attacker-controlled domain.
+
+##### Vercel is optional, and here is the honest trade-off
+
+The app is **already fully working on HTTPS** at the tunnel hostname, served by nginx:
+same origin for everything, no CORS involved, nothing to rebuild when anything moves.
+
+What Vercel actually buys is static delivery. Measured: the bundle is **4.2 MB** and
+Cloudflare returns `cf-cache-status: DYNAMIC` for it, meaning a quick tunnel caches
+nothing and every visitor pulls those 4.2 MB from the VM over a home connection.
+Vercel's CDN would cache and serve that from an edge near the user.
+
+What it costs is the thing this whole section has been working around: the frontend
+moves to a different origin, so the bundle needs absolute URLs, the backend needs an
+accurate origin list, the WebSocket cannot be proxied, and a changing tunnel hostname
+means a rebuild. Worth it for a real audience; not worth it to prove the stack works.
+
 #### Steps that need an account, and cannot be done from here
 
 1. **Supabase project** — create it, then restore the dump and collect the session
    pooler host, `postgres.<project-ref>` username and password.
-2. **Cloudflare Tunnel in the VM** — `cloudflared` has to be installed with `sudo`,
-   which needs a password, so it is a by-hand step like the Docker install was. Point
-   it at `http://localhost:80`, the frontend container's nginx, which already proxies
-   `/api` and `/ws` to the backend. That way one hostname serves both and the existing
-   proxy keeps doing its job.
+2. ~~**Cloudflare Tunnel in the VM**~~ — done, and it turned out to need no account and
+   no `sudo`, because `cloudflared` runs as a container. A **named** tunnel still needs
+   a Cloudflare account and a domain; that is the only way to stop the hostname
+   changing on every restart. Set `TUNNEL_TOKEN` and `TUNNEL_COMMAND=tunnel run`.
 3. **Vercel project** — import the repository, set Root Directory to `frontend`, and
-   add the two `REACT_APP_*` variables.
+   add the two `REACT_APP_*` variables pointing at the tunnel hostname.
 
 A note on ordering: the tunnel hostname has to exist before the Vercel build, because
 `REACT_APP_*` is baked into the bundle at build time and cannot be read at runtime. If
