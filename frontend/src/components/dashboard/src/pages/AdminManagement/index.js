@@ -36,6 +36,7 @@ import ReactLoading from "react-loading";
 import useSnackbar from "hooks/useSnackbar";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import ConfirmDialog from "components/common/ConfirmDialog";
+import { ignoreApiError } from "utils/apiError";
 
 const AdminManagement = () => {
   const [pageNumber, setPageNumber] = useState(0);
@@ -228,9 +229,7 @@ const AdminManagement = () => {
           setFetchInfo(res.data);
         }
       })
-      .catch((err) => {
-        throw err;
-      })
+      .catch(ignoreApiError)
       .finally(() => {
         setLoading(false);
       });

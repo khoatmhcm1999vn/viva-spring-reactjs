@@ -7,6 +7,7 @@ import FollowButton from "../FollowButton";
 import { useHistory } from "react-router-dom";
 import "./style.scss";
 import UsernameContainer from "../UsernameContainer";
+import { ignoreApiError } from "utils/apiError";
 
 const SuggestedAccounts = () => {
   const [isLoading, setLoading] = useState(false);
@@ -23,9 +24,7 @@ const SuggestedAccounts = () => {
           setUserInfo(res.data);
         }
       })
-      .catch((err) => {
-        throw err;
-      })
+      .catch(ignoreApiError)
       .finally(() => {
         setLoading(false);
       });
@@ -42,9 +41,7 @@ const SuggestedAccounts = () => {
           );
         }
       })
-      .catch((err) => {
-        throw err;
-      });
+      .catch(ignoreApiError);
   };
   useEffect(() => {
     handleGetProfile(getCurrentUser().username);

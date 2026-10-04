@@ -9,6 +9,7 @@ import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 import CloseIcon from "@mui/icons-material/Close";
 import ReactLoading from "react-loading";
 import { getCurrentUser } from "utils/jwtToken";
+import { ignoreApiError } from "utils/apiError";
 
 const ChattingSearch = (props) => {
   const {handleNext, isShare = false} = props;
@@ -50,9 +51,7 @@ const ChattingSearch = (props) => {
           }
         }
       })
-      .catch((err) => {
-        throw err;
-      })
+      .catch(ignoreApiError)
       .finally(() => {
         setLocalLoading(false);
         setFirstLocalLoading(false);

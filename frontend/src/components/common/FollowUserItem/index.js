@@ -12,6 +12,7 @@ import "./style.scss";
 import { useTranslation } from "react-i18next";
 import OutlineProfile from "../OulineProfile";
 import UsernameContainer from "../UsernameContainer";
+import { ignoreApiError } from "utils/apiError";
 
 const FollowUserItem = (props) => {
   const { handleCloseModal, user } = props;
@@ -53,9 +54,7 @@ const FollowUserItem = (props) => {
           setUserInfo(res.data);
         }
       })
-      .catch((err) => {
-        throw err;
-      })
+      .catch(ignoreApiError)
       .finally(() => {
         setLocalLoading(false);
       });

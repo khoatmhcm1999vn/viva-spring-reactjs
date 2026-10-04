@@ -59,6 +59,7 @@ import {
   convertDateTimeOnNearest,
   convertUTCtoLocalDate,
 } from "utils/calcDateTime";
+import { ignoreApiError } from "utils/apiError";
 
 const ChatPage = () => {
   const [inputMessage, setInputMessage] = useState("");
@@ -407,9 +408,7 @@ const ChatPage = () => {
           sendMessage(tempEvent, `[image|${res.data.url}]`);
         }
       })
-      .catch((err) => {
-        throw err;
-      })
+      .catch(ignoreApiError)
       .finally(() => {});
   };
 
@@ -755,9 +754,7 @@ const MessageItem = ({ item: message, index, dataList: messageList }) => {
           setPostInfo(res.data);
         }
       })
-      .catch((err) => {
-        throw err;
-      });
+      .catch(ignoreApiError);
   };
 
   useEffect(() => {

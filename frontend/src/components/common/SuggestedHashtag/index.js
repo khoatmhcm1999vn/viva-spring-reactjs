@@ -18,8 +18,13 @@ const SuggestedHashtag = () => {
           setHashtagList(res.data.content);
         }
       })
-      .then((err) => {
-        throw err;
+      // Truoc day la .then((err) => { throw err; }). Dung .then nen nhanh nay chay
+      // khi request THANH CONG, luc do err la undefined, va "throw undefined" tao ra
+      // mot unhandled rejection khong co ly do - chinh la dong
+      // "Unknown promise rejection reason" tren overlay cua CRA.
+      .catch((err) => {
+        console.error("Khong tai duoc danh sach hashtag trending", err);
+        setHashtagList([]);
       });
   };
 

@@ -21,6 +21,7 @@ import InfoIcon from "@mui/icons-material/Info";
 import { createCommentReport } from "api/reportService";
 import useSnackbar from "hooks/useSnackbar";
 import CommentItem from "../CommentItem";
+import { ignoreApiError } from "utils/apiError";
 
 const CommentOptionModal = ({
   isChild = false,
@@ -44,9 +45,7 @@ const CommentOptionModal = ({
           handleFilterComment(commentId);
         }
       })
-      .catch((err) => {
-        throw err;
-      })
+      .catch(ignoreApiError)
       .finally(() => {});
   };
 

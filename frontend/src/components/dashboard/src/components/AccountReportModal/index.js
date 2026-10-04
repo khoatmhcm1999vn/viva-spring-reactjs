@@ -25,6 +25,7 @@ import classNames from "classnames";
 import FollowUserItem from "components/common/FollowUserItem";
 
 import { useTranslation } from "react-i18next";
+import { ignoreApiError } from "utils/apiError";
 
 const AccountReportModal = (props) => {
   const { t: trans } = useTranslation();
@@ -68,9 +69,7 @@ const AccountReportModal = (props) => {
           setImg(res.data.avatar);
         }
       })
-      .catch((err) => {
-        throw err;
-      })
+      .catch(ignoreApiError)
       .finally(() => {
         setLoading(false);
         setLocalLoading({ status: false, index: -1 });
@@ -103,9 +102,7 @@ const AccountReportModal = (props) => {
           setFetchInfo(res.data);
         }
       })
-      .catch((err) => {
-        throw err;
-      })
+      .catch(ignoreApiError)
       .finally(() => {
         setLoading(false);
       });
@@ -137,9 +134,7 @@ const AccountReportModal = (props) => {
           setFetchInfo(res.data);
         }
       })
-      .catch((err) => {
-        throw err;
-      })
+      .catch(ignoreApiError)
       .finally(() => {
         setLoading(false);
       });
@@ -159,9 +154,7 @@ const AccountReportModal = (props) => {
           });
         }
       })
-      .catch((err) => {
-        throw err;
-      })
+      .catch(ignoreApiError)
       .finally(() => {
         // setLocalLoading(false);
       });
@@ -179,9 +172,7 @@ const AccountReportModal = (props) => {
           });
         }
       })
-      .catch((err) => {
-        throw err;
-      })
+      .catch(ignoreApiError)
       .finally(() => {
         // setLocalLoading(false);
       });
@@ -320,9 +311,7 @@ const AccountReportModal = (props) => {
           });
         }
       })
-      .catch((err) => {
-        throw err;
-      })
+      .catch(ignoreApiError)
       .finally(() => {
         setChangeAvatarLoading(false);
       });

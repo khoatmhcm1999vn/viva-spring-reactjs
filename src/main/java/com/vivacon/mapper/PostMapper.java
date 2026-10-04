@@ -102,12 +102,23 @@ public class PostMapper {
         return newsfeedPost;
     }
 
+    /**
+     * Truoc day method nay orElseThrow(RecordNotFoundException) khi post khong co
+     * attachment nao. RecordNotFoundException duoc map thanh 400, nen CHI MOT post
+     * thieu anh lam ca endpoint danh sach tra 400 va trang profile khong render duoc.
+     * Du lieu seed hien co dung mot post nhu vay (post 685).
+     *
+     * Mot post khong co anh la du lieu khong dep, nhung khong phai ly do de tu choi
+     * toan bo request. Tra firstImage = null va de frontend tu quyet dinh hien gi.
+     */
     public OutlinePost toOutlinePost(Post post) {
-        Attachment firstImage = attachmentRepository.findFirstByPostIdOrderByTimestampAsc(post.getId()).orElseThrow(RecordNotFoundException::new);
+        String firstImageUrl = attachmentRepository.findFirstByPostIdOrderByTimestampAsc(post.getId())
+                .map(Attachment::getUrl)
+                .orElse(null);
         boolean isMultipleImages = attachmentRepository.getAttachmentCountByPostId(post.getId()) > 1;
         Long likeCount = likeRepository.getCountingLike(post.getId());
         Long commentCount = commentRepository.getCountingCommentsByPost(post.getId());
-        return new OutlinePost(post.getId(), firstImage.getUrl(), isMultipleImages, likeCount, commentCount, post.getPrivacy());
+        return new OutlinePost(post.getId(), firstImageUrl, isMultipleImages, likeCount, commentCount, post.getPrivacy());
     }
 
     public DetailPost toDetailPost(Post post, Pageable commentPageable) {

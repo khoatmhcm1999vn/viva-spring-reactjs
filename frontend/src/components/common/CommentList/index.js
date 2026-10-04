@@ -23,6 +23,7 @@ import { createCommentReport } from "api/reportService";
 import useSnackbar from "hooks/useSnackbar";
 import CommentItem from "../CommentItem";
 import classNames from "classnames";
+import { ignoreApiError } from "utils/apiError";
 
 const CommentList = ({
   currentPost,
@@ -65,9 +66,7 @@ const CommentList = ({
           setCommentList(res.data.content);
         }
       })
-      .catch((err) => {
-        throw err;
-      });
+      .catch(ignoreApiError);
   };
 
   useEffect(() => {

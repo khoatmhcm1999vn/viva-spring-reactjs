@@ -17,6 +17,7 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import "./style.scss";
+import { ignoreApiError } from "utils/apiError";
 
 export default function ForgotPasswordPage(props) {
   const [verificationToken] = useState(props.location.state);
@@ -66,9 +67,7 @@ export default function ForgotPasswordPage(props) {
           }, 1000);
         }
       })
-      .catch((err) => {
-        throw err;
-      })
+      .catch(ignoreApiError)
       .finally(() => {
         setLoading(false);
       });

@@ -25,6 +25,7 @@ import { useTranslation } from "react-i18next";
 import { getCurrentUser, updateCookieToken } from "utils/jwtToken";
 import ReactLoading from "react-loading";
 import "./style.scss";
+import { ignoreApiError } from "utils/apiError";
 
 const EditProfilePage = () => {
   const [currentUser, setCurrentUser] = useState(getCurrentUser());
@@ -41,9 +42,7 @@ const EditProfilePage = () => {
           setCurrentUser({ ...res.data, avatar: getCurrentUser().avatar });
         }
       })
-      .catch((err) => {
-        throw err;
-      })
+      .catch(ignoreApiError)
       .finally(() => {});
   };
 
@@ -82,9 +81,7 @@ const EditProfilePage = () => {
           updateCookieToken();
         }
       })
-      .catch((err) => {
-        throw err;
-      })
+      .catch(ignoreApiError)
       .finally(() => {
         setChangeProfileLoading(false);
       });
@@ -114,9 +111,7 @@ const EditProfilePage = () => {
           });
         }
       })
-      .catch((err) => {
-        throw err;
-      })
+      .catch(ignoreApiError)
       .finally(() => {
         setChangeAvatarLoading(false);
       });

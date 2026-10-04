@@ -15,6 +15,7 @@ import { saveSearchList } from "utils/resolveData";
 import CloseIcon from "@mui/icons-material/Close";
 import ReactLoading from "react-loading";
 import CustomModal from "../CustomModal";
+import { ignoreApiError } from "utils/apiError";
 
 const AppSearchInput = () => {
   const [searchText, setSearchText] = useState("");
@@ -58,9 +59,7 @@ const AppSearchInput = () => {
           }
         }
       })
-      .catch((err) => {
-        throw err;
-      })
+      .catch(ignoreApiError)
       .finally(() => {
         setLocalLoading(false);
         setFirstLocalLoading(false);

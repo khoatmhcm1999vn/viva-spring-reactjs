@@ -34,10 +34,31 @@ axiosConfig.interceptors.request.use(async (config) => {
   return config;
 });
 
+/**
+ * Cho duy nhat ghi log request that bai.
+ *
+ * Nho co day, call site khong can log lai, chi can khong de rejection lan ra thanh
+ * unhandled rejection (xem utils/apiError.js). Mot dong log gon cho moi loi, kem
+ * day du thong tin de truy: method, duong dan, ma trang thai va body phan hoi.
+ */
+const logFailedRequest = (error) => {
+  const config = error?.config || {};
+  const method = (config.method || "get").toUpperCase();
+  const url = `${config.baseURL || ""}${config.url || ""}`;
+  const status = error?.response?.status;
+
+  if (status) {
+    console.error(`[API] ${method} ${url} -> ${status}`, error.response.data);
+  } else {
+    // Khong co response: thuong la backend chua chay, sai port, hoac bi CORS chan.
+    console.error(`[API] ${method} ${url} -> khong co phan hoi`, error.message);
+  }
+};
+
 axiosConfig.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response.status === 401) {
+    if (error.response?.status === 401) {
       const refreshToken = getRefreshToken();
       if (refreshToken) {
         refreshTokenRequest =
@@ -54,7 +75,6 @@ axiosConfig.interceptors.response.use(
 
           return axiosConfig(config);
         } catch (err) {
-          const { config } = error;
           removeJwtToken();
           removeRefreshToken();
           window.location.reload();
@@ -62,6 +82,11 @@ axiosConfig.interceptors.response.use(
       }
     }
 
+    logFailedRequest(error);
+
+    // Van reject de call site nao CAN xu ly rieng thi lam duoc, vi du LoginPage doc
+    // cac ma 1001 / 1002 / 1003 tu body. Cac call site khong can xu ly thi dung
+    // ignoreApiError de chan rejection lai.
     return Promise.reject(error);
   }
 );

@@ -65,9 +65,9 @@ const PostDetailsModal = ({ index, dataList, title, reportId, isOnModal }) => {
         ...res.data,
         lastModifiedAt: convertUTCtoLocalDate(res.data.lastModifiedAt),
       });
-    }).catch((err) => {
-      history.replace('/not-found');
-      throw err;
+    }).catch(() => {
+      // Giu dieu huong, bo "throw err" de khong sinh unhandled rejection.
+      history.replace("/not-found");
     });
   };
 

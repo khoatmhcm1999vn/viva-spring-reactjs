@@ -16,6 +16,7 @@ import useSnackbar from "hooks/useSnackbar";
 import useLoading from "hooks/useLoading";
 import { deleteUserLocationItem } from "api/googleMapService";
 import "./style.scss";
+import { ignoreApiError } from "utils/apiError";
 
 const containerStyle = {
   width: "600px",
@@ -56,9 +57,7 @@ const LoginActivityPage = () => {
           });
         }
       })
-      .catch((err) => {
-        throw err;
-      });
+      .catch(ignoreApiError);
   };
 
   const handleDeleteLocation = () => {
@@ -77,9 +76,7 @@ const LoginActivityPage = () => {
           }, 1000);
         }
       })
-      .catch((err) => {
-        throw err;
-      })
+      .catch(ignoreApiError)
       .finally(() => {
         setLoading(false);
       });
