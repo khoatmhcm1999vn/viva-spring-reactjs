@@ -33,6 +33,16 @@ spring:
       location: ${java.io.tmpdir}
 
 vivacon:
+  frontend:
+    # Cac origin duoc phep bat tay SockJS (chat + notification), phan cach bang phay.
+    #
+    # Truoc day gia tri nay dong cung trong Constants.FE_URL, nen chi localhost:3000
+    # ket noi duoc. Da do thuc te: /ws/info voi Origin localhost:3000 tra 200,
+    # con localhost:8081 tra 403.
+    #
+    # 3000 = CRA dev server chay tren host
+    # 8081 = container nginx cua frontend khi chay thu o may
+    allowed-origins: http://localhost:3000,http://localhost:8081
   verification:
     # BO QUA xac thuc email khi dang ky / dang nhap.
     #

@@ -13,6 +13,10 @@ this file is the record of *where we are going and what is in the way*.
 3. **Backend on the host** — `:8090`, dev profile, JDK 11.
 4. **Frontend on the host** — `:3000`, CRA dev server, talks to `:8090`.
 5. **Backend as a Docker image** — multi-stage `Dockerfile`, verified end to end.
+6. **Frontend as a Docker image** — CRA build served by nginx, API and WebSocket
+   proxied, verified end to end.
+7. **Database backup** — plain-SQL dump in `container/data/` (gitignored), proven
+   restorable.
 
 ## Backend image
 
@@ -48,39 +52,57 @@ CLOUDINARY_CLOUD_NAME  CLOUDINARY_API_KEY  CLOUDINARY_API_SECRET
 AWS_ACCESS_KEY_ID  AWS_SECRET_ACCESS_KEY
 ```
 
+## Frontend image
+
+`docker build -t vivacon-frontend:local ./frontend`. Node build stage, nginx runtime.
+Verified: index.html is served, unknown paths fall back to it so react-router works,
+`/api/v1` requests reach the backend through the proxy, and `/ws/info` negotiates.
+
+The reason a single image works for every environment: the build bakes
+`REACT_APP_API_URL=/api` and `REACT_APP_SOCKET_URL=/ws`, so the bundle only ever asks
+for **relative** paths and nginx decides where they go. Confirmed by searching the
+built bundle: it contains `/api/v1` and contains neither `localhost:8090` nor
+`vivacon.cf`. If those were absolute, the image would have to be rebuilt per domain,
+because `REACT_APP_*` is substituted at build time and cannot be read at runtime.
+
+`BACKEND_ORIGIN` chooses the upstream. It defaults to `backend:8080`, the compose
+service name; for a local run against the host backend, pass
+`-e BACKEND_ORIGIN=host.docker.internal:8090`. The nginx config is a template and the
+official image runs `envsubst` over it at startup, so nginx's own `$uri`-style
+variables survive untouched because they are not environment variables.
+
+The build uses `npm install --force`, not `--legacy-peer-deps`, for the reason noted
+in `tech.md`.
+
+`frontend/.env.production` still points at `http://vivacon.cf`, a dead domain. The
+Docker build does not read it, so it only matters for `npm run build:prod`.
+
 ## Remaining
 
-### 6. Frontend image
-
-No Dockerfile yet. A static CRA build served by nginx, with nginx proxying `/api` and
-`/ws` to the backend. The catch: `REACT_APP_*` values are baked in at build time, so
-either the image is rebuilt per environment or the frontend calls relative paths and
-lets nginx decide the target. The second option is preferable. The WebSocket proxy
-needs the `Upgrade` and `Connection` headers or SockJS will not connect.
-
-`.env.production` currently points at `http://vivacon.cf`, a domain that is gone.
-
-### 7. Full stack in compose
+### 8. Full stack in compose
 
 Three services: `db`, `backend`, `frontend`.
 
-Two blockers, both real:
+One blocker left, and it is destructive:
 
-- **`Constants.FE_URL` is hardcoded** to `http://localhost:3000` and is handed to
-  `registerStompEndpoints(...).setAllowedOrigins(FE_URL)`. Served from any other
-  host, the SockJS handshake is rejected and chat plus notifications fail silently.
-  It has to become configuration before this step.
 - **The current `docker-compose.yml` would destroy the database.** It declares no
   named volume, so the seeded data lives in an anonymous volume, and it sets no
-  `POSTGRES_DB`, so a fresh container would not even create `vivacon`. Dump the
-  database before touching that file.
+  `POSTGRES_DB`, so a fresh container would not even create `vivacon`. A backup now
+  exists in `container/data/`, but take a fresh one before applying any change to
+  that file.
 
-### 8. Ubuntu VM
+The WebSocket origin problem that used to block this step is fixed:
+`vivacon.frontend.allowed-origins` replaced the hardcoded `Constants.FE_URL`. Set
+`FRONTEND_ALLOWED_ORIGINS` for any deployed origin. Leaving it empty rejects every
+socket connection, which is why the app now logs a warning at startup when it is
+blank: the failure mode is silent, the page loads and only realtime is dead.
 
-Mostly a copy of step 7. Secrets must come from the environment, not from
+### 9. Ubuntu VM
+
+Mostly a copy of step 8. Secrets must come from the environment, not from
 `./config/`, which is gitignored and machine-local.
 
-### 9. Supabase and Vercel
+### 10. Supabase and Vercel
 
 - **Supabase** for Postgres: load `container/prepare/schema/schema.sql` and both files
   in `container/prepare/functions/`. The statistics and chat endpoints call those
@@ -89,7 +111,7 @@ Mostly a copy of step 7. Secrets must come from the environment, not from
   parameters the Postgres driver ignores.
 - **Vercel cannot run this backend.** It hosts static output and serverless functions,
   not a long-lived JVM, and it does not hold WebSocket connections. Frontend on Vercel
-  is fine; the backend needs the VM from step 8, or Render, Railway or Fly.
+  is fine; the backend needs the VM from step 9, or Render, Railway or Fly.
 - Once the two are on different origins: JWTs are kept in cookies and axios sends
   `withCredentials`, so the cookie needs `Secure` and `SameSite=None`, which means
   HTTPS on both ends and `wss` for the socket.

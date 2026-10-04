@@ -4,7 +4,10 @@ import java.util.List;
 
 public class Constants {
 
-    public static final String FE_URL = "http://localhost:3000";
+    // FE_URL da duoc bo. No tung dong cung "http://localhost:3000" va duoc dung lam
+    // allowed origin cho SockJS, nen frontend phuc vu tu bat ky origin khac deu bi
+    // tu choi bat tay va realtime chet im lang. Gia tri do gio la cau hinh:
+    // vivacon.frontend.allowed-origins, xem STOMPMessageBrokerConfiguration.
     public static final String API_V1 = "/api/v1";
     public static final List<String> URL_WHITELIST = List.of(
             "/v2/api-docs",

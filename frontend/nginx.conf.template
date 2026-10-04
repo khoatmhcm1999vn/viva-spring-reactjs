@@ -1,0 +1,77 @@
+# Cau hinh nginx cho frontend trong container.
+#
+# File nay la TEMPLATE: image nginx chinh thuc chay envsubst tren moi file trong
+# /etc/nginx/templates luc khoi dong, nen ${BACKEND_ORIGIN} duoc thay bang bien moi
+# truong. Nho vay doi backend ma khong phai build lai image.
+#
+# Cac bien cua chinh nginx nhu $uri hay $http_upgrade khong bi anh huong, vi envsubst
+# chi thay nhung ten CO trong environment, va nhung ten do khong phai bien moi truong.
+
+upstream backend_upstream {
+    server ${BACKEND_ORIGIN};
+}
+
+# SockJS/STOMP can giu ket noi duoc nang cap len WebSocket. Bien nay chuyen tiep dung
+# gia tri cua header Connection: "upgrade" khi client xin nang cap, rong khi khong.
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    ''      close;
+}
+
+server {
+    listen 80;
+    server_name _;
+
+    root /usr/share/nginx/html;
+    index index.html;
+
+    gzip on;
+    gzip_types text/plain text/css application/javascript application/json image/svg+xml;
+    gzip_min_length 1024;
+
+    # React Router v5 dung browser history: moi duong dan nhu /profile/abc deu phai
+    # tra ve index.html de router o phia client tu xu ly, neu khong se ra 404.
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # File co hash trong ten nen cache lau duoc.
+    location /static/ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        try_files $uri =404;
+    }
+
+    # Frontend goi duong dan tuong doi /api/v1/... nen khong can biet backend o dau.
+    location /api/ {
+        proxy_pass http://backend_upstream;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # WebSocket cho chat va notification. Thieu hai header Upgrade/Connection o day
+    # la SockJS khong bat tay duoc, va loi se im lang chu khong bao gi.
+    location /ws/ {
+        proxy_pass http://backend_upstream;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $connection_upgrade;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # Ket noi socket nam cho lau, dung de nginx cat giua.
+        proxy_read_timeout 3600s;
+        proxy_send_timeout 3600s;
+    }
+
+    # Tien cho healthcheck cua compose / orchestrator.
+    location = /healthz {
+        access_log off;
+        return 200 "ok\n";
+    }
+}

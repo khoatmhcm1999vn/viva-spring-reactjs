@@ -32,6 +32,14 @@ spring:
       location: ${java.io.tmpdir}
 
 vivacon:
+  frontend:
+    # Cac origin duoc phep bat tay SockJS (chat + notification), phan cach bang phay.
+    # Vi du: FRONTEND_ALLOWED_ORIGINS=https://vivacon.example.com
+    #
+    # De TRONG thi moi ket noi WebSocket bi tu choi va realtime chet IM LANG: trang
+    # web van tai binh thuong, chi rieng socket khong bao gio ket noi. Vi vay
+    # STOMPMessageBrokerConfiguration log canh bao ngay luc khoi dong neu thieu.
+    allowed-origins: ${FRONTEND_ALLOWED_ORIGINS:}
   verification:
     # Dat false TUONG MINH. Bat len tren production se cho phep bat ky ai dang ky
     # bang email cua nguoi khac ma khong can chung minh quyen so huu.

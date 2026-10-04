@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.vivacon.common.utility.JwtUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -30,21 +33,36 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 import java.util.List;
 
-import static com.vivacon.common.constant.Constants.FE_URL;
 import static com.vivacon.common.constant.Constants.STOMP_AUTHORIZATION_HEADER;
 
 @Configuration
 @EnableWebSocketMessageBroker
 public class STOMPMessageBrokerConfiguration implements WebSocketMessageBrokerConfigurer {
 
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+
     private UserDetailsService userDetailService;
 
     private JwtUtils jwtUtils;
 
+    /**
+     * Cac origin duoc phep bat tay SockJS, phan cach bang dau phay.
+     *
+     * Truoc day gia tri nay lay tu Constants.FE_URL dong cung "http://localhost:3000",
+     * nen phuc vu frontend tu bat ky origin khac deu bi tu choi. Da do thuc te:
+     * goi /ws/info voi Origin la localhost:3000 tra 200, con localhost:8081 hay mot
+     * domain that tra 403. Hau qua la chat va notification chet IM LANG - trang van
+     * tai binh thuong, chi rieng socket khong bao gio ket noi.
+     */
+    private String[] allowedOrigins;
+
     @Autowired
-    public STOMPMessageBrokerConfiguration(UserDetailsService userDetailService, JwtUtils jwtUtils) {
+    public STOMPMessageBrokerConfiguration(UserDetailsService userDetailService,
+                                           JwtUtils jwtUtils,
+                                           @Value("${vivacon.frontend.allowed-origins:}") String[] allowedOrigins) {
         this.userDetailService = userDetailService;
         this.jwtUtils = jwtUtils;
+        this.allowedOrigins = allowedOrigins;
     }
 
     /**
@@ -66,8 +84,18 @@ public class STOMPMessageBrokerConfiguration implements WebSocketMessageBrokerCo
      */
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
+        if (allowedOrigins == null || allowedOrigins.length == 0) {
+            // Khong nem exception vi nhu vay app khong boot duoc, nhung phai noi to:
+            // de trong thi moi bat tay SockJS deu bi tu choi, va kieu loi nay rat kho
+            // doan vi trang web van chay, chi rieng realtime la im.
+            logger.warn("vivacon.frontend.allowed-origins dang TRONG: moi ket noi "
+                    + "WebSocket se bi tu choi, chat va notification se khong hoat dong.");
+        } else {
+            logger.info("WebSocket chap nhan origin: {}", String.join(", ", allowedOrigins));
+        }
+
         registry.addEndpoint("/ws")
-                .setAllowedOrigins(FE_URL)
+                .setAllowedOrigins(allowedOrigins)
                 .withSockJS();
     }
 
