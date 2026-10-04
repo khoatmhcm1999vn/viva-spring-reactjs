@@ -21,6 +21,9 @@ this file is the record of *where we are going and what is in the way*.
    through the frontend proxy, with data surviving a container recreate.
 9. **Deployed to a real Ubuntu VM** — VMware guest at `192.168.221.128`, Ubuntu
    26.04, its own Docker daemon. Port 80 only, dump restored, verified from Windows.
+10. **Postgres moved to Supabase** — the VM backend runs against the Supabase session
+    pooler, proven by stopping the local database container and watching the API keep
+    serving. Frontend on Vercel is the only piece left.
 
 ## Backend image
 
@@ -239,9 +242,17 @@ registry tag later.
 
 Followed the recipe in *Restoring a dump into this stack* above, and it behaved exactly
 as documented: `DROP SCHEMA public CASCADE` first (dropping 49 objects the init scripts
-had created), then the filtered dump. **0 errors.** Afterwards: 22 tables, 14 functions,
-54 accounts, 688 posts, 30,552 comments, 1,073 attachments — identical to the Windows
-stack. The backend was restarted so Hibernate met the new schema.
+had created), then the filtered dump. **0 errors.** Afterwards: 19 base tables, 14
+functions, 54 accounts, 688 posts, 30,552 comments, 1,073 attachments — identical to
+the Windows stack. The backend was restarted so Hibernate met the new schema.
+
+A correction to an earlier number here: this used to say "22 tables". The query behind
+it counted `information_schema.tables` without filtering `table_type`, so it was
+counting three **views** as tables. There are 19 base tables and 3 views. The views are
+`month_year`, `quarter_year` and `list_year`, left behind by the statistics functions —
+see the concurrency note under *Known blockers*. They persist well enough to be
+captured in `pg_dump` output, which is the clearest evidence that they are not
+temporary.
 
 One trap worth recording, because it fails silently. The SSH helper used to run
 `bash -s`, which reads the script itself from stdin. `docker compose exec -T` also reads
@@ -352,13 +363,76 @@ sits behind both VMware NAT and the household router.
 Nothing about this is a limitation of the application. It is what happens when one
 half of a system is on the public internet and the other half is not.
 
-#### Supabase: the session pooler, not the direct host
+#### Supabase: done, and the backend is running on it
+
+Project `rmdkwpzqrdwikjutmwtz`, region **ap-south-1** (Mumbai), Postgres **17.11** —
+the same version the SQL was pre-tested against. The dump restored in 49 seconds with
+**0 errors**, giving 19 base tables, 14 functions, 54 accounts, 688 posts, 30,552
+comments, 1,073 attachments and the `admin` account at id 54. All nine stored functions
+that `dao/` calls by name were invoked and all nine returned rows, including
+`getlastestloginlocationperaccount()`, which is precisely the one that fails on a
+`schema.sql`-only schema. That is the dump-versus-schema.sql argument settled by
+experiment.
+
+The VM backend now points at it. `docker compose` still defines the local `db` service,
+but the backend no longer uses it — **proven by stopping `vivacon-db` and watching
+`/api/v1/account/check?username=admin` keep returning the admin account with a 200.**
+Configuration can claim anything; a dead database container cannot serve rows. The
+container was started again afterwards. It is now dead weight in the deploy and could
+be dropped from the compose file, which is a decision rather than a fix.
+
+Full re-verification after the switch: every check in the table above still passes,
+`FAIL=0`.
+
+Two things about TLS that are easy to get backwards:
+
+- **`pg_stat_ssl` reports `ssl = false`, and that is not alarming.** It describes the
+  hop *Supavisor → Postgres* inside Supabase's network, not the hop from here.
+  `psql \conninfo` confirms our own leg is **TLSv1.3, TLS_AES_256_GCM_SHA384**.
+- **`sslmode=require` is load-bearing.** Measured: the pooler happily accepts
+  `sslmode=disable` as well. The endpoint does not enforce encryption, so leaving the
+  parameter off means a misconfiguration can run in plaintext across the public
+  internet with nothing complaining.
+
+Credentials are supplied as discrete libpq variables in the gitignored
+`config/supabase.env`, not as a URI. That is deliberate: a password holding `@`, `:`,
+`/`, `?` or `#` needs no URL-encoding this way, and passing the file to Docker with
+`--env-file` keeps the password off every command line and out of the host process
+list.
+
+##### The latency is the real cost, and it is large
+
+| Measured against ap-south-1 | |
+|---|---|
+| Opening a fresh session (TLS + auth via the pooler) | ~790 ms |
+| 20 queries inside one session | 2810 ms, so **~105 ms per round trip** |
+| `count(*)` over 30,552 comments | 726 ms, nearly all of it session setup |
+| `/api/v1/account/check` through the proxy | **328 ms** (≈ 3 round trips) |
+| The same endpoint against the local Postgres | **5 ms** |
+
+So the database itself is not slow; the distance is. Every round trip costs about
+105 ms, and HikariPool keeps connections open so requests avoid the 790 ms handshake.
+But the arithmetic is unforgiving for anything chatty: a mapper that enriches each item
+in a page with its own counts turns a 10-item newsfeed into dozens of round trips and
+several seconds of wall time. That part is a projection from the 105 ms figure, not a
+measurement — the paginated endpoints need a token and no login credential was
+available.
+
+**ap-south-1 is Mumbai, which is the wrong side of the Bay of Bengal from Vietnam.**
+`ap-southeast-1` (Singapore) would cut the round trip substantially. The region cannot
+be changed on an existing Supabase project, so improving this means creating a new one
+and restoring the dump again — about a minute of work, given the script already exists.
+
+#### Supabase connection details, for reference
 
 **Measured: this VM has no IPv6 at all.** No global address, no default route,
 `curl -6` returns nothing on the host and inside a container, and Docker's bridge has
 IPv6 disabled. Supabase's direct connection host resolves to AAAA only, unless the
 paid IPv4 add-on is enabled, so **the direct connection string cannot work here.**
 DNS does return the AAAA record, so the failure looks like a hang, not a DNS error.
+
+Confirmed in practice: the pooler host resolves to the IPv4 address `65.0.195.55`,
+which is exactly why it works from a machine with no IPv6.
 
 Use the **session** pooler, port 5432:
 
@@ -390,13 +464,13 @@ Earlier this document said to load `schema.sql` and the two function files. That
 other eight — `device_metadata`, `hashtag`, `hashtag_rel_post`, `notification`,
 `account_report`, `post_report`, `comment_report`, `report_template` — exist only
 because Hibernate's `ddl-auto: update` creates them at boot. That is why the VM showed
-19 tables after the init scripts plus one backend start, and 22 after the dump.
+19 base tables after the init scripts plus one backend start.
 
 The visible consequence: `getlastestloginlocationperaccount()` fails with
 `relation "device_metadata" does not exist` on a schema built from `schema.sql` alone.
 
-**So restore the dump instead** — `container/data/*.sql` carries all 22 tables, all 14
-functions and the data. Follow *Restoring a dump into this stack* above; on a fresh
+**So restore the dump instead** — `container/data/*.sql` carries all 19 base tables, all
+14 functions and the data. Follow *Restoring a dump into this stack* above; on a fresh
 Supabase project there is no init-script schema to clear first.
 
 Version compatibility was checked rather than assumed: all three SQL files load into
@@ -519,7 +593,12 @@ domain you control avoids that; a quick tunnel's random hostname does not.
   on the same view, which shows up as an intermittent "relation does not exist" or a
   dependency error, never reproducible on demand. The views only generate a 12, 4 or 2
   row calendar from a `VALUES` list, so the fix is to inline them as CTEs and delete the
-  views. Pre-existing, unrelated to Supabase, and not yet fixed.
+  views. Pre-existing, unrelated to Supabase, and not yet fixed. Confirmed that the
+  leaked views outlive the call and are captured by `pg_dump`: they arrived in Supabase
+  along with the restored data.
+- **Supabase adds roughly 105 ms to every database round trip** from here, because the
+  project sits in `ap-south-1`. Endpoints that query once are fine; anything that
+  queries per list item will feel it. Moving to `ap-southeast-1` needs a new project.
 - 412 ESLint warnings in the frontend, which is why the Vercel build has to run with
   `CI=false`. Mostly `no-unused-vars`, but 20 are `jsx-a11y/alt-text`, so there is a
   genuine accessibility gap behind that number.
