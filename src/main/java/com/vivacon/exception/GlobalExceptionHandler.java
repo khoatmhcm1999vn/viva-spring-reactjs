@@ -53,11 +53,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseDTO<>(HttpStatus.BAD_REQUEST, listConstraintViolation.toString(), null);
     }
 
-//    @ExceptionHandler(Exception.class)
-//    @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
-//    public ResponseDTO<Object> handleUnwantedException(Exception ex) {
-//        return new ResponseDTO<>(HttpStatus.INTERNAL_SERVER_ERROR, Constants.SERVER_ERROR_MESSAGE, null);
-//    }
+    /**
+     * Luoi chan cuoi cung cho moi exception khong co handler rieng.
+     *
+     * Truoc day khoi nay bi comment, nen exception ngoai du kien roi xuong trang loi
+     * mac dinh cua Tomcat: client nhan 500 khong co thong diep, va server KHONG ghi
+     * gi vao log. Hau qua la loi bien mat khong dau vet, rat kho truy.
+     *
+     * O day ghi log kem stack trace de con dau vet ma lan, nhung chi tra ve cho client
+     * mot thong diep chung: khong de lo stack trace hay chi tiet noi bo ra ngoai.
+     */
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseDTO<Object> handleUnwantedException(Exception ex) {
+        logger.error("Loi khong co handler rieng", ex);
+        return new ResponseDTO<>(HttpStatus.INTERNAL_SERVER_ERROR, Constants.SERVER_ERROR_MESSAGE, null);
+    }
 
     @ExceptionHandler(UsernameNotFoundException.class)
     @ResponseStatus(code = HttpStatus.UNAUTHORIZED)

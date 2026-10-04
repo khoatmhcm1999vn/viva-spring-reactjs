@@ -46,7 +46,17 @@ public class RecommendationServiceImpl implements RecommendationService {
             performRecommendationProcessing();
         }
 
-        List<RecommendAccount> recommendAccounts = RecommendationServiceImpl.recommendAccountsPerAccount.get(accountId);
+        // recommendAccountsPerAccount chi chua nhung account XUAT HIEN trong do thi
+        // follow. Mot tai khoan vua dang ky, chua follow ai va chua ai follow, se
+        // khong co entry nao -> get() tra null.
+        //
+        // Truoc day doan nay goi thang .stream() tren ket qua get(), nen moi tai khoan
+        // moi deu lam endpoint /account/recommend nem NullPointerException va tra 500.
+        // Coi "khong co du lieu goi y" la danh sach rong, roi de nhanh ben duoi bu
+        // bang cac account nhieu follower nhat - dung nhu y dinh san co.
+        List<RecommendAccount> recommendAccounts = recommendAccountsPerAccount
+                .getOrDefault(accountId, new ArrayList<>());
+
         Set<RecommendAccountResponse> recommendAccountResponses = recommendAccounts.stream()
                 .map(recommendAccount -> {
                     Account account = accountRepository.findById(recommendAccount.accountId).orElseThrow(RecordNotFoundException::new);
@@ -73,6 +83,11 @@ public class RecommendationServiceImpl implements RecommendationService {
 
     @Scheduled(fixedDelay = 1000 * 60 * 5, initialDelay = 1000 * 60 * 0)
     public void performRecommendationProcessing() {
+        // map() chi them vao accountRelationships chu khong bao gio don. Method nay
+        // chay lai moi 5 phut, nen truoc day danh sach phinh ra mai: vua ton bo nho
+        // vua lam so ban chung bi dem trung len sau moi lan chay.
+        accountRelationships.clear();
+
         String value = userDAO.getFollowersPerAccount();
         String lines[] = value.split("\t");
         for (String line : lines) {
