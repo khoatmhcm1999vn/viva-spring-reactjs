@@ -1,21 +1,115 @@
-version: '3.1'
+# Toan bo stack: database, backend, frontend, va Adminer de xem DB.
+#
+# Dat ten project tuong minh. Tren may dang co mot stack khac ten "vivacon-services"
+# (chay tu E:\JavaProj\Vivacon-Services) cung dung Postgres, nen phai tach ra de
+# "docker compose" o day khong bao gio cham vao container cua project do.
+name: vivacon
+
+# Khong khai bao "version": compose moi da bo qua va canh bao ve nó.
 
 services:
-
   db:
     image: postgres:14
-    container_name: postgres_14
-    restart: always
+    container_name: vivacon-db
+    restart: unless-stopped
     environment:
-      POSTGRES_PASSWORD: Admin123*
-      TZ: 'UTC'
-      PGTZ: 'UTC'
+      # Thieu POSTGRES_DB la loi cua file cu: Postgres chi tao database "postgres",
+      # con ung dung lai ket noi vao "vivacon" nen chet voi
+      # "database vivacon does not exist".
+      POSTGRES_DB: ${POSTGRES_DB:-vivacon}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?can dat DB_PASSWORD trong file .env}
+      TZ: UTC
+      PGTZ: UTC
     ports:
-      - 5432:5432
+      # 5433 chu khong phai 5432: cong 5432 dang bi Postgres cua project khac giu.
+      - "${DB_PORT:-5433}:5432"
+    volumes:
+      # Named volume, khong phai anonymous. File cu khong khai bao volume nen du lieu
+      # nam trong volume vo danh, va mot lan recreate container la mat dau vet.
+      - vivacon-db-data:/var/lib/postgresql/data
+      # Postgres chay moi file trong /docker-entrypoint-initdb.d theo thu tu ten,
+      # va CHI chay khi data directory con trong (tuc lan up dau tien).
+      # Cac function nay bat buoc phai co: dao/ goi chung theo ten, thieu la
+      # thong ke, trending va chat loi runtime.
+      - ./container/prepare/schema/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./container/prepare/functions/message_functions.sql:/docker-entrypoint-initdb.d/02-message-functions.sql:ro
+      - ./container/prepare/functions/statistic_function.sql:/docker-entrypoint-initdb.d/03-statistic-functions.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-vivacon}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vivacon-backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        # Doi Postgres thuc su nhan ket noi, khong chi doi container start.
+        # Khong co dieu kien nay thi backend hay chet o lan up dau vi Hibernate
+        # can mot ket noi ngay luc khoi dong (ddl-auto: update).
+        condition: service_healthy
+    environment:
+      # Image mac dinh la profile prod. Giu nguyen: profile dev bat
+      # vivacon.verification.bypass nen khong dung cho thu gi giong deploy.
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-prod}
+      # Trong mang cua compose, host cua DB la ten service "db", khong phai localhost.
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-vivacon}
+      DB_PASSWORD: ${DB_PASSWORD:?can dat DB_PASSWORD trong file .env}
+      JWT_SECRET_SALT: ${JWT_SECRET_SALT:?can dat JWT_SECRET_SALT trong file .env}
+      # Origin ma frontend duoc phuc vu tu do. De trong la moi ket noi WebSocket
+      # bi tu choi va chat chet IM LANG, nen phai khop voi cong cua service frontend.
+      FRONTEND_ALLOWED_ORIGINS: ${FRONTEND_ALLOWED_ORIGINS:-http://localhost:8081}
+      MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS:-}
+      MS_OAUTH_CLIENT_ID: ${MS_OAUTH_CLIENT_ID:-}
+      MS_OAUTH_CLIENT_SECRET: ${MS_OAUTH_CLIENT_SECRET:-}
+      MS_OAUTH_REFRESH_TOKEN: ${MS_OAUTH_REFRESH_TOKEN:-}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:-}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:-}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:-}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+    ports:
+      # Mo ra ngoai cho tien goi Swagger va debug. Frontend KHONG dung duong nay,
+      # no goi qua proxy cua nginx trong mang noi bo.
+      - "${BACKEND_PORT:-8091}:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health | grep -q UP"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 40s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: vivacon-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      # nginx proxy /api va /ws sang day. Ten service + cong trong mang noi bo.
+      BACKEND_ORIGIN: backend:8080
+    ports:
+      - "${FRONTEND_PORT:-8081}:80"
 
   adminer:
     image: adminer:4
-    container_name: adminer_multiple_db
-    restart: always
+    container_name: vivacon-adminer
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      ADMINER_DEFAULT_SERVER: db
     ports:
-      - 8900:8080
+      # 8901 chu khong phai 8900: cong 8900 dang bi Adminer cua project khac giu.
+      - "${ADMINER_PORT:-8901}:8080"
+
+volumes:
+  vivacon-db-data:
+    name: vivacon-db-data

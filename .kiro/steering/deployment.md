@@ -17,6 +17,8 @@ this file is the record of *where we are going and what is in the way*.
    proxied, verified end to end.
 7. **Database backup** — plain-SQL dump in `container/data/` (gitignored), proven
    restorable.
+8. **Full stack in compose** — `db`, `backend`, `frontend`, `adminer`, verified
+   through the frontend proxy, with data surviving a container recreate.
 
 ## Backend image
 
@@ -77,30 +79,74 @@ in `tech.md`.
 `frontend/.env.production` still points at `http://vivacon.cf`, a dead domain. The
 Docker build does not read it, so it only matters for `npm run build:prod`.
 
+## The compose stack
+
+`docker compose up -d --build` brings up four services. Run it from the repo root
+with a `.env` file present; copy `.env.example` and fill in `DB_PASSWORD` and
+`JWT_SECRET_SALT`, which compose requires with `${VAR:?}` so a missing value fails
+immediately instead of starting half-configured.
+
+| Service    | Host port | Notes |
+|------------|-----------|-------|
+| `frontend` | 8081      | nginx, this is the address to open |
+| `backend`  | 8091      | direct access for Swagger and debugging |
+| `db`       | 5433      | Postgres 14 |
+| `adminer`  | 8901      | database browser, server `db` |
+
+**There is a second, unrelated Postgres on this machine.** The container `postgres_14`
+belongs to a different compose project, `vivacon-services`, defined at
+`E:\JavaProj\Vivacon-Services\docker-compose.yml`, and it holds port 5432 and 8900.
+That is why `docker compose down` in this repo does nothing to it, and why this stack
+deliberately uses 5433 and 8901. Do not assume a Postgres on 5432 is ours.
+
+A consequence worth remembering: the Postgres MCP server in `.kiro/settings/mcp.json`
+points at `localhost:5432`, which is the **other** project's database, not the compose
+one. Both currently hold the same restored data, so they look identical and will
+silently drift apart. Change the port to 5433 in that file to inspect the compose
+database instead.
+
+What the old compose file got wrong, for the record: no named volume, so the seeded
+data sat in an anonymous volume that a single recreate would orphan; no `POSTGRES_DB`,
+so a fresh container created only the `postgres` database while the app connects to
+`vivacon`; the password committed in plain text; and `init-db.sh` loaded only
+`schema.sql`, never the stored functions that `dao/` calls by name. The functions are
+now mounted directly into `/docker-entrypoint-initdb.d` with numeric prefixes so they
+load in order on a first `up`.
+
+Verified: the frontend serves and falls back to `index.html`, `/api` and `/ws` reach
+the backend through the proxy, the origin whitelist accepts `localhost:8081` and still
+rejects an unlisted domain, the seeded `admin` account is readable through the proxy,
+and a `down` followed by `up -d` leaves all 54 accounts, 688 posts and 30,552 comments
+in place.
+
+### Restoring a dump into this stack
+
+The init scripts and a dump restore conflict: restoring over the schema the init
+scripts just created produced 852 errors. Reset the schema first, then restore:
+
+```sql
+DROP SCHEMA public CASCADE; CREATE SCHEMA public;
+```
+
+The dump carries its own schema, functions and data, so it supersedes the init
+scripts entirely. Filter out the `\connect`, `CREATE DATABASE`, `DROP DATABASE` and
+`ALTER DATABASE` lines, because the dump is taken with `--create --clean` and would
+otherwise try to drop the database it is connected to. Do that filtering on the host,
+not with `grep` inside `sh -c`, where the escaping is easy to get wrong.
+
 ## Remaining
-
-### 8. Full stack in compose
-
-Three services: `db`, `backend`, `frontend`.
-
-One blocker left, and it is destructive:
-
-- **The current `docker-compose.yml` would destroy the database.** It declares no
-  named volume, so the seeded data lives in an anonymous volume, and it sets no
-  `POSTGRES_DB`, so a fresh container would not even create `vivacon`. A backup now
-  exists in `container/data/`, but take a fresh one before applying any change to
-  that file.
-
-The WebSocket origin problem that used to block this step is fixed:
-`vivacon.frontend.allowed-origins` replaced the hardcoded `Constants.FE_URL`. Set
-`FRONTEND_ALLOWED_ORIGINS` for any deployed origin. Leaving it empty rejects every
-socket connection, which is why the app now logs a warning at startup when it is
-blank: the failure mode is silent, the page loads and only realtime is dead.
 
 ### 9. Ubuntu VM
 
-Mostly a copy of step 8. Secrets must come from the environment, not from
-`./config/`, which is gitignored and machine-local.
+The compose stack is portable as-is. What changes on a server:
+
+- `FRONTEND_ALLOWED_ORIGINS` must list the real origin, or realtime dies silently.
+- Ports: the 5433/8901 offsets exist only to avoid the other local project. On a
+  clean host, 5432 and 8900 are free again, and `db` need not publish a port at all
+  since only the backend talks to it.
+- `.env` has to be created on the server. `./config/` is not used by the containers.
+- The frontend image needs no rebuild for a new domain, because the bundle only uses
+  relative paths.
 
 ### 10. Supabase and Vercel
 

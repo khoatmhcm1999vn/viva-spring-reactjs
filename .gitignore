@@ -50,6 +50,10 @@ yarn-error.log*
 # Credential thật của từng máy đặt ở đây, không bao giờ commit.
 /config/
 
+# Docker Compose tu doc file .env nay va no chua credential that.
+# Chi commit .env.example lam khuon mau.
+/.env
+
 ## Project ##
 logs/
 mock_data/sql
