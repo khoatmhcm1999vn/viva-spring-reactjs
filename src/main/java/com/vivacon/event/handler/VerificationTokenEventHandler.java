@@ -211,6 +211,16 @@ public class VerificationTokenEventHandler {
         account.setVerificationToken(code);
         account.setVerificationExpiredDate(Instant.now().plusMillis(verifiedTokenExpirationInMiliseconds));
         accountRepository.saveAndFlush(account);
+
+        if (bypassEmailVerification) {
+            // Khong gui duoc email nen ma nay se khong den tay nguoi dung. In ra console
+            // de luong quen mat khau van dung duoc qua UI o moi truong dev.
+            //
+            // Day la mot credential nen chi in khi bypass dang bat, va bypass mac dinh
+            // tat cung nhu duoc dat false tuong minh o profile prod.
+            logger.warn("[DEV BYPASS] Ma xac thuc cua {} la {}, het han sau {} phut",
+                    account.getUsername(), code, verifiedTokenExpirationInMiliseconds / 60000);
+        }
         return code;
     }
 }
