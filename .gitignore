@@ -29,8 +29,21 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### VS Code ###
-.vscode/
+### VS Code / Kiro IDE ###
+# settings.json chứa đường dẫn JDK tuyệt đối của từng máy nên không chia sẻ được,
+# chỉ commit danh sách extension khuyến nghị.
+.vscode/*
+!.vscode/extensions.json
+
+### Kiro ###
+# mcp.json chứa connection string kèm password, không commit
+.kiro/settings/mcp.json
+# Steering (.kiro/steering/*.md) thì CÓ commit, đó là tài liệu cho cả team
+
+### Node ###
+node_modules/
+npm-debug.log*
+yarn-error.log*
 
 ## Project ##
 logs/
