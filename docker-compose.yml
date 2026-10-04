@@ -48,11 +48,18 @@ services:
       interval: 5s
       timeout: 5s
       retries: 20
+    # Gioi han RAM. Mac dinh vua cho mot VM nho (~3-4 GB); may to hon thi nang len
+    # trong .env chu khong sua file nay.
+    mem_limit: ${DB_MEM_LIMIT:-640m}
 
   backend:
     build:
       context: .
       dockerfile: Dockerfile
+    # Dat ten image tuong minh. Co "image" thi "up" dung lai image san co va khong
+    # build lai, nen co the build o may khac roi "docker save | docker load" sang
+    # server - viec can thiet khi server khong du RAM/toolchain de build.
+    image: ${BACKEND_IMAGE:-vivacon-backend:latest}
     container_name: vivacon-backend
     restart: unless-stopped
     # Khong co "ports": frontend goi backend qua mang noi bo bang ten service.
@@ -90,11 +97,16 @@ services:
       timeout: 5s
       retries: 20
       start_period: 40s
+    # Bat buoc phai co gioi han nay. Dockerfile dat -XX:MaxRAMPercentage=75, va "75%"
+    # la 75% cua gioi han cgroup; khong co gioi han thi JVM lay 75% RAM CA MAY va
+    # tren VM 3.3 GB no se chen Postgres ra khoi bo nho.
+    mem_limit: ${BACKEND_MEM_LIMIT:-1200m}
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+    image: ${FRONTEND_IMAGE:-vivacon-frontend:latest}
     container_name: vivacon-frontend
     restart: unless-stopped
     depends_on:
@@ -105,6 +117,8 @@ services:
     ports:
       # Service duy nhat mo ra ngoai. Tren server dat FRONTEND_PORT=80.
       - "${FRONTEND_PORT:-8081}:80"
+    # nginx phuc vu file tinh, khong can nhieu.
+    mem_limit: ${FRONTEND_MEM_LIMIT:-128m}
 
 volumes:
   vivacon-db-data:
