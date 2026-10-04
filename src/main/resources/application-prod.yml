@@ -6,9 +6,12 @@ spring:
   name: Vivacon
   datasource:
     driver-class-name: org.postgresql.Driver
+    # Docker/VM: ghi de bang bien moi truong SPRING_DATASOURCE_URL.
     url: jdbc:postgresql://vivacon-database.cadyqzt0yluv.ap-southeast-2.rds.amazonaws.com:5432/innovation?useSSL=false&useUnicode=true
     username: postgres
-    password: sx5nPMQb2LLJyvPWhFW9
+    # Lay tu bien moi truong DB_PASSWORD (hoac SPRING_DATASOURCE_PASSWORD).
+    # Rong thi Hikari khong ket noi duoc va app chet ngay luc boot.
+    password: ${DB_PASSWORD:}
   jpa:
     generate-ddl: true
     hibernate:
@@ -30,19 +33,52 @@ spring:
 
 vivacon:
   jwt:
-    secret_salt: Vivacon@123456
+    # CANH BAO: ai co secret_salt la tu ky duoc JWT hop le cho bat ky user nao,
+    # ke ca ADMIN. Day la bi mat quan trong nhat trong file nay.
+    # Prod BAT BUOC dung salt khac dev, va phai dai/ngau nhien.
+    # Set bang bien moi truong JWT_SECRET_SALT.
+    secret_salt: ${JWT_SECRET_SALT:}
     jwt_validity: 36000000 # 1000 * 60 * 60 - 1 Hour
     jwt_issuer: Vivacon_Khoa_Truc_Hung
     refresh_expiration: 360000000 # 1000 * 60 * 60 * 100- 100 Hour
   verification_token:
     expiration: 600000 # 10 * 60 * 1000 - 10 minutes
   email:
-    address: vivacon.service@outlook.com
-    password: Tt*12345Tt*
+    # Mailbox dung de gui mail. Graph /me/sendMail gui tu chinh mailbox cua access
+    # token nen EmailSender KHONG set truong From; key nay chi de biet refresh-token
+    # dang thuoc mailbox nao.
+    #
+    # Khong de lo trong repo public: set bang bien moi truong MAIL_FROM_ADDRESS.
+    address: ${MAIL_FROM_ADDRESS:}
+    # Gui mail qua MICROSOFT GRAPH, khong dung SMTP nua.
+    # Basic auth da bi chan, va SMTP + XOAUTH2 khong dang tin voi tai khoan consumer.
+    # Set bang bien moi truong:
+    #   MS_OAUTH_CLIENT_ID / MS_OAUTH_CLIENT_SECRET / MS_OAUTH_REFRESH_TOKEN
+    oauth2:
+      client-id: ${MS_OAUTH_CLIENT_ID:}
+      client-secret: ${MS_OAUTH_CLIENT_SECRET:}
+      refresh-token: ${MS_OAUTH_REFRESH_TOKEN:}
+      tenant: consumers
+      scope: https://graph.microsoft.com/Mail.Send offline_access
 
+# bucket va region khong phai bi mat nen giu lai day.
+# Hai key credential lay tu bien moi truong (Docker: -e AWS_ACCESS_KEY_ID=...)
+# hoac tu ./config/application-prod.yml neu chay truc tiep tren may.
 aws:
-  access_key_id: AKIAV3KWG2VTMC3CBPXJ
-  secret_access_key: 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
+  access_key_id: ${AWS_ACCESS_KEY_ID:}
+  secret_access_key: ${AWS_SECRET_ACCESS_KEY:}
   s3:
     bucket: vivacon-objects
     region: ap-southeast-1
+
+# CloudinaryConfiguration bat buoc phai co 3 key nay, thieu la app khong boot duoc.
+# Truoc day profile prod KHONG he co khoi nay nen chay profile prod se chet ngay
+# voi loi "Could not resolve placeholder 'cloudinary.cloud-name'".
+#
+# KHONG dien credential that vao day: file nay duoc git track va repo la public.
+# Set bien moi truong khi deploy:
+#   CLOUDINARY_CLOUD_NAME / CLOUDINARY_API_KEY / CLOUDINARY_API_SECRET
+cloudinary:
+  cloud-name: ${CLOUDINARY_CLOUD_NAME:}
+  api-key: ${CLOUDINARY_API_KEY:}
+  api-secret: ${CLOUDINARY_API_SECRET:}

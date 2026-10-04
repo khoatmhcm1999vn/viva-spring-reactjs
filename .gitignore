@@ -45,6 +45,11 @@ node_modules/
 npm-debug.log*
 yarn-error.log*
 
+### Local secrets ###
+# Spring Boot doc ./config/ voi do uu tien cao hon classpath.
+# Credential thật của từng máy đặt ở đây, không bao giờ commit.
+/config/
+
 ## Project ##
 logs/
 mock_data/sql
