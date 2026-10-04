@@ -68,16 +68,27 @@
     "use-long-press": "^2.0.2",
     "web-vitals": "^2.1.4"
   },
+  "comment:scripts": "Script 'build' chuan cua CRA truoc day KHONG co, chi co 'build:prod' dung env-cmd. Vercel va Dockerfile deu muon mot lenh build khong rang buoc vao file .env nao, nen them lai 'build'.",
   "scripts": {
     "start:dev": "env-cmd -f .env.development react-scripts start",
+    "build": "react-scripts build",
     "build:prod": "env-cmd -f .env.production react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
+  "comment:engines": "Vercel da vo hieu Node 20 tu 01/10/2026, va Node 18 truoc do, nen 22 la ban LTS thap nhat con dung duoc. Da do: react-scripts 5 build thanh cong tren Node 22.23.3.",
+  "engines": {
+    "node": "22.x"
+  },
+  "comment:overrides": "react-filerobot-image-editor khai bao react-konva o dang mo (>=17.0.0) nen npm keo ve ban moi nhat, hien yeu cau React 19. Du an dung React 17, hau qua la webpack bao loi react-konva goi useFormStatus khong ton tai trong react-dom 17. Ghim lai cap tuong thich React 17.",
+  "overrides": {
+    "react-konva": "17.0.2-6",
+    "konva": "^8.4.3"
+  },
+  "comment:eslintConfig": "Bo 'react-app/jest': cau hinh do tham chieu env jest/globals ma khong giai duoc trong cay dependency hien tai, lam webpack bao loi 'Environment key jest/globals is unknown'. Du an khong co test thuc su nao.",
   "eslintConfig": {
     "extends": [
-      "react-app",
-      "react-app/jest"
+      "react-app"
     ]
   },
   "browserslist": {

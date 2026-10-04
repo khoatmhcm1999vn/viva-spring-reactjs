@@ -19,6 +19,7 @@ import "./style.scss";
 import { useTranslation } from "react-i18next";
 import { handleCheckValidEmail } from "utils/checkValidInput";
 import _ from "lodash";
+import { ignoreApiError } from "utils/apiError";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -138,9 +139,7 @@ export default function FindAccountPage(props) {
           handleNextStep();
         }
       })
-      .catch((err) => {
-        throw err;
-      })
+      .catch(ignoreApiError)
       .finally(() => {
         setLoading(false);
       });

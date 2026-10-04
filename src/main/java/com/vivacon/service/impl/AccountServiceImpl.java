@@ -24,6 +24,7 @@ import com.vivacon.security.UserDetailImpl;
 import com.vivacon.service.AccountService;
 import com.vivacon.service.DeviceService;
 import com.vivacon.service.PostService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.NonTransientDataAccessException;
@@ -55,6 +56,18 @@ public class AccountServiceImpl implements AccountService {
     private PostService postService;
 
     private DeviceService deviceService;
+
+    /**
+     * Bo qua buoc xac thuc email khi dang ky.
+     *
+     * Dung khi khong gui duoc email (Microsoft Graph chua co credential). Bat len thi
+     * tai khoan moi duoc tao o trang thai ACTIVE luon, khong can ma 6 so.
+     *
+     * Mac dinh FALSE. Chi bat o profile dev. KHONG bao gio bat tren production: no
+     * cho phep dang ky bang email cua nguoi khac ma khong can chung minh quyen so huu.
+     */
+    @Value("${vivacon.verification.bypass:false}")
+    private boolean bypassEmailVerification;
 
     public AccountServiceImpl(AccountRepository accountRepository,
                               RoleRepository roleRepository,
@@ -120,12 +133,16 @@ public class AccountServiceImpl implements AccountService {
                     .email(registrationRequest.getEmail())
                     .password(passwordEncoder.encode(registrationRequest.getPassword()))
                     .role(roleRepository.findByName(RoleType.USER.toString()))
-                    .active(false)
+                    .active(bypassEmailVerification)
                     .publicKey("each-person-publickey")
                     .createdAt(LocalDateTime.now())
-                    .accountStatus(AccountStatus.STILL_NOT_ACTIVE)
+                    .accountStatus(bypassEmailVerification
+                            ? AccountStatus.ACTIVE
+                            : AccountStatus.STILL_NOT_ACTIVE)
                     .build();
             Account savedAccount = accountRepository.saveAndFlush(account);
+            // Van publish event ke ca khi bypass, vi handler nay con tao bo Setting
+            // mac dinh cho tai khoan moi. Chi rieng buoc gui email la khong co tac dung.
             applicationEventPublisher.publishEvent(new RegistrationCompleteEvent(this, savedAccount));
             return savedAccount;
         } catch (DataIntegrityViolationException e) {
@@ -143,6 +160,17 @@ public class AccountServiceImpl implements AccountService {
         } else {
             throw new VerificationTokenException("Verification token was invalid. Please make a new resend verified token request");
         }
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {DataIntegrityViolationException.class, NonTransientDataAccessException.class, SQLException.class, Exception.class})
+    public Account activateWithoutVerification(Account account) {
+        account.setAccountStatus(AccountStatus.ACTIVE);
+        account.setActive(true);
+        // Don luon token cu cho khoi de lai token mo co the dung lai sau nay.
+        account.setVerificationToken(null);
+        account.setVerificationExpiredDate(null);
+        return accountRepository.saveAndFlush(account);
     }
 
     @Override

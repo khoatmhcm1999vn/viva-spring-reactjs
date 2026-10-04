@@ -13,7 +13,8 @@ export const API_ENDPOINT_KEYS = {
   PROFILE: "/profile",
   FOLLOWER: "/follower",
   FOLLOWING: "/following",
-  POST: "/post",
+  // Khoa POST da duoc khai bao o tren. Ban trung lap o day bi JavaScript lang le
+  // bo di; may thay vi hai ban cung gia tri "/post" nen khong ai thay gi.
   RESEND: "/account/verification_token",
   PASSWORD: "/account/password",
   CHECK: "/account/check",

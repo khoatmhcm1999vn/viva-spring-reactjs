@@ -25,6 +25,7 @@ import { useTranslation } from "react-i18next";
 import { detectImages } from "api/imageModerationService";
 import { handleCheckImageRange } from "utils/resolveData";
 import CustomModal from "../CustomModal";
+import { ignoreApiError } from "utils/apiError";
 // const fs = require("fs");
 
 const TabPanel = (props) => {
@@ -203,9 +204,7 @@ const CreatePostModal = (props) => {
           });
         }, 1000);
       })
-      .catch((err) => {
-        throw err;
-      })
+      .catch(ignoreApiError)
       .finally(() => {
         setLoading(false);
       });

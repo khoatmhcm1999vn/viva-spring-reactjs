@@ -43,6 +43,7 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { Icon } from "@iconify/react";
 import SuggestedOnProfile from "components/common/SuggestedOnProfile";
+import { ignoreApiError } from "utils/apiError";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -115,9 +116,10 @@ const ProfilePage = (props) => {
           setImg(res.data.avatar);
         }
       })
-      .catch((err) => {
+      .catch(() => {
+        // Dieu huong la hanh dong hoi phuc that, nen giu lai. Chi bo "throw err"
+        // vi nem lai o day khong ai bat, chi tao unhandled rejection.
         history.replace("/not-found");
-        throw err;
       })
       .finally(() => {
         setLoading(false);
@@ -151,9 +153,7 @@ const ProfilePage = (props) => {
           setFetchInfo(res.data);
         }
       })
-      .catch((err) => {
-        throw err;
-      })
+      .catch(ignoreApiError)
       .finally(() => {
         setLoading(false);
       });
@@ -185,9 +185,7 @@ const ProfilePage = (props) => {
           setFetchInfo(res.data);
         }
       })
-      .catch((err) => {
-        throw err;
-      })
+      .catch(ignoreApiError)
       .finally(() => {
         setLoading(false);
       });
@@ -204,8 +202,11 @@ const ProfilePage = (props) => {
           );
         }
       })
-      .then((err) => {
-        throw err;
+      // Truoc day la .then((err) => { throw err; }) nen nhanh nay chay khi request
+      // THANH CONG voi err = undefined, sinh unhandled rejection khong co ly do.
+      .catch((err) => {
+        console.error("Khong tai duoc danh sach goi y tren profile", err);
+        setSuggestedUsers([]);
       });
   };
 
@@ -224,9 +225,7 @@ const ProfilePage = (props) => {
           });
         }
       })
-      .catch((err) => {
-        throw err;
-      })
+      .catch(ignoreApiError)
       .finally(() => {
         // setLocalLoading(false);
         setLocalLoading({ status: false, index });
@@ -246,9 +245,7 @@ const ProfilePage = (props) => {
           });
         }
       })
-      .catch((err) => {
-        throw err;
-      })
+      .catch(ignoreApiError)
       .finally(() => {
         // setLocalLoading(false);
         setLocalLoading({ status: false, index });
@@ -393,9 +390,7 @@ const ProfilePage = (props) => {
           });
         }
       })
-      .catch((err) => {
-        throw err;
-      })
+      .catch(ignoreApiError)
       .finally(() => {
         setChangeAvatarLoading(false);
       });

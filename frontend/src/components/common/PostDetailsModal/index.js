@@ -14,7 +14,8 @@ import CommentList from "../CommentList";
 import { substringUsername } from "utils/resolveData";
 import { useHistory } from "react-router-dom";
 import CustomPopUp from "../CustomPopUp";
-import { PopUpContent } from "components/pages/ProfilePage";
+// PopUpContent khong duoc ProfilePage export (chi co default export) va cung khong
+// duoc dung trong file nay.
 import { AuthUser } from "App";
 import useSnackbar from "hooks/useSnackbar";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
@@ -64,9 +65,9 @@ const PostDetailsModal = ({ index, dataList, title, reportId, isOnModal }) => {
         ...res.data,
         lastModifiedAt: convertUTCtoLocalDate(res.data.lastModifiedAt),
       });
-    }).catch((err) => {
-      history.replace('/not-found');
-      throw err;
+    }).catch(() => {
+      // Giu dieu huong, bo "throw err" de khong sinh unhandled rejection.
+      history.replace("/not-found");
     });
   };
 

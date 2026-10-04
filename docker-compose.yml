@@ -1,21 +1,128 @@
-version: '3.1'
+# Cau hinh NEN, an toan de deploy.
+#
+# Chi frontend mo cong ra ngoai. Database va backend chi noi voi nhau trong mang noi
+# bo cua compose, va khong co Adminer. Truoc day cai nay publish ca bon service ra
+# 0.0.0.0, nghia la tren mot VM cong khai thi Postgres, backend va mot UI quan tri DB
+# deu phoi ra Internet.
+#
+# Chay o may dev:   docker compose up -d
+#   -> compose tu nap them docker-compose.override.yml, mo cong db/backend va
+#      them Adminer cho tien.
+#
+# Chay tren server:  docker compose -f docker-compose.yml up -d
+#   -> chi dinh -f tuong minh nen override KHONG duoc nap.
+#
+# Dat ten project tuong minh. Tren may dev dang co mot stack khac ten
+# "vivacon-services" (chay tu E:\JavaProj\Vivacon-Services) cung dung Postgres.
+name: vivacon
 
 services:
-
   db:
     image: postgres:14
-    container_name: postgres_14
-    restart: always
+    container_name: vivacon-db
+    restart: unless-stopped
+    # Khong co "ports": chi backend va adminer trong cung mang can noi tới.
+    # Mo cong database ra host la viec cua moi truong dev, xem file override.
     environment:
-      POSTGRES_PASSWORD: Admin123*
-      TZ: 'UTC'
-      PGTZ: 'UTC'
-    ports:
-      - 5432:5432
+      # Thieu POSTGRES_DB la loi cua file cu: Postgres chi tao database "postgres",
+      # con ung dung lai ket noi vao "vivacon" nen chet voi
+      # "database vivacon does not exist".
+      POSTGRES_DB: ${POSTGRES_DB:-vivacon}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?can dat DB_PASSWORD trong file .env}
+      TZ: UTC
+      PGTZ: UTC
+    volumes:
+      # Named volume, khong phai anonymous. File cu khong khai bao volume nen du lieu
+      # nam trong volume vo danh, va mot lan recreate container la mat dau vet.
+      - vivacon-db-data:/var/lib/postgresql/data
+      # Postgres chay moi file trong /docker-entrypoint-initdb.d theo thu tu ten,
+      # va CHI chay khi data directory con trong (tuc lan up dau tien).
+      # Cac function nay bat buoc phai co: dao/ goi chung theo ten, thieu la
+      # thong ke, trending va chat loi runtime.
+      - ./container/prepare/schema/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./container/prepare/functions/message_functions.sql:/docker-entrypoint-initdb.d/02-message-functions.sql:ro
+      - ./container/prepare/functions/statistic_function.sql:/docker-entrypoint-initdb.d/03-statistic-functions.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-vivacon}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    # Gioi han RAM. Mac dinh vua cho mot VM nho (~3-4 GB); may to hon thi nang len
+    # trong .env chu khong sua file nay.
+    mem_limit: ${DB_MEM_LIMIT:-640m}
 
-  adminer:
-    image: adminer:4
-    container_name: adminer_multiple_db
-    restart: always
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # Dat ten image tuong minh. Co "image" thi "up" dung lai image san co va khong
+    # build lai, nen co the build o may khac roi "docker save | docker load" sang
+    # server - viec can thiet khi server khong du RAM/toolchain de build.
+    image: ${BACKEND_IMAGE:-vivacon-backend:latest}
+    container_name: vivacon-backend
+    restart: unless-stopped
+    # Khong co "ports": frontend goi backend qua mang noi bo bang ten service.
+    # Mo cong 8091 de vao Swagger la viec cua moi truong dev, xem file override.
+    depends_on:
+      db:
+        # Doi Postgres thuc su nhan ket noi, khong chi doi container start.
+        # Khong co dieu kien nay thi backend hay chet o lan up dau vi Hibernate
+        # can mot ket noi ngay luc khoi dong (ddl-auto: update).
+        condition: service_healthy
+    environment:
+      # Image mac dinh la profile prod. Giu nguyen: profile dev bat
+      # vivacon.verification.bypass nen khong dung cho thu gi giong deploy.
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-prod}
+      # Trong mang cua compose, host cua DB la ten service "db", khong phai localhost.
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL:-jdbc:postgresql://db:5432/${POSTGRES_DB:-vivacon}}
+      # Mac dinh trung POSTGRES_USER de stack compose tu khop nhau. Tach rieng vi
+      # Supabase doi username dang postgres.<project-ref> qua pooler.
+      DB_USERNAME: ${DB_USERNAME:-${POSTGRES_USER:-postgres}}
+      DB_PASSWORD: ${DB_PASSWORD:?can dat DB_PASSWORD trong file .env}
+      JWT_SECRET_SALT: ${JWT_SECRET_SALT:?can dat JWT_SECRET_SALT trong file .env}
+      # Origin ma nguoi dung thuc su mo frontend. De trong hoac dien sai la moi ket
+      # noi WebSocket bi tu choi va chat chet IM LANG: trang van tai binh thuong.
+      # Tren server day phai la domain that, vi du https://vivacon.example.com
+      FRONTEND_ALLOWED_ORIGINS: ${FRONTEND_ALLOWED_ORIGINS:-http://localhost:8081}
+      MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS:-}
+      MS_OAUTH_CLIENT_ID: ${MS_OAUTH_CLIENT_ID:-}
+      MS_OAUTH_CLIENT_SECRET: ${MS_OAUTH_CLIENT_SECRET:-}
+      MS_OAUTH_REFRESH_TOKEN: ${MS_OAUTH_REFRESH_TOKEN:-}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:-}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:-}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:-}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health | grep -q UP"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 40s
+    # Bat buoc phai co gioi han nay. Dockerfile dat -XX:MaxRAMPercentage=75, va "75%"
+    # la 75% cua gioi han cgroup; khong co gioi han thi JVM lay 75% RAM CA MAY va
+    # tren VM 3.3 GB no se chen Postgres ra khoi bo nho.
+    mem_limit: ${BACKEND_MEM_LIMIT:-1200m}
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: ${FRONTEND_IMAGE:-vivacon-frontend:latest}
+    container_name: vivacon-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      # nginx proxy /api va /ws sang day, bang ten service trong mang noi bo.
+      BACKEND_ORIGIN: backend:8080
     ports:
-      - 8900:8080
+      # Service duy nhat mo ra ngoai. Tren server dat FRONTEND_PORT=80.
+      - "${FRONTEND_PORT:-8081}:80"
+    # nginx phuc vu file tinh, khong can nhieu.
+    mem_limit: ${FRONTEND_MEM_LIMIT:-128m}
+
+volumes:
+  vivacon-db-data:
+    name: vivacon-db-data

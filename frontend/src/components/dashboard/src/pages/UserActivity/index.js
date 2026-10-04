@@ -17,6 +17,7 @@ import ReactTooltip from "react-tooltip";
 import "./style.scss";
 import _ from "lodash";
 import { scaleQuantize } from "d3-scale";
+import { ignoreApiError } from "utils/apiError";
 
 const geoUrl =
   "https://raw.githubusercontent.com/zcreativelabs/react-simple-maps/master/topojson-maps/world-110m.json";
@@ -98,9 +99,7 @@ const UserActivity = () => {
           setGroup(sortData);
         }
       })
-      .catch((err) => {
-        throw err;
-      });
+      .catch(ignoreApiError);
   };
   useEffect(async () => {
     handleGetLatestLoginLocationOfAllUsers();
@@ -277,7 +276,7 @@ const UserActivity = () => {
                                   //console.log({ group });
                                   const { NAME, POP_EST } = geo.properties;
                                   setTooltipContent(
-                                    `${NAME} — ${
+                                    `${NAME} â€” ${
                                       group.filter(
                                         (item) => item.country === NAME
                                       )[0]?.marksList.length || 0

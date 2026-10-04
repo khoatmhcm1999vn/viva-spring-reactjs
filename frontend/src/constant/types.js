@@ -73,6 +73,15 @@ export const PERIOD = {
   YEARS: "years",
 };
 
+/**
+ * Cac khoang thoi gian cho bo chon thong ke hashtag trending.
+ *
+ * Gia tri khop voi enum TimeSection ben backend
+ * (src/main/java/com/vivacon/common/enum_type/TimeSection.java), vi chung duoc
+ * gui thang len API qua tham so timeSection.
+ */
+export const timeSectionList = ["DAYS", "WEEKS", "MONTHS", "QUARTERS", "YEARS"];
+
 export const chattingType = {
   TYPING: "TYPING",
   USUAL_TEXT: "USUAL_TEXT",

@@ -21,6 +21,7 @@ import {
 } from "api/notificationService";
 import { useHistory } from "react-router-dom";
 import { Icon } from "@iconify/react";
+import { ignoreApiError } from "utils/apiError";
 
 const AppButtonsGroup = (props) => {
   const [openNoti, setOpenNoti] = React.useState(false);
@@ -50,9 +51,7 @@ const AppButtonsGroup = (props) => {
             setOpenNoti(true);
           }
         })
-        .catch((err) => {
-          throw err;
-        });
+        .catch(ignoreApiError);
     }
     if (openMessage) {
       setChangePosition(true);
@@ -90,9 +89,7 @@ const AppButtonsGroup = (props) => {
           setNumberOfNotification(res.data.totalElements);
         }
       })
-      .catch((err) => {
-        throw err;
-      });
+      .catch(ignoreApiError);
   };
 
   React.useEffect(() => {

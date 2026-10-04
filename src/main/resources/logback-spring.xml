@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <property name="LOGS" value="./logs"/>
+    <!--
+        Truoc day gia tri nay bi dong cung "./logs". Trong container, working
+        directory thuoc root ma process chay bang user thuong, nen logback khong tao
+        duoc thu muc va app chet ngay luc khoi dong.
+        Cho phep ghi de bang bien moi truong LOGS_PATH, mac dinh van la ./logs nen
+        hanh vi o may dev khong doi.
+    -->
+    <property name="LOGS" value="${LOGS_PATH:-./logs}"/>
 
     <appender name="OUR_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">

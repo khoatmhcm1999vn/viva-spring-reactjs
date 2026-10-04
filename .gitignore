@@ -29,8 +29,30 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### VS Code ###
-.vscode/
+### VS Code / Kiro IDE ###
+# settings.json chứa đường dẫn JDK tuyệt đối của từng máy nên không chia sẻ được,
+# chỉ commit danh sách extension khuyến nghị.
+.vscode/*
+!.vscode/extensions.json
+
+### Kiro ###
+# mcp.json chứa connection string kèm password, không commit
+.kiro/settings/mcp.json
+# Steering (.kiro/steering/*.md) thì CÓ commit, đó là tài liệu cho cả team
+
+### Node ###
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+### Local secrets ###
+# Spring Boot doc ./config/ voi do uu tien cao hon classpath.
+# Credential thật của từng máy đặt ở đây, không bao giờ commit.
+/config/
+
+# Docker Compose tu doc file .env nay va no chua credential that.
+# Chi commit .env.example lam khuon mau.
+/.env
 
 ## Project ##
 logs/

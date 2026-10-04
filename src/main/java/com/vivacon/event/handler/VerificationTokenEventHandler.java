@@ -14,6 +14,7 @@ import com.vivacon.repository.SettingRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Async;
@@ -40,6 +41,14 @@ public class VerificationTokenEventHandler {
 
     private int verifiedTokenExpirationInMiliseconds;
 
+    /**
+     * Khi bat bypass thi khong can sinh ma xac thuc luc dang ky nua, vi tai khoan
+     * da ACTIVE san. Neu van sinh thi se de lai mot ma 6 so con hieu luc 10 phut
+     * tren mot tai khoan da active - mot credential lung lo khong ai dung.
+     */
+    @Value("${vivacon.verification.bypass:false}")
+    private boolean bypassEmailVerification;
+
     private Random random = new Random();
 
     public VerificationTokenEventHandler(NotificationProvider emailSender,
@@ -61,7 +70,13 @@ public class VerificationTokenEventHandler {
     @EventListener
     public void handleUserRegistration(RegistrationCompleteEvent userRegistrationEvent) {
         Account account = userRegistrationEvent.getAccount();
+        // Phai luon tao bo Setting mac dinh, ke ca khi bypass: thieu no thi cac
+        // tinh nang doc setting (vi du PRIVACY_ON_NEW_DEVICE_LOCATION) se vo.
         saveDefaultSettingsForNewAccount(account);
+        if (bypassEmailVerification) {
+            logger.info("Bypass xac thuc email dang bat, khong sinh ma cho tai khoan {}", account.getUsername());
+            return;
+        }
         sendEmailOnUserRegistrationComplete(account);
     }
 
@@ -196,6 +211,16 @@ public class VerificationTokenEventHandler {
         account.setVerificationToken(code);
         account.setVerificationExpiredDate(Instant.now().plusMillis(verifiedTokenExpirationInMiliseconds));
         accountRepository.saveAndFlush(account);
+
+        if (bypassEmailVerification) {
+            // Khong gui duoc email nen ma nay se khong den tay nguoi dung. In ra console
+            // de luong quen mat khau van dung duoc qua UI o moi truong dev.
+            //
+            // Day la mot credential nen chi in khi bypass dang bat, va bypass mac dinh
+            // tat cung nhu duoc dat false tuong minh o profile prod.
+            logger.warn("[DEV BYPASS] Ma xac thuc cua {} la {}, het han sau {} phut",
+                    account.getUsername(), code, verifiedTokenExpirationInMiliseconds / 60000);
+        }
         return code;
     }
 }

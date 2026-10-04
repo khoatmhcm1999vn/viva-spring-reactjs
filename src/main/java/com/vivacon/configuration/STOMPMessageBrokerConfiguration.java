@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.vivacon.common.utility.JwtUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -26,25 +29,42 @@ import org.springframework.util.MimeTypeUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
+import org.springframework.web.socket.config.annotation.StompWebSocketEndpointRegistration;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static com.vivacon.common.constant.Constants.FE_URL;
 import static com.vivacon.common.constant.Constants.STOMP_AUTHORIZATION_HEADER;
 
 @Configuration
 @EnableWebSocketMessageBroker
 public class STOMPMessageBrokerConfiguration implements WebSocketMessageBrokerConfigurer {
 
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+
     private UserDetailsService userDetailService;
 
     private JwtUtils jwtUtils;
 
+    /**
+     * Cac origin duoc phep bat tay SockJS, phan cach bang dau phay.
+     *
+     * Truoc day gia tri nay lay tu Constants.FE_URL dong cung "http://localhost:3000",
+     * nen phuc vu frontend tu bat ky origin khac deu bi tu choi. Da do thuc te:
+     * goi /ws/info voi Origin la localhost:3000 tra 200, con localhost:8081 hay mot
+     * domain that tra 403. Hau qua la chat va notification chet IM LANG - trang van
+     * tai binh thuong, chi rieng socket khong bao gio ket noi.
+     */
+    private String[] allowedOrigins;
+
     @Autowired
-    public STOMPMessageBrokerConfiguration(UserDetailsService userDetailService, JwtUtils jwtUtils) {
+    public STOMPMessageBrokerConfiguration(UserDetailsService userDetailService,
+                                           JwtUtils jwtUtils,
+                                           @Value("${vivacon.frontend.allowed-origins:}") String[] allowedOrigins) {
         this.userDetailService = userDetailService;
         this.jwtUtils = jwtUtils;
+        this.allowedOrigins = allowedOrigins;
     }
 
     /**
@@ -66,9 +86,47 @@ public class STOMPMessageBrokerConfiguration implements WebSocketMessageBrokerCo
      */
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws")
-                .setAllowedOrigins(FE_URL)
-                .withSockJS();
+        if (allowedOrigins == null || allowedOrigins.length == 0) {
+            // Khong nem exception vi nhu vay app khong boot duoc, nhung phai noi to:
+            // de trong thi moi bat tay SockJS deu bi tu choi, va kieu loi nay rat kho
+            // doan vi trang web van chay, chi rieng realtime la im.
+            logger.warn("vivacon.frontend.allowed-origins dang TRONG: moi ket noi "
+                    + "WebSocket se bi tu choi, chat va notification se khong hoat dong.");
+        } else {
+            logger.info("WebSocket chap nhan origin: {}", String.join(", ", allowedOrigins));
+        }
+
+        // Tach lam hai nhom. setAllowedOrigins SO KHOP NGUYEN VAN: dua
+        // "https://*.vercel.app" vao day thi no di so sanh ca dau * voi header
+        // Origin va khong bao gio khop, nen preview URL cua Vercel se bi 403 o
+        // buoc bat tay - trong khi CORS cua HTTP lai cho qua. Mot nua chay mot nua
+        // chet la kieu loi ton thoi gian nhat.
+        // Pattern phai di qua setAllowedOriginPatterns (co tu Spring 5.3).
+        List<String> exact = new ArrayList<>();
+        List<String> patterns = new ArrayList<>();
+        if (allowedOrigins != null) {
+            for (String origin : allowedOrigins) {
+                String trimmed = origin.trim();
+                if (trimmed.isEmpty()) {
+                    continue;
+                }
+                if (trimmed.contains("*")) {
+                    patterns.add(trimmed);
+                } else {
+                    exact.add(trimmed);
+                }
+            }
+        }
+
+        StompWebSocketEndpointRegistration endpoint = registry.addEndpoint("/ws");
+        if (!exact.isEmpty()) {
+            endpoint.setAllowedOrigins(exact.toArray(new String[0]));
+        }
+        if (!patterns.isEmpty()) {
+            endpoint.setAllowedOriginPatterns(patterns.toArray(new String[0]));
+            logger.info("WebSocket chap nhan them cac pattern origin: {}", String.join(", ", patterns));
+        }
+        endpoint.withSockJS();
     }
 
     /**

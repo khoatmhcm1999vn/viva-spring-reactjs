@@ -13,6 +13,7 @@ import ChangePasswordPage from "../ChangePasswordPage";
 import { getAllSetting } from "api/settingService";
 import SecurityAndPrivacyPage from "../SecurityAndPrivacyPage";
 import LoginActivityPage from "../LoginActivityPage";
+import { ignoreApiError } from "utils/apiError";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -62,9 +63,7 @@ export default function SettingPage() {
           setGlobalSetting(res.data);
         }
       })
-      .catch((err) => {
-        throw err;
-      });
+      .catch(ignoreApiError);
   };
 
   useEffect(() => {

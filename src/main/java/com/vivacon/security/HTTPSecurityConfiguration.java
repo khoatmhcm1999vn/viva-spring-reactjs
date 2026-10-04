@@ -1,7 +1,10 @@
 package com.vivacon.security;
 
 import com.vivacon.common.enum_type.RoleType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -31,19 +34,30 @@ import static com.vivacon.common.constant.Constants.URL_WHITELIST;
 @EnableWebSecurity
 public class HTTPSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+
     private UserDetailServiceImpl userDetailsService;
 
     private JWTRequestFilter jwtRequestFilter;
 
     private AuthenticationEntryPointImpl authenticationEntryPointHandler;
 
+    /**
+     * Cung mot danh sach ma STOMPMessageBrokerConfiguration dung cho WebSocket.
+     * Mot thuoc tinh, hai noi doc: dat sai thi ca API va socket cung bao loi, chu
+     * khong phai mot cai chay mot cai chet.
+     */
+    private String[] allowedOrigins;
+
     @Autowired
     public HTTPSecurityConfiguration(UserDetailServiceImpl userDetailsService,
                                      JWTRequestFilter jwtRequestFilter,
-                                     AuthenticationEntryPointImpl authenticationEntryPointHandler) {
+                                     AuthenticationEntryPointImpl authenticationEntryPointHandler,
+                                     @Value("${vivacon.frontend.allowed-origins:}") String[] allowedOrigins) {
         this.userDetailsService = userDetailsService;
         this.jwtRequestFilter = jwtRequestFilter;
         this.authenticationEntryPointHandler = authenticationEntryPointHandler;
+        this.allowedOrigins = allowedOrigins;
     }
 
     @Bean
@@ -132,7 +146,21 @@ public class HTTPSecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     /**
-     * This override method is used for set the CORS mechanism for HTTP requests
+     * CORS cho cac request HTTP, gioi han theo vivacon.frontend.allowed-origins.
+     *
+     * Truoc day o day la addAllowedOriginPattern("*") di kem setAllowCredentials(true).
+     * Cap doi do co nghia la Spring PHAN CHIEU lai bat ky Origin nao gui den va kem
+     * Access-Control-Allow-Credentials: true, tuc moi trang web tren Internet deu goi
+     * duoc API nay bang trinh duyet cua nguoi dung va doc duoc phan hoi.
+     *
+     * Rieng voi he nay thi thiet hai con han che, vi token di trong header
+     * Authorization lay tu cookie thuoc origin cua frontend, ma trang khac khong doc
+     * duoc cookie do. Nhung no la mot cai bay dang san: ngay nao co nguoi chuyen sang
+     * xac thuc bang cookie thi lo hong tro thanh that, va luc do khong ai nho o day
+     * tung co dau *.
+     *
+     * Entry nao chua dau * duoc dang ky nhu pattern, de phuc vu preview URL cua
+     * Vercel (dang https:// *.vercel.app). Con lai la so khop chinh xac.
      *
      * @return CorsFilter
      */
@@ -141,9 +169,30 @@ public class HTTPSecurityConfiguration extends WebSecurityConfigurerAdapter {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOriginPattern("*");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
+
+        if (allowedOrigins == null || allowedOrigins.length == 0) {
+            // Khong tu dong mo lai thanh "*": lam vay la lang le quay ve dung cai
+            // vua sua. Bao to roi de request cross-origin bi tu choi.
+            logger.warn("vivacon.frontend.allowed-origins dang TRONG: moi request "
+                    + "cross-origin se bi CORS tu choi. Dat FRONTEND_ALLOWED_ORIGINS "
+                    + "thanh origin that cua frontend.");
+        } else {
+            for (String origin : allowedOrigins) {
+                String trimmed = origin.trim();
+                if (trimmed.isEmpty()) {
+                    continue;
+                }
+                if (trimmed.contains("*")) {
+                    config.addAllowedOriginPattern(trimmed);
+                } else {
+                    config.addAllowedOrigin(trimmed);
+                }
+            }
+            logger.info("CORS chap nhan origin: {}", String.join(", ", allowedOrigins));
+        }
+
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }

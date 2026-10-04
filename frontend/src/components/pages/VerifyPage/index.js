@@ -13,6 +13,7 @@ import { Button, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import "./style.scss";
 import { parseJwt } from "utils/jwtToken";
+import { ignoreApiError } from "utils/apiError";
 
 export default function VerifyPage(props) {
   const [code, setCode] = useState([]);
@@ -48,9 +49,7 @@ export default function VerifyPage(props) {
           }, 1000);
         }
       })
-      .catch((err) => {
-        throw err;
-      })
+      .catch(ignoreApiError)
       .finally(() => {
         setLoading(false);
       });
@@ -73,9 +72,7 @@ export default function VerifyPage(props) {
           setTimeout(() => setButtonDisabled(false), 5000);
         }
       })
-      .catch((err) => {
-        throw err;
-      })
+      .catch(ignoreApiError)
       .finally(() => {
         setLoading(false);
       });
@@ -95,9 +92,7 @@ export default function VerifyPage(props) {
           }, 1000);
         }
       })
-      .catch((err) => {
-        throw err;
-      })
+      .catch(ignoreApiError)
       .finally(() => {
         setLoading(false);
       });
@@ -130,9 +125,7 @@ export default function VerifyPage(props) {
           }
         }
       })
-      .catch((err) => {
-        throw err;
-      })
+      .catch(ignoreApiError)
       .finally(() => {
         setLoading(false);
       });
@@ -162,9 +155,7 @@ export default function VerifyPage(props) {
           }, 1000);
         }
       })
-      .catch((err) => {
-        throw err;
-      })
+      .catch(ignoreApiError)
       .finally(() => {
         setTimeout(() => {
           setLoading(false);

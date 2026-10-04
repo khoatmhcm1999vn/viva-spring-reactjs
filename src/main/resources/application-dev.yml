@@ -1,5 +1,7 @@
 server:
-  port: 8080
+  # 8080 bị một app khác chiếm, nên dev chạy ở 8090.
+  # Khớp với REACT_APP_API_URL trong frontend/.env.development
+  port: 8090
 
 spring:
   application:
@@ -8,7 +10,9 @@ spring:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/vivacon?useSSL=false&useUnicode=true
     username: postgres
-    password: Admin123*
+    # Lay tu ./config/application-dev.yml hoac bien moi truong DB_PASSWORD.
+    # Rong thi Hikari khong ket noi duoc va app chet ngay luc boot.
+    password: ${DB_PASSWORD:}
   jpa:
     generate-ddl: true
     hibernate:
@@ -29,22 +33,91 @@ spring:
       location: ${java.io.tmpdir}
 
 vivacon:
+  frontend:
+    # Cac origin duoc phep bat tay SockJS (chat + notification), phan cach bang phay.
+    #
+    # Truoc day gia tri nay dong cung trong Constants.FE_URL, nen chi localhost:3000
+    # ket noi duoc. Da do thuc te: /ws/info voi Origin localhost:3000 tra 200,
+    # con localhost:8081 tra 403.
+    #
+    # 3000 = CRA dev server chay tren host
+    # 8081 = container nginx cua frontend khi chay thu o may
+    allowed-origins: http://localhost:3000,http://localhost:8081
+  verification:
+    # BO QUA xac thuc email khi dang ky / dang nhap.
+    #
+    # Bat vi hien khong gui duoc email: Microsoft da chan basic auth, va Graph thi
+    # chua co credential (app registration tren Azure dang vuong van de tai khoan).
+    # Khong co co che nay thi tai khoan moi vinh vien ket o STILL_NOT_ACTIVE va
+    # /login tra 403 kem body 1002.
+    #
+    # Tac dong: tai khoan moi duoc tao thang o trang thai ACTIVE, va tai khoan dang
+    # ket se duoc kich hoat ngay khi dang nhap.
+    #
+    # CANH BAO: day la noi long mot bien phap xac thuc. Khi bat, bat ky ai cung dang
+    # ky duoc bang email cua nguoi khac ma khong can chung minh quyen so huu.
+    # CHI dung o dev. Profile prod dat false tuong minh.
+    bypass: true
   jwt:
-    secret_salt: Vivacon@123456
+    # CANH BAO: ai co secret_salt la tu ky duoc JWT hop le cho bat ky user nao,
+    # ke ca ADMIN. Day la bi mat quan trong nhat trong file nay.
+    # Lay tu ./config/application-dev.yml hoac bien moi truong JWT_SECRET_SALT.
+    # Rong thi app van boot nhung moi lan login se loi khi ky token.
+    secret_salt: ${JWT_SECRET_SALT:}
     jwt_validity: 36000000 # 1000 * 60 * 60 - 1 Hour
     jwt_issuer: Vivacon_Khoa_Truc_Hung
     refresh_expiration: 360000000 # 1000 * 60 * 60 * 100- 100 Hour
   verification_token:
     expiration: 600000 # 10 * 60 * 1000 - 10 minutes
   email:
-    address: vivacon.service@outlook.com
-    password: Tt*12345Tt*
+    # Mailbox dung de gui mail. Graph /me/sendMail gui tu chinh mailbox cua access
+    # token nen EmailSender KHONG set truong From; key nay chi de biet refresh-token
+    # dang thuoc mailbox nao, va de dung lai neu quay ve SMTP.
+    #
+    # Khong de lo trong repo public: gia tri that nam o ./config/application-dev.yml
+    # hoac bien moi truong MAIL_FROM_ADDRESS.
+    address: ${MAIL_FROM_ADDRESS:}
+    # Gui mail qua MICROSOFT GRAPH, khong dung SMTP nua.
+    #
+    # Ly do: basic auth da bi chan (test truc tiep tra ve 535 5.7.3 tren ca
+    # smtp.office365.com va smtp-mail.outlook.com), con SMTP + XOAUTH2 thi co nhieu
+    # bao cao that bai voi tai khoan consumer outlook.com. Huong dan hien tai cua
+    # Microsoft cho Outlook cung la dung Graph thay cho SMTP.
+    #
+    # Tai khoan nay la personal Microsoft account nen KHONG dung duoc client_credentials.
+    # Phai lay refresh-token mot lan qua browser (delegated flow), xem huong dan trong
+    # ./config/application-dev.yml.
+    #
+    # Lay tu ./config/application-dev.yml hoac bien moi truong
+    #   MS_OAUTH_CLIENT_ID / MS_OAUTH_CLIENT_SECRET / MS_OAUTH_REFRESH_TOKEN
+    # Thieu thi app van boot, EmailSender chi log warning va bo qua viec gui mail.
+    oauth2:
+      client-id: ${MS_OAUTH_CLIENT_ID:}
+      client-secret: ${MS_OAUTH_CLIENT_SECRET:}
+      refresh-token: ${MS_OAUTH_REFRESH_TOKEN:}
+      # 'consumers' cho personal account; doi thanh tenant id neu chuyen sang mailbox cua tenant
+      tenant: consumers
+      scope: https://graph.microsoft.com/Mail.Send offline_access
 
+# bucket va region khong phai bi mat nen giu lai day.
+# Hai key credential lay tu ./config/application-dev.yml hoac bien moi truong
+#   AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY
 aws:
-  access_key_id: AKIAV3KWG2VTMC3CBPXJ
-  secret_access_key: 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
+  access_key_id: ${AWS_ACCESS_KEY_ID:}
+  secret_access_key: ${AWS_SECRET_ACCESS_KEY:}
   s3:
     bucket: vivacon-objects
     region: ap-southeast-1
+
+# CloudinaryConfiguration bắt buộc phải có 3 key này, thiếu là app không boot được.
+#
+# KHONG dien credential that vao day: file nay duoc git track va repo la public.
+# Credential that nam o ./config/application-dev.yml (da gitignore).
+# Spring Boot tu doc ./config/ voi do uu tien CAO HON classpath nen no se ghi de 3 dong duoi.
+# Hoac set bien moi truong: CLOUDINARY_CLOUD_NAME / CLOUDINARY_API_KEY / CLOUDINARY_API_SECRET
+cloudinary:
+  cloud-name: ${CLOUDINARY_CLOUD_NAME:}
+  api-key: ${CLOUDINARY_API_KEY:}
+  api-secret: ${CLOUDINARY_API_SECRET:}
 
 

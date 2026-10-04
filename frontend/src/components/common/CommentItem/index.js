@@ -24,6 +24,7 @@ import CommentChildItem from "../CommentChildItem";
 import CommentOptionModal from "../CommentOptionModal";
 import ReportDetailModal from "../ReportDetailModal";
 import UsernameContainer from "../UsernameContainer";
+import { ignoreApiError } from "utils/apiError";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -112,9 +113,7 @@ const CommentItem = ({
           );
         }
       })
-      .catch((err) => {
-        throw err;
-      });
+      .catch(ignoreApiError);
   };
 
   const handleToggleCommentChild = () => {

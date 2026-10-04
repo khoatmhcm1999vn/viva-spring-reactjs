@@ -7,6 +7,7 @@ import { getProfile } from "api/userService";
 import CustomPopUp from "../CustomPopUp";
 import { substringUsername } from "utils/resolveData";
 import classNames from "classnames";
+import { ignoreApiError } from "utils/apiError";
 
 const UsernameContainer = ({
   username,
@@ -55,9 +56,7 @@ const UsernameContainer = ({
           }
         }
       })
-      .catch((err) => {
-        throw err;
-      })
+      .catch(ignoreApiError)
       .finally(() => {
         setLocalLoading(false);
       });

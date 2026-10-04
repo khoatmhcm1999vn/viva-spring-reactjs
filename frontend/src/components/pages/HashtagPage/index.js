@@ -33,9 +33,9 @@ const HashtagPage = (props) => {
           setHashtagInfo(res.data);
         }
       })
-      .catch((err) => {
+      .catch(() => {
+        // Giu dieu huong, bo "throw err" de khong sinh unhandled rejection.
         history.push("/not-found");
-        throw err;
       });
   };
 

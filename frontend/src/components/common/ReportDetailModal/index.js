@@ -13,6 +13,7 @@ import {
 } from "api/reportService";
 import { useTranslation } from "react-i18next";
 import "./style.scss";
+import { ignoreApiError } from "utils/apiError";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -68,9 +69,7 @@ const ReportDetailModal = ({ open, handleCloseModal, type, currentTarget }) => {
             handleNextStep();
           }
         })
-        .catch((err) => {
-          throw err;
-        })
+        .catch(ignoreApiError)
         .finally(() => {
           // setLocalLoading(false);
         });
@@ -88,9 +87,7 @@ const ReportDetailModal = ({ open, handleCloseModal, type, currentTarget }) => {
             handleNextStep();
           }
         })
-        .catch((err) => {
-          throw err;
-        })
+        .catch(ignoreApiError)
         .finally(() => {
           // setLocalLoading(false);
         });
@@ -108,9 +105,7 @@ const ReportDetailModal = ({ open, handleCloseModal, type, currentTarget }) => {
             handleNextStep();
           }
         })
-        .catch((err) => {
-          throw err;
-        })
+        .catch(ignoreApiError)
         .finally(() => {
           // setLocalLoading(false);
         });

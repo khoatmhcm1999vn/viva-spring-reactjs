@@ -1,4 +1,7 @@
-import { Route, Navigate, Routes, BrowserRouter, Link } from "react-router-dom";
+// Navigate, Routes va BrowserRouter la API cua react-router-dom v6, du an dung v5
+// nen chung khong ton tai. Chung cung khong duoc dung o day (file dung Switch /
+// Route / Redirect, import ben duoi).
+import { Route } from "react-router-dom";
 import PostsListPage from "components/pages/PostsListPage";
 import NotFoundPage from "components/pages/NotFoundPage";
 import LoginPage from "components/pages/LoginPage";

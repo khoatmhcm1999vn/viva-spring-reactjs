@@ -18,6 +18,7 @@ import useSocket from "hooks/useSocket";
 import { checkConversationIsExistOrNot } from "api/chatService";
 import { useHistory } from "react-router-dom";
 import { handleFilterHashtagOfCaption } from "utils/resolveData";
+import { ignoreApiError } from "utils/apiError";
 
 const Interaction = ({ currentPost, handleClick, index, dataList }) => {
   const { isLiked, id: postId } = currentPost;
@@ -100,9 +101,7 @@ const Interaction = ({ currentPost, handleClick, index, dataList }) => {
           setFetchInfo(res.data);
         }
       })
-      .catch((err) => {
-        throw err;
-      })
+      .catch(ignoreApiError)
       .finally(() => {});
   };
 

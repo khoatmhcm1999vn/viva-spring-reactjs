@@ -6,7 +6,9 @@ import Stomp from "stompjs";
 import { getJwtToken } from "utils/cookie";
 import { getCurrentUser } from "utils/jwtToken";
 import { getConversations, getListOfConversationId } from "api/chatService";
-import { useStoreSocket, actions, SocketStoreContext } from "globalSocketState";
+// useStoreSocket khong ton tai trong globalSocketState (chi export SocketStoreContext,
+// SocketStoreProvider, actions) va cung khong duoc dung trong file nay.
+import { actions, SocketStoreContext } from "globalSocketState";
 import {
   CLEAN_SOCKET_STATES,
   GET_ACTIVE_USERS,

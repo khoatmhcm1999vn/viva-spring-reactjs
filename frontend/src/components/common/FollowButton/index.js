@@ -15,6 +15,7 @@ import CustomModal from "components/common/CustomModal";
 import "./style.scss";
 import useUpdateProfile from "hooks/useUpdateProfile";
 import { useTranslation } from "react-i18next";
+import { ignoreApiError } from "utils/apiError";
 
 const FollowButton = (props) => {
   const {
@@ -61,9 +62,7 @@ const FollowButton = (props) => {
           // setUpdatedItem({ id, following: true, inPopUp });
         }
       })
-      .catch((err) => {
-        throw err;
-      })
+      .catch(ignoreApiError)
       .finally(() => {
         setLocalLoading(false);
       });
@@ -83,9 +82,7 @@ const FollowButton = (props) => {
           // setUpdatedItem({ id, following: false, inPopUp });
         }
       })
-      .catch((err) => {
-        throw err;
-      })
+      .catch(ignoreApiError)
       .finally(() => {
         setLocalLoading(false);
       });

@@ -10,12 +10,14 @@ import {
   InputLabel,
   Typography,
 } from "@mui/material";
-import { register } from "api/userService";
+import { register, login } from "api/userService";
 import useLoading from "hooks/useLoading";
 import useSnackbar from "hooks/useSnackbar";
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { saveJwtToken, saveRefreshToken } from "utils/cookie";
+import { parseJwt } from "utils/jwtToken";
 import {
   checkAllCondition,
   getStrongScore,
@@ -182,18 +184,59 @@ const RegisterPage = () => {
     }
   };
 
+  /**
+   * Sau khi dang ky thanh cong, thu dang nhap luon.
+   *
+   * Khi backend bat vivacon.verification.bypass, tai khoan moi da o trang thai ACTIVE
+   * nen login se thanh cong va nguoi dung vao thang trang chu, khong phai cho ma
+   * xac thuc gui qua email (hien dang khong gui duoc).
+   *
+   * Khi backend TAT bypass, login tra 403 kem body 1002 va ta quay lai luong cu la
+   * dieu huong sang /verify. Nho vay frontend tu thich nghi, khong can them bien
+   * moi truong nao va cung khong the lech cau hinh voi backend.
+   */
+  const goToVerifyScreen = () => {
+    setSnackbarState({
+      open: true,
+      content: "Please verify code to use this web",
+      type: "SUCCESS",
+    });
+    history.push("/verify", { email, type: "Register" });
+  };
+
+  const loginRightAfterRegister = () => {
+    login({ username, password })
+      .then((res) => {
+        if (res.status === 200) {
+          saveJwtToken(res.data.accessToken);
+          saveRefreshToken(res.data.refreshToken);
+          setSnackbarState({
+            open: true,
+            content: trans("signIn.loginSuccessful"),
+            type: "SUCCESS",
+          });
+          const roles = parseJwt(res.data.accessToken).roles;
+          setTimeout(() => {
+            window.location.href =
+              roles.includes("ADMIN") || roles.includes("SUPER_ADMIN")
+                ? "/dashboard"
+                : "/";
+          }, 1000);
+        }
+      })
+      .catch(() => {
+        // 1002 = tai khoan chua active, tuc backend dang TAT bypass.
+        goToVerifyScreen();
+      });
+  };
+
   const handleRegister = () => {
     setLoading(true);
     register({ username, fullName, email, password, matchingPassword })
       .then((res) => {
         if (res.status === 200) {
           setTimeout(() => {
-            setSnackbarState({
-              open: true,
-              content: "Please verify code to use this web",
-              type: "SUCCESS",
-            });
-            history.push("/verify", { email, type: "Register" });
+            loginRightAfterRegister();
           }, 1000);
         }
       })
