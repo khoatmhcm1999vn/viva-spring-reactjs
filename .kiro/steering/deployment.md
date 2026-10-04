@@ -23,7 +23,14 @@ this file is the record of *where we are going and what is in the way*.
    26.04, its own Docker daemon. Port 80 only, dump restored, verified from Windows.
 10. **Postgres moved to Supabase** — the VM backend runs against the Supabase session
     pooler, proven by stopping the local database container and watching the API keep
-    serving. Frontend on Vercel is the only piece left.
+    serving.
+11. **Frontend on Vercel, backend exposed over HTTPS** — live at
+    `https://viva-spring-reactjs-five.vercel.app`, API and WebSocket reaching the VM
+    through a Cloudflare Tunnel. Verified from outside with `FAIL=0`.
+
+The roadmap is complete. What remains are the standing issues under
+*Known blockers*, chiefly TLS ownership, the ephemeral tunnel hostname, and the
+credentials still sitting in public git history.
 
 ## Backend image
 
@@ -331,13 +338,35 @@ It did establish that a clean clone plus a copied `.env` is enough to bring the 
 up, that only the frontend port was open, and that the named volume survived the project
 moving directory. All of that has since been re-established on the real VM.
 
-## Remaining
+## 10. Vercel + Supabase + the VM backend — live
 
-### 10. Vercel + Supabase + the VM backend
+**Live at `https://viva-spring-reactjs-five.vercel.app`**, with Postgres on Supabase
+and Spring Boot on the Ubuntu VM behind a Cloudflare Tunnel. Verified end to end from
+outside: `FAIL=0`.
 
-The target shape: React on Vercel, Postgres on Supabase, Spring Boot on the Ubuntu VM
-from step 9. The repository is now prepared for it, and everything that could be
-verified without an account has been. What is left is the account work and a tunnel.
+The final topology:
+
+```
+browser
+  -> https://viva-spring-reactjs-five.vercel.app     (Vercel CDN, static only)
+  -> https://<name>.trycloudflare.com/api  and  /ws  (Cloudflare edge)
+       -> cloudflared in the VM -> nginx -> Spring Boot
+            -> Supabase session pooler (ap-south-1)
+```
+
+Two things about the deployment that are worth keeping.
+
+**Vercel renamed the project.** `viva-spring-reactjs` was taken, so the actual host is
+`viva-spring-reactjs-**five**.vercel.app`. The origin allow-list was already
+`https://*.vercel.app`, so nothing broke. Had the backend been configured with the
+specific name chosen in the dashboard, it would have been wrong before the first
+deploy finished — an argument for the pattern that only showed up by accident.
+
+**`main` had to be merged first.** The Vercel import defaults to the repository's
+default branch, and at that point `main` was 22 commits behind: no `vercel.json`, no
+`build` script, no `engines.node`, and an `.env.production` still pointing at the dead
+`vivacon.cf`. Deploying from it would have failed three separate ways. Merged via PR
+(`e12d3e0`), which was a fast-forward.
 
 #### The thing that blocks it, stated plainly
 
@@ -644,21 +673,72 @@ moves to a different origin, so the bundle needs absolute URLs, the backend need
 accurate origin list, the WebSocket cannot be proxied, and a changing tunnel hostname
 means a rebuild. Worth it for a real audience; not worth it to prove the stack works.
 
-#### Steps that need an account, and cannot be done from here
+#### Measured against the live deployment
 
-1. **Supabase project** — create it, then restore the dump and collect the session
-   pooler host, `postgres.<project-ref>` username and password.
-2. ~~**Cloudflare Tunnel in the VM**~~ — done, and it turned out to need no account and
-   no `sudo`, because `cloudflared` runs as a container. A **named** tunnel still needs
-   a Cloudflare account and a domain; that is the only way to stop the hostname
-   changing on every restart. Set `TUNNEL_TOKEN` and `TUNNEL_COMMAND=tunnel run`.
-3. **Vercel project** — import the repository, set Root Directory to `frontend`, and
-   add the two `REACT_APP_*` variables pointing at the tunnel hostname.
+| Check | Result |
+|---|---|
+| `/`, `/newsfeed`, any other path | 200 index.html, so react-router works |
+| `REACT_APP_API_URL` baked into the bundle | the tunnel host + `/api` |
+| `REACT_APP_SOCKET_URL` | the tunnel host + `/ws` |
+| Any trace of `vivacon.cf` | none |
+| `/api/v1/account/check` with `Origin:` the Vercel host | 200 JSON, correct `Allow-Origin` |
+| `/api/v1/post` without a token | 401 |
+| `/ws/info` with `Origin:` the Vercel host | 200 |
+| CORS preflight from the Vercel host | 200, `Allow-Origin` exact, `Allow-Credentials: true` |
+| `/ws/info` with `Origin: https://evil.example.com` | 403 |
 
-A note on ordering: the tunnel hostname has to exist before the Vercel build, because
-`REACT_APP_*` is baked into the bundle at build time and cannot be read at runtime. If
-the hostname changes, the frontend must be redeployed. A named Cloudflare tunnel on a
-domain you control avoids that; a quick tunnel's random hostname does not.
+Two findings came out of checking rather than assuming.
+
+**Vercel injects its own variables into the bundle, 18 of them.** With the CRA preset
+it prefixes them `REACT_APP_`, and CRA inlines anything with that prefix, so the
+public bundle now contains `REACT_APP_VERCEL_GIT_COMMIT_AUTHOR_NAME`,
+`..._AUTHOR_LOGIN`, `..._REPO_OWNER`, `..._PROJECT_ID`, `..._DEPLOYMENT_ID`, the commit
+SHA and the full commit message. No credentials, and this repository is public anyway,
+so the practical impact here is small — but it is a real author-name-and-internal-id
+disclosure that would matter on a private repo. It can be turned off under
+*Project Settings → Environment Variables → Automatically expose System Environment
+Variables*.
+
+This also caused a false alarm in my own verification: the first version asserted "the
+Vercel host must not appear anywhere in the bundle", which failed on
+`REACT_APP_VERCEL_PROJECT_PRODUCTION_URL`. The assertion was wrong, not the
+deployment. The check now reads the **actual value** of `REACT_APP_API_URL` instead of
+grepping for a substring — a reminder that a test asserting the wrong thing is worse
+than no test, because it costs time and credibility.
+
+**`https://<site>.vercel.app/api/v1/post` returns 200 with HTML, not 404.** The
+catch-all rewrite to `index.html` sees to that. So if the `REACT_APP_*` variables are
+ever missing, axios receives HTML and fails with `Unexpected token <` rather than
+anything that points at the real cause. Worth knowing before it costs an afternoon.
+
+#### Operational notes for this deployment
+
+- **The tunnel hostname is ephemeral.** It is a quick tunnel, so a `cloudflared`
+  restart issues a new hostname, and then the two Vercel variables are stale.
+  Updating them is **not enough** — `REACT_APP_*` is baked in at build time, so a
+  **redeploy** is required. A named tunnel (`TUNNEL_TOKEN` plus
+  `TUNNEL_COMMAND=tunnel run`) with a real domain is the fix, and needs a Cloudflare
+  account.
+- `main` is now the production branch, so every push to it triggers a Vercel deploy.
+- Three origins are allowed: the VM's LAN address for debugging, the tunnel hostname,
+  and `https://*.vercel.app`. The last one covers preview deployments as well as
+  production.
+
+#### Reproducing this from scratch
+
+1. **Supabase project** — create it, restore the dump with
+   `config/supabase-restore.ps1`, and put the session pooler host,
+   `postgres.<project-ref>` username and password in `config/supabase.env`.
+2. **Cloudflare Tunnel** — `docker compose -f docker-compose.yml -f
+   docker-compose.tunnel.yml up -d`. No account and no `sudo`, because `cloudflared`
+   runs as a container. Then `config/vm-tunnel-origins.sh` reads the assigned hostname
+   from the running container and syncs `FRONTEND_ALLOWED_ORIGINS`.
+3. **Vercel project** — import the repository, Root Directory `frontend`, and add the
+   two `REACT_APP_*` variables pointing at the tunnel hostname.
+
+**Order matters.** The tunnel hostname has to exist *before* the Vercel build, because
+`REACT_APP_*` is baked into the bundle and cannot be read at runtime. The backend's
+origin list, by contrast, is read at startup and needs only a restart.
 
 ## Known blockers unrelated to any single step
 
