@@ -22,12 +22,9 @@ import {
   getUserQuantityStatisticInYears,
   getTopHashTagQuantityInTime,
 } from "api/statisticService";
-import {
-  limitPerPage,
-  PERIOD,
-  timeSection,
-  timeSectionList,
-} from "constant/types";
+// timeSection bi bo di: no khong duoc export tu constant/types, va trong file nay
+// cung bi che boi state cuc bo "const [timeSection, setTimeSection] = useState(...)".
+import { limitPerPage, PERIOD, timeSectionList } from "constant/types";
 import RightSide from "../RigtSide";
 import ReactApexChart from "react-apexcharts";
 

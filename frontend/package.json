@@ -74,10 +74,15 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
+  "comment:overrides": "react-filerobot-image-editor khai bao react-konva o dang mo (>=17.0.0) nen npm keo ve ban moi nhat, hien yeu cau React 19. Du an dung React 17, hau qua la webpack bao loi react-konva goi useFormStatus khong ton tai trong react-dom 17. Ghim lai cap tuong thich React 17.",
+  "overrides": {
+    "react-konva": "17.0.2-6",
+    "konva": "^8.4.3"
+  },
+  "comment:eslintConfig": "Bo 'react-app/jest': cau hinh do tham chieu env jest/globals ma khong giai duoc trong cay dependency hien tai, lam webpack bao loi 'Environment key jest/globals is unknown'. Du an khong co test thuc su nao.",
   "eslintConfig": {
     "extends": [
-      "react-app",
-      "react-app/jest"
+      "react-app"
     ]
   },
   "browserslist": {

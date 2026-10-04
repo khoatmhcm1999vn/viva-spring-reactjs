@@ -3,7 +3,8 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import { removeJwtToken, removeRefreshToken } from "utils/cookie";
-import { useNavigate } from "react-router-dom";
+// useNavigate la API cua react-router-dom v6, du an dung v5 nen no khong ton tai.
+// File nay cung khong dung no.
 const notiType = {
   POST: "POST",
   FOLLOWED: "FOLLOWED",

@@ -28,7 +28,6 @@ import { getCurrentUser } from "utils/jwtToken";
 import { SOCKET_URL } from "api/constants";
 import {
   resolveName,
-  resolveUserName,
   splitUserName,
   filterParticipants,
   targetAvatarLayout,

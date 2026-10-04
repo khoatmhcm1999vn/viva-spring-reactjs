@@ -2,7 +2,9 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import useInfiniteReverseList from "hooks/useInfiniteReverseList";
 import ReactLoading from "react-loading";
 import * as Scroll from "react-scroll";
-import { ELement, Link } from "react-scroll";
+// "ELement" la loi chinh ta cua "Element", react-scroll khong export ten do.
+// File nay khong dung no nen bo han.
+import { Link } from "react-scroll";
 import "./style.scss";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import _ from "lodash";
