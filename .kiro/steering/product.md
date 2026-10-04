@@ -19,4 +19,6 @@
 
 ## Status
 
-This is an academic/portfolio project. Config files contain committed credentials (DB passwords, AWS keys, email passwords, API keys) and the `prod` Maven profile points at a frontend directory that no longer exists. Treat these as known issues; do not add new secrets to tracked files.
+This is an academic/portfolio project. Credentials are no longer in the tracked config files — they come from environment variables, with real values kept in the gitignored `config/` directory — but they **are still in git history on a public repository**, so they need rotating rather than merely removing. The `prod` Maven profile also points at a frontend directory that no longer exists. Treat these as known issues; do not add new secrets to tracked files.
+
+Deployment status lives in `deployment.md`: the stack runs in Docker Compose and has been deployed to a real Ubuntu VM. Vercel plus Supabase is prepared but not yet live.

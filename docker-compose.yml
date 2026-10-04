@@ -75,7 +75,10 @@ services:
       # vivacon.verification.bypass nen khong dung cho thu gi giong deploy.
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-prod}
       # Trong mang cua compose, host cua DB la ten service "db", khong phai localhost.
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-vivacon}
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL:-jdbc:postgresql://db:5432/${POSTGRES_DB:-vivacon}}
+      # Mac dinh trung POSTGRES_USER de stack compose tu khop nhau. Tach rieng vi
+      # Supabase doi username dang postgres.<project-ref> qua pooler.
+      DB_USERNAME: ${DB_USERNAME:-${POSTGRES_USER:-postgres}}
       DB_PASSWORD: ${DB_PASSWORD:?can dat DB_PASSWORD trong file .env}
       JWT_SECRET_SALT: ${JWT_SECRET_SALT:?can dat JWT_SECRET_SALT trong file .env}
       # Origin ma nguoi dung thuc su mo frontend. De trong hoac dien sai la moi ket

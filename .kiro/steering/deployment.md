@@ -293,8 +293,9 @@ backend 307 MB, db 117 MB. Comfortable.
 
 - **TLS.** Nothing in this stack terminates HTTPS, and the VM run was plain HTTP.
   Either put a reverse proxy in front of the frontend container or add a certificate to
-  its nginx. Not optional once step 10 splits frontend and backend across origins,
-  because the JWT cookie will then need `Secure` and `SameSite=None`.
+  its nginx. Step 10 makes this mandatory, though not for the reason this document
+  used to give: see *The cross-origin cookie worry was wrong*. The real reasons are
+  mixed content and `wss`.
 - **A from-scratch build on a clean machine is still unproven.** Images were shipped,
   not built on the VM, and the Windows images came from a warm layer cache.
 - **No firewall was configured** in the VM, and nothing was tested from outside a NAT
@@ -321,19 +322,186 @@ moving directory. All of that has since been re-established on the real VM.
 
 ## Remaining
 
-### 10. Supabase and Vercel
+### 10. Vercel + Supabase + the VM backend
 
-- **Supabase** for Postgres: load `container/prepare/schema/schema.sql` and both files
-  in `container/prepare/functions/`. The statistics and chat endpoints call those
-  functions by name and break without them. Supabase requires SSL, so the URL needs
-  `sslmode=require`; also drop `useSSL=false&useUnicode=true`, which are MySQL
-  parameters the Postgres driver ignores.
-- **Vercel cannot run this backend.** It hosts static output and serverless functions,
-  not a long-lived JVM, and it does not hold WebSocket connections. Frontend on Vercel
-  is fine; the backend needs the VM from step 9, or Render, Railway or Fly.
-- Once the two are on different origins: JWTs are kept in cookies and axios sends
-  `withCredentials`, so the cookie needs `Secure` and `SameSite=None`, which means
-  HTTPS on both ends and `wss` for the socket.
+The target shape: React on Vercel, Postgres on Supabase, Spring Boot on the Ubuntu VM
+from step 9. The repository is now prepared for it, and everything that could be
+verified without an account has been. What is left is the account work and a tunnel.
+
+#### The thing that blocks it, stated plainly
+
+**Vercel is HTTPS-only and the VM is on a private address.** That combination breaks
+the obvious arrangement in three separate ways:
+
+1. A page served from `https://<project>.vercel.app` cannot call
+   `http://192.168.221.128`. The browser blocks it as mixed content.
+2. Vercel's edge cannot reach `192.168.221.128` either, so proxying `/api` through a
+   Vercel rewrite does not help.
+3. **Vercel cannot carry the WebSocket at all.** Its functions do not hold WebSocket
+   connections, so `/ws` can never be proxied through Vercel. SockJS has to reach the
+   backend directly, which means the backend needs its own valid `https` / `wss`
+   endpoint regardless of what happens to `/api`.
+
+So the backend needs a public HTTPS hostname with a trusted certificate. An IP on a
+NAT network cannot have one. The practical answer is a **tunnel out of the VM** —
+Cloudflare Tunnel (`cloudflared`) is the right tool: free, no port forwarding, no
+public IP, a valid certificate, and it carries WebSocket. ngrok's free tier serves an
+interstitial page that breaks XHR, and port forwarding is awkward here because the VM
+sits behind both VMware NAT and the household router.
+
+Nothing about this is a limitation of the application. It is what happens when one
+half of a system is on the public internet and the other half is not.
+
+#### Supabase: the session pooler, not the direct host
+
+**Measured: this VM has no IPv6 at all.** No global address, no default route,
+`curl -6` returns nothing on the host and inside a container, and Docker's bridge has
+IPv6 disabled. Supabase's direct connection host resolves to AAAA only, unless the
+paid IPv4 add-on is enabled, so **the direct connection string cannot work here.**
+DNS does return the AAAA record, so the failure looks like a hang, not a DNS error.
+
+Use the **session** pooler, port 5432:
+
+```
+SPRING_DATASOURCE_URL=jdbc:postgresql://aws-0-<region>.pooler.supabase.com:5432/postgres?sslmode=require
+DB_USERNAME=postgres.<project-ref>
+DB_PASSWORD=<the database password>
+```
+
+Three details that each cause a different failure:
+
+- **Session mode (5432), not transaction mode (6543).** Transaction pooling multiplexes
+  connections and breaks server-side prepared statements, which Hibernate leans on
+  heavily. If you must use 6543, add `prepareThreshold=0`.
+- **`DB_USERNAME` is now a real knob.** The pooler wants `postgres.<project-ref>`, not
+  `postgres`. Before this step `application-prod.yml` hardcoded the username, so this
+  was simply not expressible.
+- **`sslmode=require`.** The old URL carried `useSSL=false&useUnicode=true`, which are
+  *MySQL* driver parameters. The Postgres driver ignores them, so the file read as
+  though SSL were disabled while it was doing something else entirely. Both are gone.
+
+#### What to load into Supabase, and a correction
+
+Earlier this document said to load `schema.sql` and the two function files. That is
+**not sufficient**, and the test proved it.
+
+`schema.sql` creates only **11 tables**: `role`, `account`, `participant`, `following`,
+`liking`, `attachment`, `comment`, `conversation`, `message`, `post`, `setting`. The
+other eight — `device_metadata`, `hashtag`, `hashtag_rel_post`, `notification`,
+`account_report`, `post_report`, `comment_report`, `report_template` — exist only
+because Hibernate's `ddl-auto: update` creates them at boot. That is why the VM showed
+19 tables after the init scripts plus one backend start, and 22 after the dump.
+
+The visible consequence: `getlastestloginlocationperaccount()` fails with
+`relation "device_metadata" does not exist` on a schema built from `schema.sql` alone.
+
+**So restore the dump instead** — `container/data/*.sql` carries all 22 tables, all 14
+functions and the data. Follow *Restoring a dump into this stack* above; on a fresh
+Supabase project there is no init-script schema to clear first.
+
+Version compatibility was checked rather than assumed: all three SQL files load into
+**Postgres 17.11 with 0 errors**, and no file contains anything Supabase would refuse
+(no `CREATE DATABASE`, no `\connect`, no `OWNER TO`, no role or grant statements, no
+extensions, no `search_path`).
+
+#### Vercel: what was wrong and is now fixed
+
+`frontend/vercel.json` now exists. Set the project's **Root Directory to `frontend`**,
+because the repository root is the Spring Boot project.
+
+Three things would each have broken the first deployment:
+
+- **The default build fails.** Vercel sets `CI=1`, and Create React App treats every
+  warning as an error when `CI` is set. This project has **412 ESLint warnings** (347
+  `no-unused-vars`, 38 `react-hooks/exhaustive-deps`, 20 `jsx-a11y/alt-text`, 6
+  `array-callback-return`, 1 `no-dupe-keys`). Measured: `CI=true` exits 1 with
+  "Treating warnings as errors" and leaves no usable bundle; `CI=false` exits 0 and
+  produces 20 MB. Hence `"buildCommand": "CI=false npm run build"`. Clearing 412
+  warnings is a real cleanup, not a deployment step.
+- **There was no `build` script.** `package.json` had only `build:prod`, which is bound
+  to `env-cmd` and the dead `.env.production`. Vercel's CRA preset wants `npm run
+  build`. The standard script has been added.
+- **`npm install` is not enough.** It has to be `npm install --force`, for the
+  `react-konva` reason in `tech.md`. Hence `"installCommand"`.
+
+Also pinned `engines.node` to `22.x`. Vercel disabled Node 20 on 1 October 2026 and
+Node 18 before that, so 22 is the lowest usable LTS. Verified: `react-scripts` 5 builds
+cleanly on Node 22.23.3.
+
+Set these in **Project Settings → Environment Variables**, as absolute URLs:
+
+```
+REACT_APP_API_URL=https://<tunnel-host>/api
+REACT_APP_SOCKET_URL=https://<tunnel-host>/ws
+```
+
+`.env.production` is committed and still holds the relative `/api` and `/ws`, which is
+correct for `npm run build:prod` behind nginx. Real environment variables win over it,
+because dotenv never overwrites an existing `process.env` entry — verified by searching
+the built bundle, which contained the absolute URLs and neither `vivacon.cf` nor
+`localhost:8090`. The trap is forgetting to set them: the build then quietly uses `/api`
+and the deployed site calls `https://<project>.vercel.app/api/v1/...`, which 404s.
+
+#### On the backend, once the frontend is on Vercel
+
+```
+FRONTEND_ALLOWED_ORIGINS=https://<project>.vercel.app,https://*.vercel.app
+```
+
+The second entry covers Vercel's per-deployment preview URLs. One property drives both
+CORS and the WebSocket handshake, so getting it wrong fails loudly in both places
+rather than half-working.
+
+**CORS used to accept everything.** `corsFilter` called
+`addAllowedOriginPattern("*")` together with `setAllowCredentials(true)`, which reflects
+whatever `Origin` arrives and adds `Access-Control-Allow-Credentials: true` — meaning
+any site on the internet could call this API from a visitor's browser and read the
+reply. It is now restricted to the configured list; entries containing `*` are
+registered as patterns so `https://*.vercel.app` works. Measured: the configured origin
+gets a 200 preflight with the right headers, while `evil.example.com`,
+`attacker.vercel.app` and an unlisted `localhost:3000` all get 403 and no
+`Access-Control-Allow-Origin`.
+
+One consequence to remember: running the CRA dev server on `:3000` against a
+prod-profile backend now requires adding `http://localhost:3000` to that list.
+
+#### The cross-origin cookie worry was wrong
+
+An earlier version of this document said the JWT cookie would need `Secure` and
+`SameSite=None` once the frontend and backend were on different origins. **That is not
+how this application authenticates.**
+
+`utils/cookie.js` stores the token with `js-cookie` under `sameSite: 'Lax'`, on the
+*frontend's* origin, and the axios request interceptor copies it into an
+`Authorization: Bearer` header. The backend is `SessionCreationPolicy.STATELESS` with
+CSRF disabled and `JWTRequestFilter` reads that header. The cookie is client-side
+storage that never crosses an origin, so `SameSite=None` is irrelevant to whether login
+works cross-origin.
+
+`withCredentials: true` is set on the axios instance but earns nothing here, since the
+backend origin has no cookies to send. It does have one real effect: it forces the
+preflight to demand `Access-Control-Allow-Credentials: true` and a specific, non-wildcard
+`Access-Control-Allow-Origin`, which is exactly why the origin list has to be right.
+
+HTTPS is still required, for the mixed-content and `wss` reasons above. Just not for
+this reason.
+
+#### Steps that need an account, and cannot be done from here
+
+1. **Supabase project** — create it, then restore the dump and collect the session
+   pooler host, `postgres.<project-ref>` username and password.
+2. **Cloudflare Tunnel in the VM** — `cloudflared` has to be installed with `sudo`,
+   which needs a password, so it is a by-hand step like the Docker install was. Point
+   it at `http://localhost:80`, the frontend container's nginx, which already proxies
+   `/api` and `/ws` to the backend. That way one hostname serves both and the existing
+   proxy keeps doing its job.
+3. **Vercel project** — import the repository, set Root Directory to `frontend`, and
+   add the two `REACT_APP_*` variables.
+
+A note on ordering: the tunnel hostname has to exist before the Vercel build, because
+`REACT_APP_*` is baked into the bundle at build time and cannot be read at runtime. If
+the hostname changes, the frontend must be redeployed. A named Cloudflare tunnel on a
+domain you control avoids that; a quick tunnel's random hostname does not.
 
 ## Known blockers unrelated to any single step
 
@@ -341,10 +509,20 @@ moving directory. All of that has since been re-established on the real VM.
   Microsoft account, so the client-credentials flow is unavailable and a refresh token
   has to be obtained once through an interactive browser consent. See the comments in
   `config/application-dev.yml`.
-- `application-prod.yml` still points at an AWS RDS endpoint that is almost certainly
-  retired.
 - The `prod` Maven profile builds the frontend from `../Vivacon-UI`, a directory that
   does not exist here. It is stale and unused by the Docker build.
+- **The statistics stored functions are not safe to call concurrently.** Each of
+  `postQuantityStatisticInRecentMonths`, `postQuantityStatisticInQuarters`,
+  `userQuantityStatisticInRecentMonths` and their siblings begins by dropping and
+  recreating a *permanent* view in `public` — `month_year`, `quarter_year` or
+  `list_year`. Two dashboard requests arriving together on different connections race
+  on the same view, which shows up as an intermittent "relation does not exist" or a
+  dependency error, never reproducible on demand. The views only generate a 12, 4 or 2
+  row calendar from a `VALUES` list, so the fix is to inline them as CTEs and delete the
+  views. Pre-existing, unrelated to Supabase, and not yet fixed.
+- 412 ESLint warnings in the frontend, which is why the Vercel build has to run with
+  `CI=false`. Mostly `no-unused-vars`, but 20 are `jsx-a11y/alt-text`, so there is a
+  genuine accessibility gap behind that number.
 - Credentials committed before this work started remain in git history on a public
   repository. Removing them from the current files does not undo that; they need
   rotating at AWS, Cloudinary, the mail provider, and Postgres.

@@ -68,11 +68,17 @@
     "use-long-press": "^2.0.2",
     "web-vitals": "^2.1.4"
   },
+  "comment:scripts": "Script 'build' chuan cua CRA truoc day KHONG co, chi co 'build:prod' dung env-cmd. Vercel va Dockerfile deu muon mot lenh build khong rang buoc vao file .env nao, nen them lai 'build'.",
   "scripts": {
     "start:dev": "env-cmd -f .env.development react-scripts start",
+    "build": "react-scripts build",
     "build:prod": "env-cmd -f .env.production react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
+  },
+  "comment:engines": "Vercel da vo hieu Node 20 tu 01/10/2026, va Node 18 truoc do, nen 22 la ban LTS thap nhat con dung duoc. Da do: react-scripts 5 build thanh cong tren Node 22.23.3.",
+  "engines": {
+    "node": "22.x"
   },
   "comment:overrides": "react-filerobot-image-editor khai bao react-konva o dang mo (>=17.0.0) nen npm keo ve ban moi nhat, hien yeu cau React 19. Du an dung React 17, hau qua la webpack bao loi react-konva goi useFormStatus khong ton tai trong react-dom 17. Ghim lai cap tuong thich React 17.",
   "overrides": {

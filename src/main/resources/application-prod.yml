@@ -6,9 +6,20 @@ spring:
   name: Vivacon
   datasource:
     driver-class-name: org.postgresql.Driver
-    # Docker/VM: ghi de bang bien moi truong SPRING_DATASOURCE_URL.
-    url: jdbc:postgresql://vivacon-database.cadyqzt0yluv.ap-southeast-2.rds.amazonaws.com:5432/innovation?useSSL=false&useUnicode=true
-    username: postgres
+    # Mac dinh la mot Postgres chay cung mang, vi deploy that LUON ghi de bang
+    # SPRING_DATASOURCE_URL (compose dat gia tri nay tro den service "db").
+    #
+    # Truoc day mac dinh o day la mot endpoint AWS RDS da ngung hoat dong, kem hai
+    # tham so useSSL=false&useUnicode=true - do la tham so cua driver MySQL, driver
+    # Postgres khong hieu va bo qua. Ai doc file se tuong dang tat SSL, thuc te
+    # khong tat gi ca.
+    #
+    # Supabase: dung SESSION pooler (IPv4) va bat SSL tuong minh, vi du
+    #   jdbc:postgresql://aws-0-<region>.pooler.supabase.com:5432/postgres?sslmode=require
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://db:5432/vivacon}
+    # Phai tach ra duoc khoi "postgres": Supabase pooler yeu cau username dang
+    # postgres.<project-ref>, khong phai postgres.
+    username: ${DB_USERNAME:postgres}
     # Lay tu bien moi truong DB_PASSWORD (hoac SPRING_DATASOURCE_PASSWORD).
     # Rong thi Hikari khong ket noi duoc va app chet ngay luc boot.
     password: ${DB_PASSWORD:}

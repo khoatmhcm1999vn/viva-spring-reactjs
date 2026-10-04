@@ -43,7 +43,8 @@ Frontend (from `frontend/`). Use `--force`, not `--legacy-peer-deps`: the latter
 ```powershell
 npm install --force
 npm run start:dev    # CRA dev server on :3000, loads .env.development
-npm run build:prod   # production build, loads .env.production
+npm run build        # plain CRA build; REACT_APP_* come from the real environment
+npm run build:prod   # same build but with env-cmd loading .env.production
 npm test             # watch mode; use `npm test -- --watchAll=false` for one-shot
 ```
 
@@ -79,9 +80,12 @@ Docker image: `Dockerfile` expects `target/Vivacon-0.0.1-SNAPSHOT.jar` to alread
 ## Known config caveats
 
 - Backend dev port is **8090**, matching `REACT_APP_API_URL` in `.env.development`. The prod profile still uses 8080.
-- `Constants.FE_URL` is hardcoded to `http://localhost:3000` and is used for the CORS/SockJS allowed origins and email links. It has to become configurable before the app is served from any other host, or the SockJS handshake will be rejected and chat plus notifications will fail silently.
+- The origins allowed to reach the API and open a WebSocket both come from the single property `vivacon.frontend.allowed-origins` (`FRONTEND_ALLOWED_ORIGINS`), read by `HTTPSecurityConfiguration.corsFilter` and `STOMPMessageBrokerConfiguration`. Leave it empty and cross-origin requests are refused and the SockJS handshake returns 403, which fails *silently* from the user's side: the page loads and only chat and notifications are dead. Both classes log a warning at startup when it is empty. An entry containing `*` is treated as a pattern, which is how `https://*.vercel.app` preview URLs are allowed. This replaced a hardcoded `Constants.FE_URL` of `http://localhost:3000`.
+- Running the CRA dev server on `:3000` against a **prod-profile** backend needs `http://localhost:3000` added to `FRONTEND_ALLOWED_ORIGINS`. The dev profile already lists it.
 - Email cannot actually be sent until `MS_OAUTH_*` is filled in. The mailbox is a personal Microsoft account, so `client_credentials` is unavailable and a refresh token has to be obtained once through an interactive browser consent. Basic SMTP auth is dead: a direct test returns `535 5.7.3`.
 - `frontend/package.json` pins `react-konva` to the exact prerelease `17.0.2-6` through `overrides`, because a transitive open range (`>=17.0.0`) otherwise resolves to a React 19 build that fails against React 17. Do not relax that to a caret range; the React 17 line has no plain releases.
 - `package-lock.json` is gitignored by project choice, so dependency resolution is not reproducible across machines. The `overrides` block is the only thing holding the tree together.
 - The `prod` Maven profile builds the frontend from `../Vivacon-UI`, which does not exist in this repo (the frontend is `frontend/`). The profile is stale.
-- `application-prod.yml` still points at an AWS RDS endpoint that is almost certainly gone.
+- The frontend carries **412 ESLint warnings**, so any build with `CI` set fails: CRA promotes warnings to errors. `frontend/vercel.json` therefore builds with `CI=false`. 347 are `no-unused-vars`, but 20 are `jsx-a11y/alt-text`, a real accessibility gap.
+- `engines.node` is pinned to `22.x`. Vercel disabled Node 20 on 1 October 2026, and `react-scripts` 5 is verified working on 22.23.3.
+- The statistics stored functions drop and recreate *permanent* views (`month_year`, `quarter_year`, `list_year`) in `public` on every call, so two concurrent dashboard requests can race and fail intermittently. See `deployment.md` for the detail and the suggested fix.
