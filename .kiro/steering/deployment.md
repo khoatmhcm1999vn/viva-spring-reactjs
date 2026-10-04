@@ -81,17 +81,39 @@ Docker build does not read it, so it only matters for `npm run build:prod`.
 
 ## The compose stack
 
-`docker compose up -d --build` brings up four services. Run it from the repo root
-with a `.env` file present; copy `.env.example` and fill in `DB_PASSWORD` and
-`JWT_SECRET_SALT`, which compose requires with `${VAR:?}` so a missing value fails
-immediately instead of starting half-configured.
+There are two files and the difference matters.
 
-| Service    | Host port | Notes |
-|------------|-----------|-------|
-| `frontend` | 8081      | nginx, this is the address to open |
-| `backend`  | 8091      | direct access for Swagger and debugging |
-| `db`       | 5433      | Postgres 14 |
-| `adminer`  | 8901      | database browser, server `db` |
+`docker-compose.yml` is the base and is safe to deploy: **only the frontend publishes
+a port.** The database and backend talk over the compose network and are not reachable
+from outside, and there is no Adminer.
+
+`docker-compose.override.yml` adds the development conveniences: it publishes the
+database and backend ports and adds Adminer. Compose loads it automatically, so these
+two commands differ:
+
+```bash
+docker compose up -d                      # dev: override is loaded
+docker compose -f docker-compose.yml up -d # deploy: override is skipped
+```
+
+Naming a file explicitly with `-f` is what stops the override from being picked up.
+Everything the override adds is something that should not exist on a public host: an
+open database port, an open backend port, and a database admin UI with no
+authentication.
+
+Copy `.env.example` to `.env` and fill in `DB_PASSWORD` and `JWT_SECRET_SALT`.
+Compose declares them with `${VAR:?}`, so a missing value stops the stack immediately
+rather than starting it half-configured.
+
+| Service    | Dev host port | Deploy | Notes |
+|------------|---------------|--------|-------|
+| `frontend` | 8081          | 8081   | nginx, the address to open |
+| `backend`  | 8091          | none   | Swagger and debugging in dev only |
+| `db`       | 5433          | none   | Postgres 14 |
+| `adminer`  | 8901          | absent | database browser, server `db` |
+
+Measured in deploy mode: port 8081 open, ports 8091, 5433 and 8901 all closed, and the
+application still fully works through the proxy.
 
 **There is a second, unrelated Postgres on this machine.** The container `postgres_14`
 belongs to a different compose project, `vivacon-services`, defined at
@@ -138,15 +160,46 @@ not with `grep` inside `sh -c`, where the escaping is easy to get wrong.
 
 ### 9. Ubuntu VM
 
-The compose stack is portable as-is. What changes on a server:
+Not done, and it cannot be done from here: there is no VM, no host and no credentials
+in this environment. What follows is the prepared procedure, with the parts that were
+actually verified marked as such.
 
-- `FRONTEND_ALLOWED_ORIGINS` must list the real origin, or realtime dies silently.
-- Ports: the 5433/8901 offsets exist only to avoid the other local project. On a
-  clean host, 5432 and 8900 are free again, and `db` need not publish a port at all
-  since only the backend talks to it.
-- `.env` has to be created on the server. `./config/` is not used by the containers.
-- The frontend image needs no rebuild for a new domain, because the bundle only uses
-  relative paths.
+The stack is portable as-is. On the server:
+
+```bash
+git clone <repo> && cd viva-spring-reactjs
+cp .env.example .env            # then fill it in
+docker compose -f docker-compose.yml up -d --build
+```
+
+Four things change relative to a laptop:
+
+1. **`FRONTEND_ALLOWED_ORIGINS` must be the real origin**, for example
+   `https://vivacon.example.com`. Verified that this knob works end to end: setting
+   it to a domain flipped `/ws/info` to 200 for that domain and to 403 for
+   `localhost:8081`, and reverting flipped it back. Get it wrong and the failure is
+   silent, because the page still loads and only chat and notifications are dead.
+2. **`FRONTEND_PORT=80`**. The 5433 and 8901 offsets in the override exist only to
+   dodge the other local project; a clean host does not need them, and in deploy mode
+   the database and backend publish nothing anyway.
+3. **`.env` has to be created on the server.** `./config/` is a developer-machine
+   mechanism and the containers never read it.
+4. **The frontend image does not need rebuilding for a new domain**, because the
+   bundle only ever uses relative paths.
+
+Still open for a real deployment, none of it verifiable here:
+
+- **TLS.** Nothing in this stack terminates HTTPS. Either put a reverse proxy in front
+  of the frontend container, or add a certificate to its nginx. This is not optional
+  once step 10 splits the frontend and backend across origins, because the JWT cookie
+  will need `Secure` and `SameSite=None`.
+- **Image delivery.** The compose file builds from source on the host, which needs the
+  full toolchain and about a gigabyte of npm downloads on the VM. Building elsewhere
+  and pulling a tagged image is the better arrangement.
+- **Backups.** `container/data/` is a developer convenience, not a backup strategy.
+- **Rotate the committed credentials first.** They are in git history on a public
+  repository; a deployed instance using them is a deployed instance with known
+  passwords.
 
 ### 10. Supabase and Vercel
 

@@ -1,17 +1,28 @@
-# Toan bo stack: database, backend, frontend, va Adminer de xem DB.
+# Cau hinh NEN, an toan de deploy.
 #
-# Dat ten project tuong minh. Tren may dang co mot stack khac ten "vivacon-services"
-# (chay tu E:\JavaProj\Vivacon-Services) cung dung Postgres, nen phai tach ra de
-# "docker compose" o day khong bao gio cham vao container cua project do.
+# Chi frontend mo cong ra ngoai. Database va backend chi noi voi nhau trong mang noi
+# bo cua compose, va khong co Adminer. Truoc day cai nay publish ca bon service ra
+# 0.0.0.0, nghia la tren mot VM cong khai thi Postgres, backend va mot UI quan tri DB
+# deu phoi ra Internet.
+#
+# Chay o may dev:   docker compose up -d
+#   -> compose tu nap them docker-compose.override.yml, mo cong db/backend va
+#      them Adminer cho tien.
+#
+# Chay tren server:  docker compose -f docker-compose.yml up -d
+#   -> chi dinh -f tuong minh nen override KHONG duoc nap.
+#
+# Dat ten project tuong minh. Tren may dev dang co mot stack khac ten
+# "vivacon-services" (chay tu E:\JavaProj\Vivacon-Services) cung dung Postgres.
 name: vivacon
-
-# Khong khai bao "version": compose moi da bo qua va canh bao ve nó.
 
 services:
   db:
     image: postgres:14
     container_name: vivacon-db
     restart: unless-stopped
+    # Khong co "ports": chi backend va adminer trong cung mang can noi tới.
+    # Mo cong database ra host la viec cua moi truong dev, xem file override.
     environment:
       # Thieu POSTGRES_DB la loi cua file cu: Postgres chi tao database "postgres",
       # con ung dung lai ket noi vao "vivacon" nen chet voi
@@ -21,9 +32,6 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD:?can dat DB_PASSWORD trong file .env}
       TZ: UTC
       PGTZ: UTC
-    ports:
-      # 5433 chu khong phai 5432: cong 5432 dang bi Postgres cua project khac giu.
-      - "${DB_PORT:-5433}:5432"
     volumes:
       # Named volume, khong phai anonymous. File cu khong khai bao volume nen du lieu
       # nam trong volume vo danh, va mot lan recreate container la mat dau vet.
@@ -47,6 +55,8 @@ services:
       dockerfile: Dockerfile
     container_name: vivacon-backend
     restart: unless-stopped
+    # Khong co "ports": frontend goi backend qua mang noi bo bang ten service.
+    # Mo cong 8091 de vao Swagger la viec cua moi truong dev, xem file override.
     depends_on:
       db:
         # Doi Postgres thuc su nhan ket noi, khong chi doi container start.
@@ -61,8 +71,9 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-vivacon}
       DB_PASSWORD: ${DB_PASSWORD:?can dat DB_PASSWORD trong file .env}
       JWT_SECRET_SALT: ${JWT_SECRET_SALT:?can dat JWT_SECRET_SALT trong file .env}
-      # Origin ma frontend duoc phuc vu tu do. De trong la moi ket noi WebSocket
-      # bi tu choi va chat chet IM LANG, nen phai khop voi cong cua service frontend.
+      # Origin ma nguoi dung thuc su mo frontend. De trong hoac dien sai la moi ket
+      # noi WebSocket bi tu choi va chat chet IM LANG: trang van tai binh thuong.
+      # Tren server day phai la domain that, vi du https://vivacon.example.com
       FRONTEND_ALLOWED_ORIGINS: ${FRONTEND_ALLOWED_ORIGINS:-http://localhost:8081}
       MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS:-}
       MS_OAUTH_CLIENT_ID: ${MS_OAUTH_CLIENT_ID:-}
@@ -73,10 +84,6 @@ services:
       CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:-}
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
-    ports:
-      # Mo ra ngoai cho tien goi Swagger va debug. Frontend KHONG dung duong nay,
-      # no goi qua proxy cua nginx trong mang noi bo.
-      - "${BACKEND_PORT:-8091}:8080"
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health | grep -q UP"]
       interval: 10s
@@ -93,22 +100,11 @@ services:
     depends_on:
       - backend
     environment:
-      # nginx proxy /api va /ws sang day. Ten service + cong trong mang noi bo.
+      # nginx proxy /api va /ws sang day, bang ten service trong mang noi bo.
       BACKEND_ORIGIN: backend:8080
     ports:
+      # Service duy nhat mo ra ngoai. Tren server dat FRONTEND_PORT=80.
       - "${FRONTEND_PORT:-8081}:80"
-
-  adminer:
-    image: adminer:4
-    container_name: vivacon-adminer
-    restart: unless-stopped
-    depends_on:
-      - db
-    environment:
-      ADMINER_DEFAULT_SERVER: db
-    ports:
-      # 8901 chu khong phai 8900: cong 8900 dang bi Adminer cua project khac giu.
-      - "${ADMINER_PORT:-8901}:8080"
 
 volumes:
   vivacon-db-data:

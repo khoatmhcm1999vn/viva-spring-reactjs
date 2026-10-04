@@ -1,0 +1,36 @@
+# Tien ich cho moi truong DEV. Compose tu nap file nay khi chay "docker compose up"
+# ma khong chi dinh -f, nen o may ca nhan khong phai lam gi them.
+#
+# Tren server thi chi dinh -f tuong minh de BO QUA file nay:
+#   docker compose -f docker-compose.yml up -d
+#
+# Nhung gi o day deu khong nen co tren mot may cong khai: mot database mo cong,
+# mot backend mo cong, va mot UI quan tri database khong co xac thuc.
+
+services:
+  db:
+    ports:
+      # Mo cong de dung psql, DBeaver hay Postgres MCP tu host.
+      # 5433 chu khong phai 5432: cong 5432 dang bi Postgres cua project
+      # "vivacon-services" giu.
+      - "${DB_PORT:-5433}:5432"
+
+  backend:
+    ports:
+      # Mo cong de vao Swagger o http://localhost:8091/swagger-ui/index.html
+      # va goi thang API khi debug. Frontend KHONG dung duong nay, no goi qua
+      # proxy cua nginx trong mang noi bo.
+      - "${BACKEND_PORT:-8091}:8080"
+
+  adminer:
+    image: adminer:4
+    container_name: vivacon-adminer
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+    ports:
+      # 8901 chu khong phai 8900: cong 8900 dang bi Adminer cua project
+      # "vivacon-services" giu.
+      - "${ADMINER_PORT:-8901}:8080"
