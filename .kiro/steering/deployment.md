@@ -160,17 +160,35 @@ not with `grep` inside `sh -c`, where the escaping is easy to get wrong.
 
 ### 9. Ubuntu VM
 
-Not done, and it cannot be done from here: there is no VM, no host and no credentials
-in this environment. What follows is the prepared procedure, with the parts that were
-actually verified marked as such.
-
-The stack is portable as-is. On the server:
+Partly exercised, on WSL2 rather than a real server. The procedure below has been run
+end to end and works:
 
 ```bash
-git clone <repo> && cd viva-spring-reactjs
+git clone -b <branch> <repo> && cd viva-spring-reactjs
 cp .env.example .env            # then fill it in
 docker compose -f docker-compose.yml up -d --build
 ```
+
+**The WSL2 Ubuntu on this machine is not a separate host.** `docker ps` inside it
+lists the same containers as Windows, same engine version and build: it uses the
+Docker Desktop daemon through WSL integration, and the distro list shows Docker
+Desktop's own `docker-desktop` distro alongside `Ubuntu`. Deploying "to the VM" there
+redeploys to the same daemon. It proves nothing about a remote host, firewalls, SSH,
+or a separately installed engine.
+
+What it did prove, which is worth having: cloning this branch from GitHub into the
+WSL filesystem, adding only a `.env` copied from `.env.example`, and running the
+deploy-mode command brought the whole stack up with the backend healthy in 15 seconds.
+Only port 8081 was open; 8091, 5433 and 8901 were closed. The application worked
+through the proxy, the origin whitelist still rejected an unlisted domain, and the
+clean clone saw the existing data, `admin / admin@gmail.com`, because the named volume
+survived the project moving to a different directory entirely. The checked-out tree
+correctly had no `config/` and no `.env`, and the SQL files mounted into Postgres had
+LF endings, so there is no CRLF problem on Linux.
+
+One limitation to be honest about: the images came from the daemon's existing layer
+cache, so this did **not** demonstrate a from-scratch build on a clean machine. The
+first build on a real server will download the full Maven and npm dependency sets.
 
 Four things change relative to a laptop:
 
