@@ -12,7 +12,7 @@
 # dia chi rieng. Trang HTTPS khong goi duoc http://192.168.221.128 (mixed content),
 # edge cua Vercel cung khong voi tới day duoc, va Vercel KHONG proxy duoc WebSocket
 # nen SockJS buoc phai noi thang vao backend. Ba ly do, cung mot ket luan: backend
-# can mot endpoint https/wss that.
+# can mot endpoint https/wss that, ma mot IP rieng thi khong xin duoc chung chi.
 #
 # Khong can sudo: day la container, khong phai goi apt.
 
@@ -23,31 +23,34 @@ services:
     restart: unless-stopped
     depends_on:
       - frontend
-    # Tro vao nginx cua frontend trong mang noi bo, chu khong vao backend truc tiep.
-    # nginx da proxy /api va /ws san, nen mot hostname phuc vu duoc ca static, API
-    # va WebSocket - khong phai cau hinh lai gi.
+    # KHONG boc trong "sh -c". Image nay co san
+    # ENTRYPOINT ["cloudflared", "--no-autoupdate"] va KHONG he co shell ben trong
+    # (dang distroless). Lan dau viet file nay da boc sh -c va ket qua la ca chuoi
+    # do bi truyen vao lam DOI SO cho cloudflared: no bao "You did not specify any
+    # valid additional argument" roi restart vo han.
+    #
+    # Vi entrypoint da co --no-autoupdate nen o day khong lap lai. Compose tach
+    # chuoi nay thanh argv va noi vao sau entrypoint.
+    #
+    # Tro vao nginx cua frontend chu khong vao backend truc tiep: nginx da proxy
+    # /api va /ws san, nen mot hostname phuc vu duoc ca static, API va WebSocket.
     #
     # Hai che do:
     #
-    # 1. Quick tunnel (mac dinh, khong can tai khoan): TUNNEL_TOKEN de trong.
-    #    Duoc mot hostname *.trycloudflare.com ngau nhien, va no DOI moi lan khoi
-    #    dong lai. Du de kiem chung ca duong di, khong du de dung lau: moi lan doi
-    #    hostname la phai build lai frontend tren Vercel, vi REACT_APP_* bi nhung
-    #    cung vao bundle luc build.
+    # 1. Quick tunnel (mac dinh, khong can tai khoan). Duoc mot hostname
+    #    *.trycloudflare.com ngau nhien, va no DOI moi lan khoi dong lai. Du de
+    #    kiem chung ca duong di, khong du de dung lau: moi lan doi hostname la phai
+    #    build lai frontend tren Vercel, vi REACT_APP_* bi nhung cung vao bundle
+    #    luc build.
     #
-    # 2. Named tunnel (can tai khoan + domain): dat TUNNEL_TOKEN trong .env.
-    #    Hostname co dinh, dung duoc lau dai.
+    # 2. Named tunnel (can tai khoan Cloudflare + domain): dat TUNNEL_TOKEN trong
+    #    .env va TUNNEL_COMMAND="tunnel run". cloudflared tu doc TUNNEL_TOKEN tu
+    #    moi truong. Hostname co dinh, dung duoc lau dai.
     #
-    # --no-autoupdate: container thi nang cap bang cach keo image moi, khong phai
-    # de tien trinh tu thay the binary roi tu restart.
-    command: >
-      sh -c 'if [ -n "$${TUNNEL_TOKEN}" ]; then
-               exec cloudflared --no-autoupdate tunnel run --token "$${TUNNEL_TOKEN}";
-             else
-               exec cloudflared --no-autoupdate tunnel --url http://frontend:80 ${TUNNEL_EXTRA_ARGS:-};
-             fi'
+    # Neu VMware NAT chan UDP 7844 thi them --protocol http2 vao TUNNEL_COMMAND.
+    command: ${TUNNEL_COMMAND:-tunnel --url http://frontend:80}
     environment:
       TUNNEL_TOKEN: ${TUNNEL_TOKEN:-}
-      # Metric de doc duoc trang thai tunnel tu trong mang noi bo.
+      # Mo metric de doc duoc trang thai tunnel tu trong mang noi bo.
       TUNNEL_METRICS: 0.0.0.0:2000
     mem_limit: ${TUNNEL_MEM_LIMIT:-128m}
