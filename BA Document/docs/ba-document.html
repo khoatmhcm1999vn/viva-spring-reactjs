@@ -1,0 +1,1470 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vivacon — Tài liệu Phân tích Nghiệp vụ &amp; Kiến trúc</title>
+<style>
+  :root{
+    --ink:#1b2430; --ink-soft:#4a5568; --line:#d7dde5; --line-soft:#eceff3;
+    --brand:#2b5797; --brand-soft:#eef3fb;
+    --ok:#2f7d32; --ok-bg:#eef7ee;
+    --warn:#9a6700; --warn-bg:#fff8e1;
+    --risk:#b3261e; --risk-bg:#fdefee;
+    --ask:#6b3fa0; --ask-bg:#f4eefb;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+  body{
+    margin:0; padding:0;
+    font-family:"Segoe UI","Noto Sans",system-ui,-apple-system,Arial,sans-serif;
+    font-size:10.5pt; line-height:1.55; color:var(--ink); background:#f0f2f5;
+  }
+  .sheet{
+    background:#fff; width:210mm; min-height:297mm; margin:10mm auto;
+    padding:18mm 16mm 20mm 16mm; box-shadow:0 2px 14px rgba(0,0,0,.14);
+  }
+
+  /* ---------- Cover ---------- */
+  .cover{display:flex; flex-direction:column; min-height:255mm}
+  .cover-top{border-top:6px solid var(--brand); padding-top:14mm}
+  .cover h1{font-size:30pt; line-height:1.15; margin:0 0 4mm 0; letter-spacing:-.5px}
+  .cover .sub{font-size:14pt; color:var(--brand); font-weight:600; margin:0 0 2mm}
+  .cover .sub2{font-size:11pt; color:var(--ink-soft); margin:0}
+  .cover-meta{margin-top:auto; border-top:1px solid var(--line); padding-top:6mm}
+  .cover-meta table{width:100%; border:0}
+  .cover-meta td{border:0; padding:2.2mm 0; vertical-align:top}
+  .cover-meta td:first-child{width:42mm; color:var(--ink-soft); font-weight:600}
+
+  /* ---------- Headings ---------- */
+  h2{
+    font-size:16pt; color:var(--brand); margin:0 0 5mm;
+    padding-bottom:2.5mm; border-bottom:2.5px solid var(--brand);
+    page-break-after:avoid
+  }
+  h3{font-size:12.5pt; margin:8mm 0 3mm; color:var(--ink); page-break-after:avoid}
+  h3:first-of-type{margin-top:4mm}
+  h4{font-size:11pt; margin:6mm 0 2mm; color:var(--ink-soft); page-break-after:avoid}
+  p{margin:0 0 3.2mm}
+  ul,ol{margin:0 0 3.2mm; padding-left:6mm}
+  li{margin-bottom:1.4mm}
+  code{
+    font-family:"Cascadia Mono",Consolas,monospace; font-size:9pt;
+    background:var(--line-soft); padding:.4mm 1.2mm; border-radius:2px
+  }
+
+  /* ---------- Tables ---------- */
+  table{width:100%; border-collapse:collapse; margin:0 0 4mm; font-size:9.3pt}
+  caption{
+    caption-side:top; text-align:left; font-weight:600; font-size:9.5pt;
+    color:var(--ink-soft); padding-bottom:1.8mm
+  }
+  th,td{border:1px solid var(--line); padding:2mm 2.4mm; vertical-align:top; text-align:left}
+  thead th{background:var(--brand-soft); color:var(--brand); font-weight:600}
+  tbody tr:nth-child(even){background:#fafbfc}
+  th.id,td.id{width:19mm; white-space:nowrap; font-weight:600}
+  th.w-narrow,td.w-narrow{width:24mm}
+  th.w-role,td.w-role{width:26mm; text-align:center}
+  table.compact{font-size:8.8pt}
+  table.compact th,table.compact td{padding:1.4mm 2mm}
+
+  /* ---------- Badges ---------- */
+  .tag{
+    display:inline-block; font-size:7.6pt; font-weight:700; letter-spacing:.3px;
+    padding:.5mm 1.8mm; border-radius:2.5px; white-space:nowrap; border:1px solid
+  }
+  .t-ok  {color:var(--ok);   background:var(--ok-bg);   border-color:#b9ddb9}
+  .t-warn{color:var(--warn); background:var(--warn-bg); border-color:#e8d08a}
+  .t-risk{color:var(--risk); background:var(--risk-bg); border-color:#eeb9b5}
+  .t-ask {color:var(--ask);  background:var(--ask-bg);  border-color:#cfbce6}
+
+  /* ---------- Callouts ---------- */
+  .box{border-left:4px solid; padding:3.5mm 4mm; margin:0 0 4mm; border-radius:0 3px 3px 0}
+  .box p:last-child{margin-bottom:0}
+  .box .box-title{font-weight:700; margin:0 0 1.8mm; font-size:10pt}
+  .b-ok  {border-color:var(--ok);   background:var(--ok-bg)}
+  .b-warn{border-color:var(--warn); background:var(--warn-bg)}
+  .b-risk{border-color:var(--risk); background:var(--risk-bg)}
+  .b-ask {border-color:var(--ask);  background:var(--ask-bg)}
+  .b-info{border-color:var(--brand);background:var(--brand-soft)}
+
+  /* ---------- TOC ---------- */
+  .toc{font-size:10pt}
+  .toc ol{list-style:none; padding-left:0; counter-reset:toc}
+  .toc > ol > li{counter-increment:toc; margin-bottom:2.2mm; border-bottom:1px dotted var(--line); padding-bottom:1.6mm}
+  .toc > ol > li::before{content:counter(toc) ". "; font-weight:700; color:var(--brand)}
+  .toc ol ol{padding-left:7mm; margin-top:1.4mm; font-size:9.3pt; color:var(--ink-soft)}
+  .toc ol ol li{margin-bottom:.8mm}
+  .toc ol ol li::before{content:"– "; color:var(--line)}
+
+  /* ---------- Diagram cards ---------- */
+  .dgrid{display:grid; grid-template-columns:1fr 1fr; gap:4mm; margin-bottom:4mm}
+  .dcard{border:1px solid var(--line); border-radius:3px; padding:3.5mm 4mm; background:#fcfdfe}
+  .dcard h4{margin:0 0 1.5mm; color:var(--brand); font-size:10.5pt}
+  .dcard .path{font-family:Consolas,monospace; font-size:8.2pt; color:var(--ink-soft); word-break:break-all; margin-bottom:2mm}
+  .dcard ul{padding-left:4.5mm; margin-bottom:0; font-size:9pt}
+
+  /* ---------- Misc ---------- */
+  .lead{font-size:11pt; color:var(--ink-soft); border-left:3px solid var(--brand); padding-left:4mm; margin-bottom:6mm}
+  .note{font-size:9pt; color:var(--ink-soft); font-style:italic}
+  .kpi{display:grid; grid-template-columns:repeat(4,1fr); gap:3mm; margin-bottom:5mm}
+  .kpi div{border:1px solid var(--line); border-radius:3px; padding:3mm; text-align:center}
+  .kpi .n{font-size:17pt; font-weight:700; color:var(--brand); line-height:1.1}
+  .kpi .l{font-size:8.2pt; color:var(--ink-soft)}
+  .ctr{text-align:center}
+  hr.soft{border:0; border-top:1px solid var(--line-soft); margin:6mm 0}
+
+  @page{size:A4; margin:14mm 12mm}
+  @media print{
+    body{background:#fff; font-size:9.8pt}
+    .sheet{width:auto; min-height:0; margin:0; padding:0; box-shadow:none; page-break-after:always}
+    .sheet:last-child{page-break-after:auto}
+    tr,.box,.dcard{page-break-inside:avoid}
+    thead{display:table-header-group}
+    a{color:inherit; text-decoration:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- ======================= TRANG BÌA ======================= -->
+<section class="sheet cover">
+  <div class="cover-top">
+    <p class="sub">Tài liệu Phân tích Nghiệp vụ &amp; Kiến trúc Giải pháp</p>
+    <h1>VIVACON</h1>
+    <p class="sub2">Nền tảng mạng xã hội chia sẻ hình ảnh — bản phân tích dựng từ mã nguồn</p>
+  </div>
+
+  <div style="margin-top:14mm">
+    <div class="kpi">
+      <div><div class="n">3</div><div class="l">vai trò người dùng</div></div>
+      <div><div class="n">8</div><div class="l">quy trình nghiệp vụ</div></div>
+      <div><div class="n">19</div><div class="l">bảng dữ liệu</div></div>
+      <div><div class="n">4</div><div class="l">sơ đồ, 9 trang vẽ</div></div>
+    </div>
+
+    <div class="box b-info">
+      <p class="box-title">Tài liệu này được viết như thế nào</p>
+      <p>Toàn bộ nội dung dưới đây được rút ra bằng cách <strong>đọc mã nguồn thực tế</strong> của hệ thống, không phải từ một bản đặc tả có trước. Vì vậy tài liệu phân biệt rõ ba loại phát biểu, và mỗi phát biểu đều mang một trong ba nhãn:</p>
+      <p style="margin-top:2.5mm">
+        <span class="tag t-ok">XÁC NHẬN</span> &nbsp;điều này đúng vì mã nguồn làm như vậy &nbsp;·&nbsp;
+        <span class="tag t-warn">GIẢ ĐỊNH</span> &nbsp;suy luận hợp lý nhưng chưa có bằng chứng &nbsp;·&nbsp;
+        <span class="tag t-ask">CẦN LÀM RÕ</span> &nbsp;phải hỏi bên nghiệp vụ mới trả lời được
+      </p>
+      <p style="margin-top:2.5mm">Ngoài ra, nhãn <span class="tag t-risk">RỦI RO</span> đánh dấu những chỗ mã nguồn <em>chạy khác</em> với điều mà thiết kế rõ ràng đang nhắm tới. Những chỗ đó không được viết thành yêu cầu, mà được tách riêng ở mục 12.</p>
+    </div>
+  </div>
+
+  <div class="cover-meta">
+    <table>
+      <tr><td>Hệ thống</td><td>Vivacon — Spring Boot 2.5 (Java 11) + React 17, PostgreSQL</td></tr>
+      <tr><td>Phạm vi tài liệu</td><td>Nghiệp vụ, kiến trúc giải pháp, mô hình dữ liệu, tiêu chí nghiệm thu</td></tr>
+      <tr><td>Đối tượng đọc</td><td>Solution Architect, Business Analyst, Product Owner, Tech Lead</td></tr>
+      <tr><td>Nguồn dữ liệu</td><td>Mã nguồn backend và frontend, tệp lược đồ cơ sở dữ liệu, hàm lưu trữ PostgreSQL, tệp cấu hình triển khai</td></tr>
+      <tr><td>Sơ đồ kèm theo</td><td><code>docs/diagrams/</code> — 4 tệp <code>.drawio</code>, mở và chỉnh sửa trực tiếp bằng draw.io</td></tr>
+      <tr><td>Trạng thái</td><td>Bản mô tả hiện trạng (as-is), dùng làm cơ sở để chốt bản mong đợi (to-be)</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ======================= MỤC LỤC ======================= -->
+<section class="sheet">
+  <h2>Mục lục</h2>
+  <div class="toc">
+    <ol>
+      <li><a href="#s1">Mục tiêu và bối cảnh</a>
+        <ol><li>Vấn đề hệ thống giải quyết</li><li>Mục tiêu nghiệp vụ</li><li>Các bên liên quan</li></ol>
+      </li>
+      <li><a href="#s2">Phạm vi</a>
+        <ol><li>Trong phạm vi</li><li>Ngoài phạm vi</li><li>Giả định và phụ thuộc</li></ol>
+      </li>
+      <li><a href="#s3">Vai trò người dùng và phân quyền</a>
+        <ol><li>Ba vai trò</li><li>Vòng đời trạng thái tài khoản</li><li>Ma trận phân quyền</li></ol>
+      </li>
+      <li><a href="#s4">Bộ sơ đồ kèm theo</a>
+        <ol><li>Cách đọc bốn tệp sơ đồ</li><li>Quy ước màu và ký hiệu</li></ol>
+      </li>
+      <li><a href="#s5">Kiến trúc giải pháp</a>
+        <ol><li>Bối cảnh triển khai</li><li>Ràng buộc kiến trúc quyết định thiết kế</li><li>Phân lớp thành phần</li></ol>
+      </li>
+      <li><a href="#s6">Quy trình nghiệp vụ</a>
+        <ol><li>Bản đồ tám quy trình</li><li>Đặc tả từng quy trình</li></ol>
+      </li>
+      <li><a href="#s7">Yêu cầu chức năng</a>
+        <ol><li>Tài khoản và xác thực</li><li>Hồ sơ và quan hệ xã hội</li><li>Nội dung</li><li>Tương tác</li><li>Nhắn tin và thông báo</li><li>Kiểm duyệt</li><li>Quản trị và thống kê</li></ol>
+      </li>
+      <li><a href="#s8">Quy tắc nghiệp vụ</a>
+        <ol><li>Nhóm tài khoản</li><li>Nhóm nội dung và quyền riêng tư</li><li>Nhóm tương tác và thông báo</li><li>Nhóm kiểm duyệt</li><li>Nhóm dữ liệu và phân trang</li></ol>
+      </li>
+      <li><a href="#s9">Mô hình dữ liệu</a>
+        <ol><li>Danh mục bảng</li><li>Ba đặc điểm chi phối mô hình</li><li>Bảng mã trạng thái</li></ol>
+      </li>
+      <li><a href="#s10">Yêu cầu phi chức năng</a></li>
+      <li><a href="#s11">Tiêu chí nghiệm thu</a>
+        <ol><li>Cách viết và cách dùng</li><li>Tiêu chí theo từng quy trình</li><li>Tiêu chí mức hệ thống</li></ol>
+      </li>
+      <li><a href="#s12">Khoảng trống và rủi ro phát hiện trong mã nguồn</a>
+        <ol><li>Nhóm phân quyền</li><li>Nhóm mô hình nghiệp vụ</li><li>Nhóm vận hành</li></ol>
+      </li>
+      <li><a href="#s13">Câu hỏi cần làm rõ với bên nghiệp vụ</a></li>
+      <li><a href="#s14">Phụ lục — danh mục đầu mối dịch vụ</a></li>
+    </ol>
+  </div>
+
+  <h3>Cách dùng tài liệu này</h3>
+  <p>Tài liệu phục vụ ba tình huống đọc khác nhau, nên không cần đọc tuần tự:</p>
+  <table>
+    <thead><tr><th class="w-narrow">Bạn là</th><th>Hãy đọc</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Solution Architect</strong></td><td>Mục 5 (kiến trúc) và mục 9 (mô hình dữ liệu), rồi mục 12 để biết nợ kỹ thuật. Hai tệp sơ đồ cần nhất là <code>system-architecture.drawio</code> và <code>data-model.drawio</code>.</td></tr>
+      <tr><td><strong>Business Analyst / PO</strong></td><td>Mục 1 đến 3 để lấy bối cảnh, mục 6 đến 8 là phần cốt lõi, mục 13 là danh sách câu hỏi mang đi họp. Sơ đồ cần nhất là <code>business-flow.drawio</code>.</td></tr>
+      <tr><td><strong>Tech Lead / QA</strong></td><td>Mục 7, 8 và 11. Phụ lục ở mục 14 là danh mục đầu mối dịch vụ dùng để viết kịch bản kiểm thử.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="box b-warn">
+    <p class="box-title">Một lưu ý về bản chất của tài liệu as-is</p>
+    <p>Khi mã nguồn chạy khác với điều thiết kế nhắm tới, tài liệu này mô tả <strong>điều mã nguồn thực sự làm</strong>, rồi đánh dấu chênh lệch ở mục 12. Lý do: một tài liệu mô tả hành vi mong đợi trong khi hệ thống làm chuyện khác sẽ khiến người đọc tin vào một hệ thống không tồn tại, và đó là loại sai lệch tốn kém nhất.</p>
+    <p>Ngược lại, những chỗ đã đánh dấu rủi ro <strong>không nên</strong> được chuyển thành yêu cầu chức năng. Chúng là hạng mục cần quyết định sửa hay chấp nhận.</p>
+  </div>
+</section>
+
+<!-- ======================= 1. MỤC TIÊU ======================= -->
+<section class="sheet" id="s1">
+  <h2>1. Mục tiêu và bối cảnh</h2>
+
+  <h3>1.1 Vấn đề hệ thống giải quyết</h3>
+  <p>Vivacon là một nền tảng mạng xã hội lấy hình ảnh làm trung tâm, theo mô hình quen thuộc của Instagram. Người dùng đăng bài gồm ảnh kèm chú thích, chọn ai được xem, theo dõi người khác để hình thành dòng tin cá nhân, rồi tương tác qua lượt thích, bình luận và tin nhắn riêng. Hệ thống có thêm lớp kiểm duyệt nội dung do người dùng báo cáo và quản trị viên xử lý, cùng một khu vực quản trị có số liệu thống kê.</p>
+
+  <h3>1.2 Mục tiêu nghiệp vụ</h3>
+  <table>
+    <thead><tr><th class="id">Mã</th><th class="w-narrow">Mục tiêu</th><th>Diễn giải và cách hệ thống hiện thực hoá</th><th class="w-narrow">Nhãn</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="id">MT-01</td><td><strong>Tài khoản đáng tin</strong></td>
+        <td>Mỗi tài khoản phải chứng minh quyền sở hữu email trước khi dùng được. Hệ thống gửi mã sáu chữ số có hạn mười phút và chỉ mở quyền sau khi mã được xác nhận. Có thêm lớp ghi nhận thiết bị và vị trí đăng nhập.</td>
+        <td><span class="tag t-ok">XÁC NHẬN</span></td>
+      </tr>
+      <tr>
+        <td class="id">MT-02</td><td><strong>Người dùng kiểm soát được phạm vi hiển thị</strong></td>
+        <td>Mỗi bài đăng mang một trong ba mức riêng tư: chỉ mình tôi, người theo dõi, công khai. Thêm bảy thiết lập cá nhân chi phối việc nhận thông báo và hiển thị trạng thái hoạt động.</td>
+        <td><span class="tag t-ok">XÁC NHẬN</span></td>
+      </tr>
+      <tr>
+        <td class="id">MT-03</td><td><strong>Dòng tin có liên quan tới người dùng</strong></td>
+        <td>Dòng tin chỉ gồm bài của những người mà người dùng đang theo dõi. Để người mới không gặp trang trắng, hệ thống có cơ chế gợi ý kết bạn dựa trên số bạn chung, và bù bằng những tài khoản nhiều người theo dõi nhất khi chưa đủ gợi ý.</td>
+        <td><span class="tag t-ok">XÁC NHẬN</span></td>
+      </tr>
+      <tr>
+        <td class="id">MT-04</td><td><strong>Tương tác tức thời</strong></td>
+        <td>Tin nhắn, chỉ báo đang gõ và thông báo tương tác đều đi qua một kênh kết nối giữ mở, không cần tải lại trang.</td>
+        <td><span class="tag t-ok">XÁC NHẬN</span></td>
+      </tr>
+      <tr>
+        <td class="id">MT-05</td><td><strong>Nội dung vi phạm được xử lý</strong></td>
+        <td>Người dùng báo cáo tài khoản, bài đăng hoặc bình luận; người xử lý duyệt hoặc từ chối; nếu duyệt thì hệ thống tự áp hệ quả tương ứng và thông báo cho hai bên.</td>
+        <td><span class="tag t-ok">XÁC NHẬN</span></td>
+      </tr>
+      <tr>
+        <td class="id">MT-06</td><td><strong>Vận hành nhìn thấy được</strong></td>
+        <td>Khu vực quản trị có số lượng bài đăng và tài khoản theo mười hai tháng, bốn quý và hai năm gần nhất, kèm bảng xếp hạng tương tác và bản đồ vị trí đăng nhập.</td>
+        <td><span class="tag t-ok">XÁC NHẬN</span></td>
+      </tr>
+      <tr>
+        <td class="id">MT-07</td><td><strong>Phục vụ người dùng Việt Nam và quốc tế</strong></td>
+        <td>Giao diện có hai bộ ngôn ngữ: tiếng Việt và tiếng Anh.</td>
+        <td><span class="tag t-ok">XÁC NHẬN</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="box b-ask">
+    <p class="box-title">Chưa xác định được chỉ số thành công</p>
+    <p>Mã nguồn cho biết hệ thống <em>làm được gì</em>, nhưng không cho biết <em>bao nhiêu là đủ</em>. Không tìm thấy bất kỳ mục tiêu định lượng nào: không có số người dùng mục tiêu, không có ngưỡng thời gian phản hồi, không có tỷ lệ chuyển đổi từ đăng ký sang kích hoạt thành công, không có thời hạn xử lý báo cáo. Những con số này phải lấy từ bên nghiệp vụ — xem câu hỏi Q-01 đến Q-03 ở mục 13.</p>
+  </div>
+
+  <h3>1.3 Các bên liên quan</h3>
+  <table>
+    <thead><tr><th class="w-narrow">Bên liên quan</th><th>Quan tâm chính</th><th>Tương tác với hệ thống qua</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Người dùng cuối</strong></td><td>Đăng và xem nội dung, kết nối với người khác, nhắn tin, kiểm soát quyền riêng tư</td><td>Giao diện web trên trình duyệt</td></tr>
+      <tr><td><strong>Người kiểm duyệt</strong></td><td>Xử lý báo cáo nhanh và đúng, có đủ ngữ cảnh để ra quyết định</td><td>Khu vực quản trị và các đầu mối xử lý báo cáo</td></tr>
+      <tr><td><strong>Quản trị hệ thống</strong></td><td>Sức khoẻ hệ thống, số liệu tăng trưởng, quản lý tài khoản quản trị</td><td>Khu vực quản trị, dashboard thống kê</td></tr>
+      <tr><td><strong>Đội phát triển</strong></td><td>Thay đổi an toàn, hiểu được tác động của mỗi thay đổi</td><td>Mã nguồn, tài liệu đầu mối dịch vụ tự sinh</td></tr>
+      <tr><td><strong>Nhà cung cấp dịch vụ ngoài</strong></td><td>Lưu trữ ảnh, gửi email, sàng lọc ảnh, tra cứu vị trí theo địa chỉ mạng</td><td>Lời gọi dịch vụ từ backend, trừ phần sàng lọc ảnh gọi từ trình duyệt</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ======================= 2. PHẠM VI ======================= -->
+<section class="sheet" id="s2">
+  <h2>2. Phạm vi</h2>
+
+  <h3>2.1 Trong phạm vi</h3>
+  <p>Những nhóm tính năng sau <strong>đã tồn tại trong mã nguồn</strong> và là đối tượng của tài liệu này.</p>
+  <table>
+    <thead><tr><th class="id">Mã</th><th class="w-narrow">Nhóm</th><th>Nội dung</th></tr></thead>
+    <tbody>
+      <tr><td class="id">PV-01</td><td>Tài khoản và xác thực</td><td>Đăng ký, kích hoạt bằng mã, đăng nhập, làm mới phiên, quên và đổi mật khẩu, ghi nhận thiết bị và vị trí đăng nhập</td></tr>
+      <tr><td class="id">PV-02</td><td>Hồ sơ cá nhân</td><td>Xem và chỉnh sửa hồ sơ, lịch sử ảnh đại diện, đếm số bài đăng và số người theo dõi</td></tr>
+      <tr><td class="id">PV-03</td><td>Quan hệ xã hội</td><td>Theo dõi và bỏ theo dõi, danh sách người theo dõi và đang theo dõi, gợi ý kết bạn theo số bạn chung</td></tr>
+      <tr><td class="id">PV-04</td><td>Nội dung</td><td>Tạo bài đăng nhiều ảnh kèm chú thích và mức riêng tư, tải ảnh lên dịch vụ lưu trữ, trích hashtag từ chú thích, xoá mềm bài đăng</td></tr>
+      <tr><td class="id">PV-05</td><td>Khám phá nội dung</td><td>Dòng tin cá nhân, bài đăng nổi bật theo mức tương tác, hashtag phổ biến, tìm kiếm trong chú thích, tìm kiếm tài khoản</td></tr>
+      <tr><td class="id">PV-06</td><td>Tương tác</td><td>Thích và bỏ thích, bình luận hai cấp, xoá bình luận kèm toàn bộ nhánh con</td></tr>
+      <tr><td class="id">PV-07</td><td>Nhắn tin</td><td>Hội thoại nhiều thành viên, tin nhắn thời gian thực, chỉ báo đang gõ, thêm thành viên, danh sách người đang hoạt động</td></tr>
+      <tr><td class="id">PV-08</td><td>Thông báo</td><td>Thông báo trong ứng dụng theo bảy thiết lập cá nhân, đẩy tức thời, đánh dấu đã xem</td></tr>
+      <tr><td class="id">PV-09</td><td>Kiểm duyệt</td><td>Báo cáo tài khoản, bài đăng và bình luận; duyệt hoặc từ chối; hệ quả tự động theo loại</td></tr>
+      <tr><td class="id">PV-10</td><td>Quản trị và thống kê</td><td>Quản lý tài khoản quản trị, xem hồ sơ và bài đăng kể cả đã ẩn, mười hai chỉ số thống kê</td></tr>
+      <tr><td class="id">PV-11</td><td>Đa ngôn ngữ</td><td>Tiếng Việt và tiếng Anh cho toàn bộ văn bản hiển thị</td></tr>
+    </tbody>
+  </table>
+
+  <h3>2.2 Ngoài phạm vi</h3>
+  <p>Những mục dưới đây <strong>không tìm thấy trong mã nguồn</strong>. Chúng được liệt kê để tránh ngộ nhận khi đọc danh sách tính năng, chứ không phải để khẳng định rằng chúng không cần thiết.</p>
+  <table>
+    <thead><tr><th class="w-narrow">Không có</th><th>Chi tiết</th><th class="w-narrow">Nhãn</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Tài khoản riêng tư cần duyệt</strong></td><td>Việc theo dõi diễn ra tức thì, không có trạng thái chờ duyệt, không có khái niệm tài khoản riêng tư ở mức quan hệ. Quyền riêng tư chỉ áp ở từng bài đăng.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td><strong>Gỡ khoá tài khoản</strong></td><td>Không có đầu mối nào đưa một tài khoản từ trạng thái bị khoá trở lại hoạt động. Khoá là một chiều.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td><strong>Nâng quyền qua giao diện</strong></td><td>Đăng ký luôn tạo ra vai trò người dùng thường. Không tìm thấy luồng nào cấp vai trò quản trị; việc đó phải can thiệp trực tiếp vào cơ sở dữ liệu.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td><strong>Đánh dấu tin nhắn đã đọc</strong></td><td>Mô hình dữ liệu có trạng thái đã gửi, đã nhận, đã xem cho tin nhắn, nhưng không có luồng nào cập nhật trạng thái đó.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td><strong>Rời hội thoại, xoá thành viên</strong></td><td>Có thể thêm thành viên nhưng không có chiều ngược lại.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td><strong>Chỉnh sửa bài đăng và bình luận</strong></td><td>Không có đầu mối cập nhật nội dung bài đăng hay bình luận sau khi tạo.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td><strong>Ứng dụng di động</strong></td><td>Chỉ có giao diện web.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td><strong>Kiếm tiền, quảng cáo, nội dung dạng câu chuyện ngắn hạn, video</strong></td><td>Không có dấu vết nào trong mã nguồn. Định dạng tệp được chấp nhận chỉ gồm năm loại ảnh.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+    </tbody>
+  </table>
+
+  <h3>2.3 Giả định và phụ thuộc</h3>
+  <table>
+    <thead><tr><th class="id">Mã</th><th>Nội dung</th><th class="w-narrow">Nhãn</th></tr></thead>
+    <tbody>
+      <tr><td class="id">GD-01</td><td>Hệ thống phụ thuộc dịch vụ lưu trữ ảnh bên ngoài. Thiếu khoá truy cập thì ứng dụng vẫn khởi động được nhưng mọi đầu mối tải ảnh lên sẽ lỗi khi gọi.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">GD-02</td><td>Email đi qua một giao diện dịch vụ thư của nhà cung cấp, không dùng giao thức thư truyền thống. Thiếu cấu hình xác thực thì ứng dụng vẫn chạy nhưng không email nào được gửi, nghĩa là luồng kích hoạt và quên mật khẩu đứt.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">GD-03</td><td>Việc sàng lọc ảnh khiêu dâm phụ thuộc một dịch vụ bên ngoài được gọi từ trình duyệt. Người dùng cần kết nối được tới dịch vụ đó.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">GD-04</td><td>Phần thống kê phụ thuộc các hàm lưu trữ trong cơ sở dữ liệu, được gọi theo tên. Một môi trường thiếu các hàm này sẽ lỗi lúc chạy, không lỗi lúc khởi động.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">GD-05</td><td>Tra cứu vị trí theo địa chỉ mạng dùng một tệp dữ liệu nằm trong thư mục làm việc của tiến trình. Nếu tra cứu thất bại, luồng xác minh thiết bị <strong>cho qua</strong> thay vì chặn — trường hợp thường gặp với địa chỉ mạng nội bộ.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">GD-06</td><td>Giả định rằng tất cả người dùng đều dùng trình duyệt hỗ trợ kết nối giữ mở hai chiều. Nếu không, chat và thông báo tức thời sẽ không hoạt động trong khi phần còn lại vẫn bình thường.</td><td><span class="tag t-warn">GIẢ ĐỊNH</span></td></tr>
+      <tr><td class="id">GD-07</td><td>Giả định mỗi tài khoản tương ứng một người thật. Không có cơ chế chống tạo tài khoản hàng loạt: không giới hạn tần suất, không mã xác minh người thật.</td><td><span class="tag t-warn">GIẢ ĐỊNH</span></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ======================= 3. VAI TRÒ ======================= -->
+<section class="sheet" id="s3">
+  <h2>3. Vai trò người dùng và phân quyền</h2>
+
+  <h3>3.1 Ba vai trò</h3>
+  <table>
+    <thead><tr><th class="w-narrow">Vai trò</th><th>Mô tả nghiệp vụ</th><th>Cách có được vai trò</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>USER</strong><br><span class="note">Người dùng thường</span></td>
+        <td>Toàn bộ nghiệp vụ mạng xã hội: đăng bài, tương tác, nhắn tin, báo cáo vi phạm. Đây là vai trò duy nhất có hồ sơ công khai cho người khác xem.</td>
+        <td>Mọi tài khoản đăng ký đều nhận vai trò này</td>
+      </tr>
+      <tr>
+        <td><strong>ADMIN</strong><br><span class="note">Quản trị viên</span></td>
+        <td>Xem được hồ sơ và bài đăng kể cả phần đã ẩn, xem được bình luận đã xoá mềm, đọc được nội dung hội thoại của người khác, xoá được bài đăng và bình luận của người khác, quản lý danh sách tài khoản quản trị.</td>
+        <td>Chỉ gán được trực tiếp trong cơ sở dữ liệu, hoặc qua đầu mối quản trị dành cho vai trò quản trị</td>
+      </tr>
+      <tr>
+        <td><strong>SUPER_ADMIN</strong><br><span class="note">Quản trị cấp cao</span></td>
+        <td>Vào được toàn bộ khu vực quản trị giống vai trò quản trị thường.</td>
+        <td>Như trên</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="box b-risk">
+    <p class="box-title">Hai bất thường về vai trò, đã xác nhận trong mã nguồn <span class="tag t-risk">RỦI RO</span></p>
+    <p><strong>Thứ nhất, vai trò quản trị cấp cao yếu hơn quản trị thường ở một mặt.</strong> Kiểm tra quyền truy cập theo tài nguyên chỉ chấp nhận đúng giá trị <code>ADMIN</code>, không liệt kê <code>SUPER_ADMIN</code>. Hệ quả: một tài khoản quản trị cấp cao vào được toàn bộ khu vực quản trị nhưng <em>không</em> xoá được bài đăng hay bình luận của người khác. Xem GAP-06.</p>
+    <p><strong>Thứ hai, cơ sở dữ liệu không ràng buộc giá trị vai trò.</strong> Tên vai trò lưu dưới dạng chuỗi tự do. Một bản ghi sai chính tả sẽ tạo ra một vai trò không khớp bất kỳ quy tắc nào, nghĩa là tài khoản đó mất mọi quyền một cách âm thầm. Xem GAP-07.</p>
+  </div>
+
+  <h3>3.2 Vòng đời trạng thái tài khoản</h3>
+  <p>Một tài khoản mang <strong>hai khái niệm trạng thái độc lập nhau</strong>, và việc nhập nhằng hai khái niệm này là nguồn sai sót thường gặp:</p>
+  <table>
+    <thead><tr><th class="w-narrow">Khái niệm</th><th>Giá trị</th><th>Ý nghĩa nghiệp vụ</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Trạng thái vòng đời</strong></td>
+        <td><code>STILL_NOT_ACTIVE</code><br><code>ACTIVE</code><br><code>BANNED</code><br><code>INACTIVE</code></td>
+        <td>Quyết định tài khoản đăng nhập được hay không, và nhận mã lỗi nghiệp vụ nào.</td>
+      </tr>
+      <tr>
+        <td><strong>Cờ xoá mềm</strong></td>
+        <td>đúng / sai</td>
+        <td>Quyết định bản ghi có xuất hiện trong các truy vấn thông thường hay không.</td>
+      </tr>
+    </tbody>
+  </table>
+  <table>
+    <caption>Chuyển trạng thái vòng đời</caption>
+    <thead><tr><th class="w-narrow">Từ</th><th class="w-narrow">Đến</th><th>Kích hoạt bởi</th></tr></thead>
+    <tbody>
+      <tr><td>(mới)</td><td><code>STILL_NOT_ACTIVE</code></td><td>Đăng ký thành công khi cơ chế bỏ qua xác thực đang tắt</td></tr>
+      <tr><td>(mới)</td><td><code>ACTIVE</code></td><td>Đăng ký thành công khi cơ chế bỏ qua xác thực đang bật — <em>chỉ dùng cho môi trường phát triển</em></td></tr>
+      <tr><td><code>STILL_NOT_ACTIVE</code></td><td><code>ACTIVE</code></td><td>Nhập đúng mã kích hoạt còn hạn; hoặc đăng nhập khi cơ chế bỏ qua đang bật</td></tr>
+      <tr><td><code>ACTIVE</code></td><td><code>BANNED</code></td><td>Một báo cáo tài khoản được duyệt. Thao tác này đồng thời ẩn toàn bộ bài đăng đang hiện của tài khoản đó.</td></tr>
+      <tr><td><code>BANNED</code></td><td>—</td><td><strong>Không có đường ra.</strong> Xem GAP-09.</td></tr>
+      <tr><td colspan="3"><code>INACTIVE</code> có trong danh mục giá trị nhưng <strong>không tìm thấy nơi nào gán nó</strong>. Mục đích nghiệp vụ không xác định được từ mã nguồn — xem Q-11. <span class="tag t-ask">CẦN LÀM RÕ</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="box b-warn">
+    <p class="box-title">Khoá tài khoản không đồng nghĩa với xoá mềm</p>
+    <p>Thao tác khoá chỉ đổi trạng thái vòng đời, <strong>không</strong> đổi cờ xoá mềm. Vì vậy một tài khoản bị khoá vẫn có cờ xoá mềm bằng đúng, và vẫn xuất hiện trong những truy vấn chỉ lọc theo cờ đó. Việc chặn truy cập hồ sơ của tài khoản bị khoá được xử lý riêng ở tầng nghiệp vụ, không dựa vào cờ này.</p>
+  </div>
+
+  <h3>3.3 Ma trận phân quyền</h3>
+  <p>Bảng dưới đây mô tả <strong>hành vi thực tế của mã nguồn</strong>. Ký hiệu: ✔ được phép · ✘ bị chặn · <strong>!</strong> được phép nhưng <em>đáng lẽ không nên</em> — mỗi dấu này đều trỏ tới một hạng mục ở mục 12.</p>
+  <table class="compact">
+    <thead>
+      <tr>
+        <th>Hành động</th>
+        <th class="w-role">Khách</th>
+        <th class="w-role">USER<br>(chủ sở hữu)</th>
+        <th class="w-role">USER<br>(người khác)</th>
+        <th class="w-role">ADMIN</th>
+        <th class="w-role">SUPER<br>ADMIN</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Đăng ký, kích hoạt, đăng nhập, quên mật khẩu</td><td class="ctr">✔</td><td class="ctr">✔</td><td class="ctr">✔</td><td class="ctr">✔</td><td class="ctr">✔</td></tr>
+      <tr><td>Tra cứu một tên đăng nhập hoặc email có tồn tại hay không</td><td class="ctr"><strong>!</strong></td><td class="ctr">✔</td><td class="ctr">✔</td><td class="ctr">✔</td><td class="ctr">✔</td></tr>
+      <tr><td>Xem dòng tin, hồ sơ, bài đăng theo mức riêng tư</td><td class="ctr">✘</td><td class="ctr">✔</td><td class="ctr">✔</td><td class="ctr">✔</td><td class="ctr">✔</td></tr>
+      <tr><td>Tạo bài đăng, thích, bình luận, theo dõi</td><td class="ctr">✘</td><td class="ctr">✔</td><td class="ctr">✔</td><td class="ctr">✔</td><td class="ctr">✔</td></tr>
+      <tr><td>Chỉnh sửa hồ sơ của chính mình</td><td class="ctr">✘</td><td class="ctr">✔</td><td class="ctr">✘</td><td class="ctr">✔</td><td class="ctr">✔</td></tr>
+      <tr><td><strong>Xoá bình luận</strong></td><td class="ctr">✘</td><td class="ctr">✔</td><td class="ctr">✘</td><td class="ctr">✔</td><td class="ctr">✘ <span class="note">(GAP-06)</span></td></tr>
+      <tr><td><strong>Xoá bài đăng</strong></td><td class="ctr">✘</td><td class="ctr">✔</td><td class="ctr"><strong>!</strong> <span class="note">(GAP-01)</span></td><td class="ctr">✔</td><td class="ctr">✔</td></tr>
+      <tr><td>Gửi tin nhắn, thêm thành viên trong hội thoại của mình</td><td class="ctr">✘</td><td class="ctr">✔</td><td class="ctr">✘</td><td class="ctr">✔</td><td class="ctr">✔</td></tr>
+      <tr><td><strong>Đọc tin nhắn của một hội thoại bất kỳ</strong></td><td class="ctr">✘</td><td class="ctr">✔</td><td class="ctr"><strong>!</strong> <span class="note">(GAP-02)</span></td><td class="ctr">✔</td><td class="ctr">✔</td></tr>
+      <tr><td>Gửi báo cáo vi phạm</td><td class="ctr">✘</td><td class="ctr">✔</td><td class="ctr">✔</td><td class="ctr">✔</td><td class="ctr">✔</td></tr>
+      <tr><td><strong>Duyệt hoặc từ chối báo cáo</strong> (kéo theo khoá tài khoản, ẩn nội dung)</td><td class="ctr">✘</td><td class="ctr">—</td><td class="ctr"><strong>!</strong> <span class="note">(GAP-03)</span></td><td class="ctr">✔</td><td class="ctr">✔</td></tr>
+      <tr><td><strong>Xem số liệu thống kê</strong></td><td class="ctr">✘</td><td class="ctr">—</td><td class="ctr"><strong>!</strong> <span class="note">(GAP-04)</span></td><td class="ctr">✔</td><td class="ctr">✔</td></tr>
+      <tr><td>Xem hồ sơ và bài đăng kể cả phần đã ẩn</td><td class="ctr">✘</td><td class="ctr">✘</td><td class="ctr">✘</td><td class="ctr">✔</td><td class="ctr">✔</td></tr>
+      <tr><td>Quản lý danh sách tài khoản quản trị</td><td class="ctr">✘</td><td class="ctr">✘</td><td class="ctr">✘</td><td class="ctr">✔</td><td class="ctr">✔</td></tr>
+    </tbody>
+  </table>
+
+  <div class="box b-info">
+    <p class="box-title">Vì sao ma trận này có nhiều dấu chấm than</p>
+    <p>Toàn bộ phân quyền của hệ thống nằm trong <strong>tám dòng khai báo tập trung ở một chỗ duy nhất</strong>. Đó là thiết kế tốt: dễ đọc, dễ soát. Nhưng nó dựa trên việc so khớp đường dẫn, nên một đường dẫn viết sai sẽ tạo ra quy tắc <em>không bao giờ khớp cái gì</em> — và không có cảnh báo nào, vì về mặt kỹ thuật thì không có gì sai. Bốn trong năm dấu chấm than ở trên đều có nguyên nhân này.</p>
+    <p>Nhận xét dành cho kiến trúc: rủi ro không nằm ở cách tiếp cận tập trung, mà nằm ở chỗ <strong>không có phép kiểm chứng nào đối chiếu danh sách quy tắc với danh sách đầu mối dịch vụ thực tế</strong>. Một bài kiểm thử tự động làm việc đối chiếu đó sẽ bắt được cả bốn trường hợp.</p>
+  </div>
+</section>
+
+<!-- ======================= 4. SƠ ĐỒ ======================= -->
+<section class="sheet" id="s4">
+  <h2>4. Bộ sơ đồ kèm theo</h2>
+  <p class="lead">Bốn tệp <code>.drawio</code> trong thư mục <code>docs/diagrams/</code>, tổng cộng chín trang vẽ. Mỗi tệp mở và chỉnh sửa trực tiếp bằng draw.io hoặc tiện ích draw.io trong trình soạn thảo mã.</p>
+
+  <h3>4.1 Cách đọc bốn tệp sơ đồ</h3>
+
+  <div class="dgrid">
+    <div class="dcard">
+      <h4>Luồng nghiệp vụ</h4>
+      <div class="path">docs/diagrams/business-flow.drawio</div>
+      <p style="font-size:9pt">Ba trang, chia làn theo vai trò. Trả lời câu hỏi <em>ai làm gì, theo thứ tự nào</em>.</p>
+      <ul>
+        <li><strong>Trang 1</strong> — bảy bước xương sống, bốn làn: Khách · Người dùng · Hệ thống · Quản trị viên</li>
+        <li><strong>Trang 2</strong> — chi tiết đăng ký và kích hoạt, kèm bảng ràng buộc đầu vào</li>
+        <li><strong>Trang 3</strong> — chi tiết báo cáo và kiểm duyệt, kèm sáu rủi ro của quy trình này</li>
+      </ul>
+    </div>
+    <div class="dcard">
+      <h4>Kiến trúc hệ thống</h4>
+      <div class="path">docs/diagrams/system-architecture.drawio</div>
+      <p style="font-size:9pt">Hai trang. Trả lời câu hỏi <em>cái gì chạy ở đâu và nói chuyện với ai</em>.</p>
+      <ul>
+        <li><strong>Trang 1</strong> — bối cảnh triển khai: khung nét đứt là ranh giới hạ tầng; kèm phần giải thích vì sao đường đi phải vòng</li>
+        <li><strong>Trang 2</strong> — phân lớp thành phần của giao diện và backend, kèm bốn điểm kiến trúc cần lưu ý</li>
+      </ul>
+    </div>
+    <div class="dcard">
+      <h4>Trình tự tương tác</h4>
+      <div class="path">docs/diagrams/main-sequence.drawio</div>
+      <p style="font-size:9pt">Hai trang, dạng sơ đồ trình tự. Trả lời câu hỏi <em>thứ tự gọi và ai chờ ai</em>.</p>
+      <ul>
+        <li><strong>Trang 1</strong> — đăng bài kèm ảnh: mười sáu bước qua bảy thành phần</li>
+        <li><strong>Trang 2</strong> — bình luận sinh thông báo tức thời, kèm bảng hành động nào gửi qua kênh nào</li>
+      </ul>
+    </div>
+    <div class="dcard">
+      <h4>Mô hình dữ liệu</h4>
+      <div class="path">docs/diagrams/data-model.drawio</div>
+      <p style="font-size:9pt">Hai trang, dạng sơ đồ quan hệ thực thể. Trả lời câu hỏi <em>dữ liệu nằm ở đâu và liên kết thế nào</em>.</p>
+      <ul>
+        <li><strong>Trang 1</strong> — nhóm cốt lõi: 9 bảng về tài khoản, nội dung, quan hệ xã hội</li>
+        <li><strong>Trang 2</strong> — nhóm mở rộng: 10 bảng về chat, thông báo, thiết lập, thiết bị, kiểm duyệt</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="box b-info">
+    <p class="box-title">Vì sao mỗi loại sơ đồ đều tách thành trang tổng quan và trang chi tiết</p>
+    <p>Mười chín bảng dữ liệu vẽ chung một trang sẽ cho ra hơn hai mươi đường nối đều hội tụ về bảng tài khoản, và hình vẽ trở nên không đọc được. Quy trình nghiệp vụ cũng vậy: bảy bước xương sống thì nhìn một lần là hiểu, còn trải toàn bộ nhánh rẽ của đăng ký và kiểm duyệt lên cùng trang thì không.</p>
+    <p>Nguyên tắc áp dụng: <strong>một trang trả lời một câu hỏi</strong>. Những thực thể xuất hiện ở nhiều trang — như bảng tài khoản — được vẽ đầy đủ ở trang chính và rút gọn ở trang khác để làm điểm neo.</p>
+  </div>
+
+  <h3>4.2 Quy ước màu và ký hiệu</h3>
+  <p>Bốn tệp dùng chung một bộ màu, nên một hình màu tím ở sơ đồ kiến trúc và một hình màu tím ở sơ đồ luồng nghiệp vụ mang cùng ý nghĩa.</p>
+  <table class="compact">
+    <thead><tr><th class="w-narrow">Màu</th><th class="w-narrow">Ý nghĩa</th><th>Dùng cho</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Xanh dương</strong></td><td>Người dùng</td><td>Vai trò người dùng, bước do người dùng thực hiện, thành phần phía trình duyệt, thực thể trung tâm</td></tr>
+      <tr><td><strong>Tím</strong></td><td>Hệ thống của ta</td><td>Xử lý tự động của backend, thành phần ta tự vận hành, bảng nối và bảng phụ không có xoá mềm</td></tr>
+      <tr><td><strong>Xanh lá</strong></td><td>Dữ liệu và hạ tầng được quản lý</td><td>Cơ sở dữ liệu, thực thể nội dung có xoá mềm, hạ tầng do nhà cung cấp quản lý</td></tr>
+      <tr><td><strong>Cam</strong></td><td>Bên thứ ba</td><td>Dịch vụ ngoài, vai trò quản trị, bus sự kiện bất đồng bộ</td></tr>
+      <tr><td><strong>Vàng</strong></td><td>Quyết định và điểm cần làm rõ</td><td>Nhánh rẽ trong quy trình, ghi chú cần xác nhận với bên nghiệp vụ</td></tr>
+      <tr><td><strong>Đỏ</strong></td><td>Rủi ro đã xác nhận</td><td>Khoảng trống phát hiện khi đọc mã nguồn, nhóm thực thể kiểm duyệt</td></tr>
+    </tbody>
+  </table>
+  <table class="compact">
+    <thead><tr><th class="w-narrow">Ký hiệu</th><th>Ý nghĩa</th></tr></thead>
+    <tbody>
+      <tr><td>Đường liền đậm</td><td>Luồng nghiệp vụ chính, hoặc lời gọi đồng bộ mà bên gọi phải chờ kết quả</td></tr>
+      <tr><td>Đường nét đứt</td><td>Luồng phụ, ghi hoặc đọc dữ liệu, hoặc phản hồi trả về</td></tr>
+      <tr><td>Nhãn trên đường nối</td><td>Điều kiện chuyển bước, hoặc bản số của quan hệ dữ liệu</td></tr>
+      <tr><td>Chân chẻ ba</td><td>Phía &ldquo;nhiều&rdquo; của một quan hệ khoá ngoại</td></tr>
+      <tr><td>Mũi nhọn tam giác rỗng</td><td>Quan hệ kế thừa trong mô hình dữ liệu</td></tr>
+      <tr><td>Khung nét đứt bao ngoài</td><td>Một nơi triển khai, tức ranh giới hạ tầng</td></tr>
+      <tr><td>Vòng lặp về chính mình</td><td>Xử lý nội bộ, không ra khỏi thành phần đó</td></tr>
+    </tbody>
+  </table>
+
+  <p class="note">Kèm theo bộ sơ đồ có tệp <code>docs/diagrams/_validate.ps1</code>. Tệp này kiểm tra ba điều cho cả bốn sơ đồ: cú pháp hợp lệ, mọi tham chiếu nội bộ trỏ đúng, và không có hình nào chồng lên nhau hoặc tràn ra ngoài khung chứa. Chạy lại sau mỗi lần sửa sơ đồ.</p>
+</section>
+
+<!-- ======================= 5. KIẾN TRÚC ======================= -->
+<section class="sheet" id="s5">
+  <h2>5. Kiến trúc giải pháp</h2>
+  <p class="lead">Mục này viết cho người cần ra quyết định kiến trúc, nên tập trung vào <em>ràng buộc</em> và <em>hệ quả</em> hơn là danh mục công nghệ. Sơ đồ tương ứng: <code>system-architecture.drawio</code>.</p>
+
+  <h3>5.1 Bối cảnh triển khai</h3>
+  <p>Hệ thống gồm ba tầng, và điểm đáng chú ý nhất là <strong>ba tầng nằm ở ba nơi khác nhau</strong>, nối với nhau bằng hai đường truyền công khai:</p>
+  <table>
+    <thead><tr><th class="w-narrow">Tầng</th><th class="w-narrow">Triển khai ở</th><th>Trách nhiệm</th><th>Không chịu trách nhiệm</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Giao diện</strong></td><td>Mạng phân phối nội dung toàn cầu</td><td>Phục vụ tệp tĩnh của ứng dụng một trang</td><td>Không chạy mã phía máy chủ, không biết gì về backend, <strong>không giữ được kết nối hai chiều</strong></td></tr>
+      <tr><td><strong>Ứng dụng</strong></td><td>Máy ảo riêng, chạy trong các vùng chứa</td><td>Toàn bộ nghiệp vụ, xác thực, phân quyền, kênh nhắn tin tức thời</td><td>Không phục vụ tệp tĩnh của giao diện</td></tr>
+      <tr><td><strong>Dữ liệu</strong></td><td>Dịch vụ cơ sở dữ liệu được quản lý, đặt ở một vùng địa lý khác</td><td>Lưu trữ, và các hàm tính toán thống kê</td><td>Không đảm nhiệm xác thực người dùng — hệ thống tự quản phiếu truy cập</td></tr>
+    </tbody>
+  </table>
+
+  <h3>5.2 Ràng buộc kiến trúc quyết định thiết kế</h3>
+
+  <h4>RB-01 · Nền tảng phục vụ tệp tĩnh không mang được kết nối hai chiều</h4>
+  <p>Đây là ràng buộc chi phối toàn bộ phần còn lại. Cách triển khai hiển nhiên — để nền tảng giao diện chuyển tiếp mọi lời gọi về backend — không khả thi vì ba lý do độc lập:</p>
+  <ol>
+    <li>Trang phục vụ qua kết nối an toàn không gọi được một địa chỉ không an toàn; trình duyệt chặn.</li>
+    <li>Hạ tầng biên của nền tảng giao diện không với tới được địa chỉ nội bộ của máy ảo, nên chuyển tiếp ở phía đó cũng không giải quyết gì.</li>
+    <li><strong>Quan trọng nhất:</strong> nền tảng đó không giữ được kết nối dài hạn. Kênh nhắn tin tức thời <em>không bao giờ</em> chuyển tiếp qua nó được.</li>
+  </ol>
+  <p>Ba lý do dẫn tới một kết luận: backend bắt buộc phải có <strong>đầu mối công khai riêng với chứng chỉ hợp lệ</strong>. Giải pháp hiện tại là một đường hầm mở từ trong máy ảo ra ngoài, không cần địa chỉ cố định và không cần mở cổng trên thiết bị mạng. Đường hầm trỏ vào lớp chuyển tiếp web, không trỏ thẳng vào backend — nhờ vậy một tên miền duy nhất phục vụ được cả tệp tĩnh, giao diện dịch vụ và kênh nhắn tin.</p>
+
+  <h4>RB-02 · Cấu hình của giao diện được nhúng vào lúc xây dựng, không đọc được lúc chạy</h4>
+  <p>Địa chỉ của backend được nhúng cứng vào gói tệp tĩnh khi xây dựng. Hệ quả vận hành không lách được:</p>
+  <ul>
+    <li>Tên miền của backend phải tồn tại <strong>trước khi</strong> xây dựng giao diện.</li>
+    <li>Nếu tên miền đó đổi, phải <strong>xây dựng và triển khai lại</strong> giao diện, không chỉ sửa biến cấu hình.</li>
+    <li>Ngược lại, danh sách nguồn gốc được phép của backend đọc lúc khởi động, nên chỉ cần khởi động lại.</li>
+  </ul>
+  <p>Sự bất đối xứng này là lý do thứ tự triển khai bắt buộc phải là: dữ liệu → backend và đường hầm → giao diện.</p>
+
+  <h4>RB-03 · Một thiết lập điều khiển cả hai cơ chế kiểm soát nguồn gốc</h4>
+  <p>Danh sách nguồn gốc được phép vừa quyết định lời gọi giữa các tên miền có được chấp nhận, vừa quyết định kết nối hai chiều có bắt tay được. Đây là lựa chọn có chủ ý: đặt sai thì <em>cả hai</em> cùng báo lỗi, thay vì một cái chạy một cái chết âm thầm.</p>
+  <div class="box b-warn">
+    <p class="box-title">Kiểu lỗi đặc trưng của hệ thống này</p>
+    <p>Nếu phần kiểm soát kết nối hai chiều cấu hình sai, hệ quả không phải là trang trắng. Trang vẫn tải bình thường, mọi lời gọi dịch vụ vẫn chạy — <strong>chỉ riêng chat và thông báo im lặng không hoạt động</strong>. Không có thông báo lỗi nào hiện ra cho người dùng. Đây là loại lỗi cần có bài kiểm thử riêng, vì kiểm thử chức năng thông thường sẽ không bắt được.</p>
+  </div>
+
+  <h4>RB-04 · Khoảng cách địa lý tới tầng dữ liệu là chi phí thật</h4>
+  <p>Cơ sở dữ liệu nằm ở một vùng địa lý khác với máy ứng dụng. <span class="tag t-ok">XÁC NHẬN</span> Đo được: mỗi lượt truy vấn mất khoảng <strong>105 ms</strong>, trong khi cùng truy vấn đó trên cơ sở dữ liệu cục bộ mất khoảng <strong>5 ms</strong>. Một đầu mối dịch vụ truy vấn một lần thì bình thường, nhưng phép tính này không khoan nhượng với bất cứ thứ gì truy vấn theo từng phần tử của danh sách.</p>
+  <p><span class="tag t-warn">GIẢ ĐỊNH</span> Suy ra từ con số trên: một trang dòng tin mười bài, nếu mỗi bài cần thêm truy vấn riêng để đếm lượt thích và lượt bình luận, sẽ phát sinh vài chục lượt truy vấn và mất vài giây. Đây là <em>suy luận</em> chứ không phải phép đo — các đầu mối phân trang cần phiếu truy cập nên chưa đo trực tiếp được.</p>
+  <p>Điều đáng lưu ý cho kiến trúc: nguyên nhân gốc nằm ở <strong>mô hình dữ liệu</strong>, không nằm ở hạ tầng. Mục 9.2 giải thích vì sao.</p>
+
+  <h3>5.3 Phân lớp thành phần</h3>
+  <p>Backend phân lớp theo <strong>mối quan tâm kỹ thuật</strong>, không theo tính năng. Nghĩa là mã của một tính năng nằm rải ở nhiều thư mục, mỗi thư mục một lớp.</p>
+  <table>
+    <thead><tr><th class="w-narrow">Lớp</th><th>Trách nhiệm</th><th>Quy ước đã xác nhận</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Bảo mật</strong></td><td>Đọc phiếu truy cập, kiểm soát nguồn gốc, khai báo phân quyền</td><td>Phiên không trạng thái. Toàn bộ quy tắc truy cập tập trung một chỗ.</td></tr>
+      <tr><td><strong>Điều khiển</strong></td><td>Nhận yêu cầu, kiểm tra đầu vào, gọi lớp nghiệp vụ, trả đối tượng truyền dữ liệu</td><td>Rất mỏng, không chứa quy tắc nghiệp vụ. Một lớp cho một tài nguyên.</td></tr>
+      <tr><td><strong>Nghiệp vụ</strong></td><td>Toàn bộ quy tắc</td><td>Tiêm phụ thuộc qua hàm khởi tạo. Hệ quả phụ phát qua bus sự kiện, không gọi trực tiếp.</td></tr>
+      <tr><td><strong>Chuyển đổi</strong></td><td>Biến thực thể thành đối tượng truyền dữ liệu, bổ sung số đếm và cờ trạng thái của người dùng hiện tại</td><td>Chính lớp này là nơi phát sinh các truy vấn theo từng phần tử nêu ở RB-04.</td></tr>
+      <tr><td><strong>Truy cập dữ liệu</strong></td><td>Truy vấn theo cơ chế ánh xạ đối tượng; riêng phần thống kê gọi hàm lưu trữ của cơ sở dữ liệu theo tên</td><td>Mọi truy vấn phải <em>tự</em> thêm điều kiện xoá mềm — không có bộ lọc toàn cục.</td></tr>
+      <tr><td><strong>Sự kiện</strong></td><td>Mười một loại sự kiện, mọi bộ xử lý đều chạy bất đồng bộ</td><td>Hai kênh phát: email và kết nối hai chiều.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="box b-risk">
+    <p class="box-title">Hệ quả kiến trúc của việc xử lý bất đồng bộ <span class="tag t-risk">RỦI RO</span></p>
+    <p>Lời gọi dịch vụ trả kết quả cho người dùng <strong>trước khi</strong> chuỗi hệ quả phụ hoàn tất. Đây là lựa chọn hợp lý về trải nghiệm: người bình luận không phải chờ hệ thống đi tính danh sách người nhận thông báo.</p>
+    <p>Nhưng hệ quả phải chấp nhận: <strong>không có cơ chế thử lại và không có bảo đảm nào về thời điểm</strong>. Nếu một bộ xử lý bất đồng bộ lỗi, lời gọi dịch vụ vẫn báo thành công và không ai biết. Hai biểu hiện cụ thể đã xác nhận: hashtag của một bài vừa đăng có thể chưa tìm được ngay, và một thông báo thất bại sẽ mất hẳn. Xem GAP-12.</p>
+  </div>
+</section>
+
+<!-- ======================= 6. QUY TRÌNH ======================= -->
+<section class="sheet" id="s6">
+  <h2>6. Quy trình nghiệp vụ</h2>
+  <p class="lead">Tám quy trình, tương ứng sơ đồ <code>business-flow.drawio</code>. Mỗi quy trình nêu rõ điều kiện bắt đầu, các bước, điều kiện kết thúc và những nhánh ngoại lệ đã có trong mã nguồn.</p>
+
+  <h3>6.1 Bản đồ tám quy trình</h3>
+  <table>
+    <thead><tr><th class="id">Mã</th><th class="w-narrow">Quy trình</th><th class="w-narrow">Vai trò chính</th><th>Kết quả nghiệp vụ</th></tr></thead>
+    <tbody>
+      <tr><td class="id">BP-01</td><td>Đăng ký và kích hoạt</td><td>Khách</td><td>Một tài khoản ở trạng thái hoạt động, có bộ bảy thiết lập mặc định</td></tr>
+      <tr><td class="id">BP-02</td><td>Đăng nhập và xác minh thiết bị</td><td>Người dùng</td><td>Một cặp phiếu truy cập và phiếu làm mới</td></tr>
+      <tr><td class="id">BP-03</td><td>Khôi phục mật khẩu</td><td>Khách</td><td>Mật khẩu mới có hiệu lực</td></tr>
+      <tr><td class="id">BP-04</td><td>Xây dựng mạng theo dõi</td><td>Người dùng</td><td>Quan hệ theo dõi được ghi; dòng tin có nội dung</td></tr>
+      <tr><td class="id">BP-05</td><td>Tạo và phát hành bài đăng</td><td>Người dùng</td><td>Bài đăng hiển thị theo mức riêng tư đã chọn, hashtag được lập chỉ mục</td></tr>
+      <tr><td class="id">BP-06</td><td>Tương tác và nhận thông báo</td><td>Người dùng</td><td>Lượt thích hoặc bình luận được ghi; người liên quan nhận thông báo tức thời</td></tr>
+      <tr><td class="id">BP-07</td><td>Nhắn tin trong hội thoại</td><td>Người dùng</td><td>Tin nhắn tới mọi thành viên của hội thoại</td></tr>
+      <tr><td class="id">BP-08</td><td>Báo cáo và kiểm duyệt</td><td>Người dùng + Quản trị viên</td><td>Nội dung bị ẩn hoặc tài khoản bị khoá; hai bên được thông báo</td></tr>
+    </tbody>
+  </table>
+
+  <h3>6.2 Đặc tả từng quy trình</h3>
+
+  <h4>BP-01 · Đăng ký và kích hoạt</h4>
+  <table class="compact">
+    <tbody>
+      <tr><th class="w-narrow">Điều kiện bắt đầu</th><td>Người dùng chưa có tài khoản; tên đăng nhập và email chưa tồn tại trong hệ thống</td></tr>
+      <tr><th>Các bước</th><td>
+        1. Điền biểu mẫu: email, tên đăng nhập, họ tên, mật khẩu, nhập lại mật khẩu.<br>
+        2. Giao diện tra trước xem tên đăng nhập và email đã được dùng chưa.<br>
+        3. Hệ thống kiểm tra toàn bộ ràng buộc đầu vào (xem BR-01 đến BR-04).<br>
+        4. Tạo tài khoản: vai trò người dùng thường, mật khẩu được băm, trạng thái chưa kích hoạt.<br>
+        5. Phát sự kiện hoàn tất đăng ký (bất đồng bộ).<br>
+        6. Sinh <strong>bảy bản ghi thiết lập mặc định</strong> — bước này luôn chạy.<br>
+        7. Sinh mã sáu chữ số có hạn mười phút, gửi email.<br>
+        8. Người dùng nhập mã; hệ thống đối chiếu mã và hạn dùng, chuyển trạng thái sang hoạt động và phát hành phiếu truy cập ngay.
+      </td></tr>
+      <tr><th>Điều kiện kết thúc</th><td>Tài khoản ở trạng thái hoạt động, người dùng đã đăng nhập</td></tr>
+      <tr><th>Nhánh ngoại lệ</th><td>
+        <strong>a.</strong> Đầu vào không hợp lệ → trả lỗi theo từng trường, quay lại bước 1.<br>
+        <strong>b.</strong> Tên đăng nhập hoặc email đã tồn tại → báo lỗi trùng.<br>
+        <strong>c.</strong> Mã hết hạn hoặc sai → không kích hoạt; người dùng yêu cầu gửi lại mã.<br>
+        <strong>d.</strong> Đăng nhập khi chưa kích hoạt → nhận lỗi kèm mã nghiệp vụ <code>1002</code>, hệ thống tự gửi lại mã.<br>
+        <strong>e.</strong> Khi cơ chế bỏ qua xác thực đang bật (chỉ môi trường phát triển) → tài khoản hoạt động ngay, mã chỉ ghi vào bản ghi vận hành.
+      </td></tr>
+      <tr><th>Phụ thuộc</th><td>Dịch vụ gửi thư. Nếu chưa cấu hình, quy trình <strong>đứt ở bước 7</strong> và không có thông báo nào cho người dùng.</td></tr>
+    </tbody>
+  </table>
+
+  <h4>BP-02 · Đăng nhập và xác minh thiết bị</h4>
+  <table class="compact">
+    <tbody>
+      <tr><th class="w-narrow">Điều kiện bắt đầu</th><td>Tài khoản tồn tại</td></tr>
+      <tr><th>Các bước</th><td>
+        1. Gửi tên đăng nhập và mật khẩu; hệ thống đối chiếu mật khẩu đã băm.<br>
+        2. Xét theo trạng thái vòng đời của tài khoản:<br>
+        &nbsp;&nbsp;• bị khoá → lỗi kèm mã <code>1001</code>, dừng;<br>
+        &nbsp;&nbsp;• chưa kích hoạt → lỗi kèm mã <code>1002</code> và gửi lại mã xác thực, dừng;<br>
+        &nbsp;&nbsp;• hoạt động → tiếp bước 3.<br>
+        3. Nếu vai trò <em>không phải</em> người dùng thường → phát hành phiếu ngay, <strong>bỏ qua kiểm tra thiết bị</strong>.<br>
+        4. Nếu là người dùng thường → đọc thiết lập cảnh báo thiết bị mới. <strong>Mặc định thiết lập này TẮT</strong>, nên luồng thông thường phát hành phiếu ngay tại đây.<br>
+        5. Nếu thiết lập bật → đối chiếu thiết bị hiện tại với lịch sử: thiết bị đã biết thì phát hành phiếu; thiết bị lạ thì trả lỗi kèm mã <code>1003</code> và gửi email cảnh báo.
+      </td></tr>
+      <tr><th>Điều kiện kết thúc</th><td>Nhận được phiếu truy cập hạn một giờ và phiếu làm mới hạn một trăm giờ</td></tr>
+      <tr><th>Ghi chú</th><td><span class="tag t-ok">XÁC NHẬN</span> Danh tính thiết bị được xác định bằng bộ ba: quốc gia, &ldquo;thành phố&rdquo; và dòng thiết bị. Trường &ldquo;thành phố&rdquo; thực tế lưu múi giờ tra được từ địa chỉ mạng, không phải tên thành phố.<br><span class="tag t-risk">RỦI RO</span> Nếu không tra được vị trí, hệ thống <strong>cho qua</strong> thay vì chặn — xem GAP-11.</td></tr>
+    </tbody>
+  </table>
+
+  <h4>BP-03 · Khôi phục mật khẩu</h4>
+  <table class="compact">
+    <tbody>
+      <tr><th class="w-narrow">Các bước</th><td>
+        1. Nhập email; hệ thống tìm tài khoản. Không tìm thấy thì báo không có bản ghi.<br>
+        2. Sinh mã sáu chữ số hạn mười phút, gửi email.<br>
+        3. Gửi mã kèm mật khẩu mới; hệ thống đối chiếu mã và hạn, rồi băm và lưu mật khẩu mới.
+      </td></tr>
+      <tr><th>Ghi chú</th><td><span class="tag t-risk">RỦI RO</span> Mã không bị xoá sau khi dùng thành công, nên còn hiệu lực đến khi hết hạn hoặc bị ghi đè — xem GAP-10.</td></tr>
+    </tbody>
+  </table>
+
+  <h4>BP-04 · Xây dựng mạng theo dõi</h4>
+  <table class="compact">
+    <tbody>
+      <tr><th class="w-narrow">Các bước</th><td>
+        1. Người dùng tìm tài khoản theo tên đăng nhập hoặc họ tên, hoặc mở danh sách gợi ý kết bạn.<br>
+        2. Bấm theo dõi → quan hệ được ghi <strong>tức thì, không có bước duyệt</strong>; người được theo dõi nhận thông báo.<br>
+        3. Dòng tin của người theo dõi bắt đầu có bài đăng của người kia.<br>
+        4. Bỏ theo dõi → bản ghi quan hệ bị <strong>xoá hẳn</strong>, và thông báo &ldquo;có người theo dõi bạn&rdquo; tương ứng cũng bị xoá.
+      </td></tr>
+      <tr><th>Gợi ý kết bạn</th><td><span class="tag t-ok">XÁC NHẬN</span> Thuật toán tính <strong>số bạn chung</strong> trên đồ thị theo dõi, sắp xếp giảm dần theo số bạn chung; khi bằng nhau thì tài khoản có mã nhỏ hơn xếp trước. Bảng kết quả được <strong>làm mới mỗi năm phút</strong> và lưu trong bộ nhớ, nên quan hệ vừa tạo chưa phản ánh ngay. Nếu có dưới sáu gợi ý, hệ thống bù bằng những tài khoản nhiều người theo dõi nhất. Người đã được theo dõi bị loại khỏi danh sách.</td></tr>
+      <tr><th>Ghi chú</th><td><span class="tag t-ask">CẦN LÀM RÕ</span> Không có kiểm tra tự theo dõi chính mình — xem Q-08.</td></tr>
+    </tbody>
+  </table>
+
+  <h4>BP-05 · Tạo và phát hành bài đăng</h4>
+  <p>Chi tiết đầy đủ ở sơ đồ trình tự <code>main-sequence.drawio</code>, trang 1.</p>
+  <table class="compact">
+    <tbody>
+      <tr><th class="w-narrow">Các bước</th><td>
+        1. Chọn ảnh, nhập chú thích, chọn mức riêng tư.<br>
+        2. <strong>Giao diện</strong> gửi ảnh đi sàng lọc nội dung qua một dịch vụ bên ngoài.<br>
+        3. Tải ảnh lên hệ thống; hệ thống kiểm tra định dạng và kích thước rồi đẩy lên dịch vụ lưu trữ, trả về đường dẫn.<br>
+        4. Gửi yêu cầu tạo bài đăng kèm chú thích, danh sách đường dẫn ảnh và mức riêng tư.<br>
+        5. Lưu bài đăng; chủ sở hữu được ghi là người tạo.<br>
+        6. Phát sự kiện tạo bài đăng, rồi <strong>trả kết quả ngay</strong>.<br>
+        7. <em>Bất đồng bộ:</em> trích hashtag từ chú thích, tạo hashtag mới nếu chưa có và liên kết với bài đăng.
+      </td></tr>
+      <tr><th>Ghi chú</th><td>
+        <span class="tag t-risk">RỦI RO</span> Sàng lọc ảnh chỉ chạy ở phía trình duyệt, nên là trợ giúp trải nghiệm chứ không phải chốt kiểm soát — xem GAP-13.<br>
+        <span class="tag t-risk">RỦI RO</span> Chỉ đầu mối tải <em>nhiều</em> ảnh kiểm tra định dạng; đầu mối tải một ảnh thì không — xem GAP-14.<br>
+        <span class="tag t-ask">CẦN LÀM RÕ</span> Không có giới hạn số ảnh cho một bài đăng — xem Q-04.
+      </td></tr>
+    </tbody>
+  </table>
+
+  <h4>BP-06 · Tương tác và nhận thông báo</h4>
+  <p>Chi tiết đầy đủ ở sơ đồ trình tự <code>main-sequence.drawio</code>, trang 2.</p>
+  <table class="compact">
+    <tbody>
+      <tr><th class="w-narrow">Thích bài đăng</th><td>Mỗi người chỉ thích một bài một lần, đảm bảo bằng ràng buộc dữ liệu. Thông báo được <strong>gộp</strong> thay vì tạo mới cho từng lượt: nội dung được cập nhật thành dạng &ldquo;X và N người khác đã thích&rdquo;. Bỏ thích thì bản ghi bị xoá hẳn và nội dung thông báo được tính lại, hoặc thông báo bị xoá nếu chỉ còn một lượt thích. Tự thích bài của mình thì không sinh thông báo.</td></tr>
+      <tr><th>Bình luận</th><td>Hai cấp theo thiết kế: bình luận cấp một và bình luận con. Xoá một bình luận cấp một sẽ <strong>xoá mềm đệ quy toàn bộ nhánh con</strong>. Người dùng thường chỉ thấy bình luận chưa bị xoá; vai trò quản trị thấy cả phần đã xoá mềm.</td></tr>
+      <tr><th>Sinh thông báo</th><td>Người nhận gồm: chủ bài đăng, chủ bình luận cha, và những người đã bình luận cùng bài. Một người nhận <strong>chỉ giữ một thông báo</strong> có mức ưu tiên cao nhất thay vì nhận nhiều thông báo cho cùng một hành động. Tác giả tự bình luận bài của mình thì không sinh thông báo nào.</td></tr>
+      <tr><th>Ghi chú</th><td><span class="tag t-risk">RỦI RO</span> Tầng ghi không chặn bình luận cấp ba, trong khi tầng đọc không hiển thị được — xem GAP-15.</td></tr>
+    </tbody>
+  </table>
+
+  <h4>BP-07 · Nhắn tin trong hội thoại</h4>
+  <table class="compact">
+    <tbody>
+      <tr><th class="w-narrow">Các bước</th><td>
+        1. Tạo hội thoại bằng cách nêu danh sách người tham gia. Người gọi được <strong>tự động thêm vào</strong> nếu chưa có trong danh sách; tên hội thoại được ghép từ họ tên các thành viên; tin nhắn đầu tiên được lưu ngay cùng lúc.<br>
+        2. Gửi tin nhắn → lưu vào cơ sở dữ liệu, phát tới mọi thành viên qua kênh giữ mở, và cập nhật thời điểm thay đổi của hội thoại (đây là cách danh sách chat được sắp xếp).<br>
+        3. Chỉ báo đang gõ được phát đi nhưng <strong>không lưu</strong> vào cơ sở dữ liệu.<br>
+        4. Thêm thành viên mới → hệ thống kiểm tra người gọi phải là thành viên của hội thoại.
+      </td></tr>
+      <tr><th>Ghi chú</th><td>
+        <span class="tag t-ok">XÁC NHẬN</span> Không chặn việc tạo hội thoại trùng giữa cùng một tập người, nên hai người có thể có nhiều hội thoại song song.<br>
+        <span class="tag t-ok">XÁC NHẬN</span> Mọi thao tác qua kênh giữ mở <em>đều</em> kiểm tra quyền thành viên. Nhưng đầu mối <em>đọc</em> lịch sử tin nhắn thì không — xem GAP-02.<br>
+        <span class="tag t-ask">CẦN LÀM RÕ</span> Không có chức năng đánh dấu đã đọc, không có rời nhóm — xem Q-12.
+      </td></tr>
+    </tbody>
+  </table>
+
+  <h4>BP-08 · Báo cáo và kiểm duyệt</h4>
+  <p>Chi tiết đầy đủ ở sơ đồ <code>business-flow.drawio</code>, trang 3.</p>
+  <table class="compact">
+    <tbody>
+      <tr><th class="w-narrow">Các bước</th><td>
+        1. Người dùng chọn đối tượng: tài khoản, bài đăng hoặc bình luận.<br>
+        2. Nhập nội dung tố cáo (tối đa 3000 ký tự) và chọn nhóm vi phạm.<br>
+        3. Hệ thống tạo bản ghi báo cáo ở trạng thái chờ xử lý; người tố cáo được ghi là người tạo.<br>
+        4. Người xử lý mở danh sách báo cáo đang chờ và ra quyết định.<br>
+        5a. <strong>Duyệt</strong> → áp hệ quả theo loại, ghi người xử lý và thời điểm, đóng báo cáo, phát sự kiện gửi <strong>hai</strong> thông báo: một cho người tố cáo, một cho người bị xử lý.<br>
+        5b. <strong>Từ chối</strong> → chỉ đóng báo cáo. Không phát sự kiện, không thông báo cho ai.
+      </td></tr>
+      <tr><th>Hệ quả khi duyệt</th><td>
+        • Báo cáo <strong>tài khoản</strong> → ẩn toàn bộ bài đăng đang hiện của tài khoản đó, rồi đặt trạng thái bị khoá.<br>
+        • Báo cáo <strong>bài đăng</strong> → ẩn bài đăng và toàn bộ bình luận của bài.<br>
+        • Báo cáo <strong>bình luận</strong> → ẩn bình luận và toàn bộ nhánh con.
+      </td></tr>
+      <tr><th>Ghi chú</th><td>Quy trình này có nhiều rủi ro nhất: xem GAP-03, GAP-05, GAP-08, GAP-09, GAP-16.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ======================= 7. YÊU CẦU CHỨC NĂNG ======================= -->
+<section class="sheet" id="s7">
+  <h2>7. Yêu cầu chức năng</h2>
+  <p class="lead">Mỗi yêu cầu dưới đây tương ứng một chức năng <strong>đã tồn tại và chạy được</strong>. Cột quyền truy cập mô tả hành vi thực tế; nơi nào hành vi thực tế lệch với thiết kế hợp lý, ô đó dẫn tới một mục ở phần 12.</p>
+
+  <h3>7.1 Tài khoản và xác thực</h3>
+  <table class="compact">
+    <thead><tr><th class="id">Mã</th><th>Yêu cầu</th><th class="w-narrow">Ai dùng</th></tr></thead>
+    <tbody>
+      <tr><td class="id">FR-A01</td><td>Hệ thống cho phép đăng ký tài khoản mới bằng email, tên đăng nhập, họ tên và mật khẩu, với toàn bộ ràng buộc ở BR-01 đến BR-04.</td><td>Khách</td></tr>
+      <tr><td class="id">FR-A02</td><td>Hệ thống cho phép kiểm tra trước một tên đăng nhập hoặc email đã được dùng hay chưa.</td><td>Khách <span class="tag t-risk">GAP-17</span></td></tr>
+      <tr><td class="id">FR-A03</td><td>Hệ thống kích hoạt tài khoản khi nhận đúng mã sáu chữ số còn hạn, và phát hành phiếu truy cập ngay trong cùng lời gọi.</td><td>Khách</td></tr>
+      <tr><td class="id">FR-A04</td><td>Hệ thống gửi lại mã xác thực theo yêu cầu, dùng chung cho cả luồng kích hoạt và luồng quên mật khẩu.</td><td>Khách</td></tr>
+      <tr><td class="id">FR-A05</td><td>Hệ thống xác thực bằng tên đăng nhập và mật khẩu, trả phiếu truy cập hạn một giờ và phiếu làm mới hạn một trăm giờ.</td><td>Khách</td></tr>
+      <tr><td class="id">FR-A06</td><td>Hệ thống phân biệt ba tình huống không cho đăng nhập bằng ba mã nghiệp vụ riêng: <code>1001</code> bị khoá, <code>1002</code> chưa kích hoạt, <code>1003</code> thiết bị lạ.</td><td>Khách</td></tr>
+      <tr><td class="id">FR-A07</td><td>Hệ thống cấp phiếu truy cập mới khi nhận phiếu làm mới còn hạn, không cần đăng nhập lại.</td><td>Khách</td></tr>
+      <tr><td class="id">FR-A08</td><td>Hệ thống cho phép đặt mật khẩu mới bằng mã xác thực (quên mật khẩu), và đổi mật khẩu khi đã đăng nhập (cần mật khẩu cũ).</td><td>Khách / Người dùng</td></tr>
+      <tr><td class="id">FR-A09</td><td>Hệ thống ghi nhận thiết bị và vị trí mỗi lần đăng nhập, gồm dòng thiết bị, quốc gia, múi giờ, toạ độ và thời điểm gần nhất.</td><td>Hệ thống</td></tr>
+      <tr><td class="id">FR-A10</td><td>Hệ thống cho phép người dùng xem và xoá các bản ghi thiết bị, vị trí đăng nhập của mình.</td><td>Người dùng <span class="tag t-risk">GAP-18</span></td></tr>
+    </tbody>
+  </table>
+
+  <h3>7.2 Hồ sơ và quan hệ xã hội</h3>
+  <table class="compact">
+    <thead><tr><th class="id">Mã</th><th>Yêu cầu</th><th class="w-narrow">Ai dùng</th></tr></thead>
+    <tbody>
+      <tr><td class="id">FR-B01</td><td>Hệ thống hiển thị hồ sơ gồm ảnh đại diện, số bài đăng, số người theo dõi, số đang theo dõi, cờ cho biết người xem có đang theo dõi hay không, và trang bài đăng đầu tiên đã lọc theo mức riêng tư.</td><td>Người dùng</td></tr>
+      <tr><td class="id">FR-B02</td><td>Hệ thống chặn việc xem hồ sơ của tài khoản đã bị khoá, và chặn việc dùng tài khoản người dùng thường để xem hồ sơ của tài khoản quản trị.</td><td>Hệ thống</td></tr>
+      <tr><td class="id">FR-B03</td><td>Hệ thống cho phép chỉnh sửa tên đăng nhập, email, họ tên, giới thiệu ngắn, số điện thoại và giới tính.</td><td>Người dùng</td></tr>
+      <tr><td class="id">FR-B04</td><td>Hệ thống lưu lịch sử ảnh đại diện, ảnh mới nhất là ảnh đang dùng.</td><td>Người dùng</td></tr>
+      <tr><td class="id">FR-B05</td><td>Hệ thống cho phép theo dõi và bỏ theo dõi một tài khoản khác, hiệu lực tức thì.</td><td>Người dùng</td></tr>
+      <tr><td class="id">FR-B06</td><td>Hệ thống trả danh sách người theo dõi và danh sách đang theo dõi của một tài khoản, có phân trang.</td><td>Người dùng <span class="tag t-risk">GAP-19</span></td></tr>
+      <tr><td class="id">FR-B07</td><td>Hệ thống gợi ý tài khoản nên theo dõi, xếp theo số bạn chung; bù bằng tài khoản nhiều người theo dõi nhất khi chưa đủ sáu gợi ý.</td><td>Người dùng</td></tr>
+      <tr><td class="id">FR-B08</td><td>Hệ thống tìm tài khoản theo tên đăng nhập hoặc họ tên, chỉ trả về tài khoản có vai trò người dùng thường.</td><td>Người dùng</td></tr>
+    </tbody>
+  </table>
+
+  <h3>7.3 Nội dung</h3>
+  <table class="compact">
+    <thead><tr><th class="id">Mã</th><th>Yêu cầu</th><th class="w-narrow">Ai dùng</th></tr></thead>
+    <tbody>
+      <tr><td class="id">FR-C01</td><td>Hệ thống cho phép tạo bài đăng gồm chú thích, danh sách ảnh và một mức riêng tư.</td><td>Người dùng</td></tr>
+      <tr><td class="id">FR-C02</td><td>Hệ thống nhận một hoặc nhiều ảnh, đẩy lên dịch vụ lưu trữ và trả về đường dẫn dùng được.</td><td>Người dùng</td></tr>
+      <tr><td class="id">FR-C03</td><td>Hệ thống tự trích hashtag từ chú thích sau khi bài đăng đã lưu, tạo hashtag mới nếu chưa tồn tại và liên kết với bài đăng.</td><td>Hệ thống</td></tr>
+      <tr><td class="id">FR-C04</td><td>Hệ thống hiển thị chi tiết bài đăng kèm trang bình luận cấp một, số lượt thích và cờ cho biết người xem đã thích hay chưa.</td><td>Người dùng</td></tr>
+      <tr><td class="id">FR-C05</td><td>Hệ thống cho phép tìm bài đăng theo tác giả, mức riêng tư, cờ của-tôi và từ khoá trong chú thích.</td><td>Người dùng <span class="tag t-risk">GAP-20</span></td></tr>
+      <tr><td class="id">FR-C06</td><td>Hệ thống xoá mềm bài đăng, đồng thời ẩn toàn bộ bình luận của bài.</td><td>Người dùng <span class="tag t-risk">GAP-01</span></td></tr>
+      <tr><td class="id">FR-C07</td><td>Hệ thống trả dòng tin gồm bài đăng của những người mà người dùng đang theo dõi, mức riêng tư công khai và người-theo-dõi, sắp theo thời điểm thay đổi giảm dần.</td><td>Người dùng</td></tr>
+      <tr><td class="id">FR-C08</td><td>Hệ thống trả danh sách bài đăng nổi bật, xếp theo tổng số bình luận cộng số lượt thích.</td><td>Người dùng</td></tr>
+      <tr><td class="id">FR-C09</td><td>Hệ thống trả danh sách hashtag phổ biến nhất, và cho phép tìm bài đăng theo tên hashtag.</td><td>Người dùng</td></tr>
+    </tbody>
+  </table>
+
+  <h3>7.4 Tương tác</h3>
+  <table class="compact">
+    <thead><tr><th class="id">Mã</th><th>Yêu cầu</th><th class="w-narrow">Ai dùng</th></tr></thead>
+    <tbody>
+      <tr><td class="id">FR-D01</td><td>Hệ thống cho phép thích và bỏ thích một bài đăng, mỗi người tối đa một lượt cho một bài.</td><td>Người dùng</td></tr>
+      <tr><td class="id">FR-D02</td><td>Hệ thống trả danh sách những người đã thích một bài đăng, có phân trang.</td><td>Người dùng</td></tr>
+      <tr><td class="id">FR-D03</td><td>Hệ thống cho phép bình luận vào bài đăng, hoặc trả lời một bình luận cấp một.</td><td>Người dùng</td></tr>
+      <tr><td class="id">FR-D04</td><td>Hệ thống trả bình luận cấp một của một bài đăng, và bình luận con của một bình luận, đều có phân trang.</td><td>Người dùng</td></tr>
+      <tr><td class="id">FR-D05</td><td>Hệ thống cho phép chủ bình luận hoặc quản trị viên xoá mềm một bình luận, kéo theo toàn bộ nhánh con.</td><td>Chủ sở hữu / Quản trị</td></tr>
+    </tbody>
+  </table>
+
+  <h3>7.5 Nhắn tin và thông báo</h3>
+  <table class="compact">
+    <thead><tr><th class="id">Mã</th><th>Yêu cầu</th><th class="w-narrow">Ai dùng</th></tr></thead>
+    <tbody>
+      <tr><td class="id">FR-E01</td><td>Hệ thống cho phép tạo hội thoại từ một danh sách người tham gia; người gọi tự được thêm vào nếu thiếu; tin nhắn đầu tiên được lưu cùng lúc.</td><td>Người dùng</td></tr>
+      <tr><td class="id">FR-E02</td><td>Hệ thống gửi tin nhắn tới mọi thành viên của hội thoại qua kênh giữ mở, không cần tải lại trang.</td><td>Người dùng</td></tr>
+      <tr><td class="id">FR-E03</td><td>Hệ thống phát chỉ báo đang gõ tới các thành viên khác, không lưu vào cơ sở dữ liệu.</td><td>Người dùng</td></tr>
+      <tr><td class="id">FR-E04</td><td>Hệ thống cho phép thêm thành viên vào hội thoại, với điều kiện người gọi là thành viên.</td><td>Người dùng</td></tr>
+      <tr><td class="id">FR-E05</td><td>Hệ thống trả danh sách hội thoại của người dùng, lịch sử tin nhắn của một hội thoại, và cho phép tìm hội thoại theo từ khoá so với tên hội thoại, tên đăng nhập hoặc họ tên thành viên.</td><td>Người dùng <span class="tag t-risk">GAP-02</span></td></tr>
+      <tr><td class="id">FR-E06</td><td>Hệ thống phát danh sách người đang hoạt động, tuân theo thiết lập hiển thị trạng thái của từng người.</td><td>Người dùng</td></tr>
+      <tr><td class="id">FR-E07</td><td>Hệ thống sinh thông báo cho các hành động: bình luận, trả lời bình luận, có người cùng bình luận, lượt thích, được theo dõi, và kết quả xử lý báo cáo.</td><td>Hệ thống</td></tr>
+      <tr><td class="id">FR-E08</td><td>Hệ thống chỉ gửi thông báo khi thiết lập tương ứng của người nhận đang bật, và với một hành động thì một người nhận chỉ nhận một thông báo ưu tiên cao nhất.</td><td>Hệ thống</td></tr>
+      <tr><td class="id">FR-E09</td><td>Hệ thống trả danh sách thông báo có lọc theo trạng thái, và cho phép chuyển trạng thái sang đã nhận hoặc đã xem.</td><td>Người dùng</td></tr>
+      <tr><td class="id">FR-E10</td><td>Hệ thống cho phép xem và đổi bảy thiết lập cá nhân.</td><td>Người dùng</td></tr>
+    </tbody>
+  </table>
+
+  <h3>7.6 Kiểm duyệt</h3>
+  <table class="compact">
+    <thead><tr><th class="id">Mã</th><th>Yêu cầu</th><th class="w-narrow">Ai dùng</th></tr></thead>
+    <tbody>
+      <tr><td class="id">FR-F01</td><td>Hệ thống cho phép báo cáo một tài khoản, một bài đăng hoặc một bình luận, kèm nội dung tố cáo và nhóm vi phạm.</td><td>Người dùng</td></tr>
+      <tr><td class="id">FR-F02</td><td>Hệ thống trả danh sách báo cáo, lọc theo trạng thái đang chờ hoặc đã đóng, có phân trang.</td><td>Người dùng <span class="tag t-risk">GAP-03</span></td></tr>
+      <tr><td class="id">FR-F03</td><td>Khi một báo cáo được duyệt, hệ thống áp hệ quả tương ứng với loại đối tượng, ghi nhận người xử lý và đóng báo cáo.</td><td>Quản trị <span class="tag t-risk">GAP-03</span></td></tr>
+      <tr><td class="id">FR-F04</td><td>Khi một báo cáo bị từ chối, hệ thống đóng báo cáo mà không thay đổi đối tượng bị tố cáo.</td><td>Quản trị <span class="tag t-risk">GAP-05</span></td></tr>
+      <tr><td class="id">FR-F05</td><td>Khi một báo cáo được duyệt, hệ thống gửi hai thông báo: một cho người tố cáo, một cho người bị xử lý, qua kênh tức thời và kèm email nếu thiết lập cho phép.</td><td>Hệ thống <span class="tag t-risk">GAP-16</span></td></tr>
+      <tr><td class="id">FR-F06</td><td>Hệ thống cho phép quản trị viên xem chi tiết một bài đăng hoặc một hồ sơ, kể cả phần đã bị xoá mềm.</td><td>Quản trị</td></tr>
+    </tbody>
+  </table>
+
+  <h3>7.7 Quản trị và thống kê</h3>
+  <table class="compact">
+    <thead><tr><th class="id">Mã</th><th>Yêu cầu</th><th class="w-narrow">Ai dùng</th></tr></thead>
+    <tbody>
+      <tr><td class="id">FR-G01</td><td>Hệ thống cho phép xem danh sách, tạo mới và xoá mềm tài khoản quản trị.</td><td>Quản trị</td></tr>
+      <tr><td class="id">FR-G02</td><td>Hệ thống trả tổng số bài đăng, tổng số tài khoản và tổng số hashtag.</td><td>Quản trị <span class="tag t-risk">GAP-04</span></td></tr>
+      <tr><td class="id">FR-G03</td><td>Hệ thống trả số bài đăng và số tài khoản mới theo <strong>mười hai tháng</strong>, <strong>bốn quý</strong> và <strong>hai năm</strong> gần nhất.</td><td>Quản trị <span class="tag t-risk">GAP-04</span></td></tr>
+      <tr><td class="id">FR-G04</td><td>Hệ thống trả bảng xếp hạng: tài khoản nhiều người theo dõi nhất, bài đăng nhiều tương tác nhất, bài đăng mới nhất.</td><td>Quản trị <span class="tag t-risk">GAP-04</span></td></tr>
+      <tr><td class="id">FR-G05</td><td>Hệ thống trả vị trí đăng nhập gần nhất của từng tài khoản, dùng để vẽ bản đồ phân bố người dùng.</td><td>Quản trị <span class="tag t-risk">GAP-04</span></td></tr>
+      <tr><td class="id">FR-G06</td><td>Hệ thống trả hashtag nổi bật trong một khoảng thời gian, chọn theo đơn vị ngày, tuần, tháng, quý hoặc năm.</td><td>Quản trị <span class="tag t-risk">GAP-21</span></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ======================= 8. QUY TẮC NGHIỆP VỤ ======================= -->
+<section class="sheet" id="s8">
+  <h2>8. Quy tắc nghiệp vụ</h2>
+  <p class="lead">Những ràng buộc dưới đây đều lấy từ mã nguồn, kèm giá trị cụ thể. Chúng là cơ sở để viết tiêu chí nghiệm thu ở mục 11.</p>
+
+  <h3>8.1 Nhóm tài khoản</h3>
+  <table class="compact">
+    <thead><tr><th class="id">Mã</th><th>Quy tắc</th><th class="w-narrow">Nhãn</th></tr></thead>
+    <tbody>
+      <tr><td class="id">BR-01</td><td><strong>Tên đăng nhập</strong> dài tối thiểu 3 ký tự, chỉ gồm chữ cái không dấu, chữ số và ba ký tự <code>.</code> <code>_</code> <code>-</code>. <strong>Không có giới hạn trên.</strong> Việc kiểm tra trùng không phân biệt chữ hoa chữ thường.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-02</td><td><strong>Mật khẩu</strong> dài 8 đến 30 ký tự và bắt buộc có đủ bốn loại: ít nhất một chữ số, một chữ thường, một chữ hoa và một ký tự đặc biệt.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-03</td><td><strong>Họ tên</strong> dài 1 đến 50 ký tự. <strong>Giới thiệu ngắn</strong> tối đa 200 ký tự.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-04</td><td><strong>Email</strong> phải đúng định dạng và chưa tồn tại trong hệ thống. Trường nhập lại mật khẩu phải khớp trường mật khẩu.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-05</td><td><strong>Mã xác thực</strong> gồm 6 chữ số, hạn dùng <strong>10 phút</strong>, lưu trực tiếp trên bản ghi tài khoản nên mỗi tài khoản chỉ có một mã còn hiệu lực tại một thời điểm.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-06</td><td><strong>Phiếu truy cập</strong> hạn 1 giờ. <strong>Phiếu làm mới</strong> hạn 100 giờ. Phiếu làm mới lưu trên bản ghi tài khoản nên mỗi tài khoản chỉ có một phiếu làm mới hợp lệ.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-07</td><td>Mọi tài khoản đăng ký đều nhận vai trò <strong>người dùng thường</strong>. Mật khẩu được băm, không bao giờ lưu dạng nguyên văn.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-08</td><td>Khi đăng ký thành công, hệ thống sinh <strong>đúng bảy bản ghi thiết lập</strong> với giá trị mặc định. Bước này chạy kể cả khi cơ chế bỏ qua xác thực đang bật, vì thiếu các bản ghi này thì mọi chỗ đọc thiết lập sẽ lỗi.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-09</td><td>Tài khoản <strong>bị khoá không thể đăng nhập</strong> và hồ sơ của họ không xem được. Trạng thái khoá là một chiều.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-10</td><td>Vai trò quản trị <strong>bỏ qua bước kiểm tra thiết bị</strong> khi đăng nhập.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-11</td><td>Danh tính một thiết bị được xác định bằng bộ ba: quốc gia, múi giờ (lưu ở trường tên là &ldquo;thành phố&rdquo;), và dòng thiết bị kèm phiên bản chính.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+    </tbody>
+  </table>
+
+  <h3>8.2 Nhóm nội dung và quyền riêng tư</h3>
+  <table class="compact">
+    <thead><tr><th class="id">Mã</th><th>Quy tắc</th><th class="w-narrow">Nhãn</th></tr></thead>
+    <tbody>
+      <tr><td class="id">BR-12</td><td><strong>Chú thích bài đăng</strong> bắt buộc có, tối đa 1500 ký tự. Danh sách ảnh bắt buộc không rỗng.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-13</td><td><strong>Tệp ảnh</strong> chỉ nhận năm định dạng: <code>.png</code> <code>.jpeg</code> <code>.jpg</code> <code>.svg</code> <code>.gif</code>. Giới hạn kích thước: 10 MB cho mỗi tệp và 10 MB cho toàn bộ một lượt gửi.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-14</td><td><strong>Ba mức riêng tư của bài đăng</strong>: chỉ mình tôi, người theo dõi, công khai. Giá trị được lưu dưới dạng số thứ tự, nên thứ tự khai báo là một phần hợp đồng dữ liệu.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-15</td><td><strong>Khi xem hồ sơ người khác</strong>: chỉ thấy bài công khai; thêm bài mức người-theo-dõi nếu người xem đang theo dõi chủ hồ sơ. <strong>Khi xem hồ sơ của chính mình</strong>: thấy cả ba mức.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-16</td><td><strong>Dòng tin</strong> chỉ gồm bài của những người mà người dùng đang theo dõi, ở mức công khai và người-theo-dõi. Không gồm bài của chính người dùng. Chưa theo dõi ai thì dòng tin rỗng, không có nội dung thay thế.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-17</td><td>Dòng tin sắp xếp theo <strong>thời điểm thay đổi</strong> giảm dần, không theo thời điểm tạo. Hệ quả: một bài cũ bị cập nhật sẽ nổi lên đầu dòng tin.</td><td><span class="tag t-ask">CẦN LÀM RÕ</span></td></tr>
+      <tr><td class="id">BR-18</td><td><strong>Hashtag</strong> được trích từ chú thích sau khi bài đăng đã lưu. Tên hashtag lưu <strong>kèm dấu thăng</strong>. Trùng lặp trong cùng một chú thích được khử. Biểu thức trích xuất không nhận ký tự tiếng Việt có dấu.</td><td><span class="tag t-ask">CẦN LÀM RÕ</span></td></tr>
+      <tr><td class="id">BR-19</td><td><strong>Xoá bài đăng</strong> là xoá mềm, và kéo theo ẩn toàn bộ bình luận của bài.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-20</td><td><strong>Nội dung bình luận</strong> bắt buộc có, dài 1 đến 1200 ký tự ở tầng giao diện dịch vụ (tầng dữ liệu cho phép tới 1500).</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-21</td><td><strong>Bình luận hai cấp</strong>: cấp một và con của cấp một. Khi trả lời, bình luận cha phải thuộc đúng bài đăng được chỉ định.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-22</td><td><strong>Xoá bình luận cấp một</strong> kéo theo xoá mềm đệ quy toàn bộ nhánh con.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-23</td><td>Người dùng thường <strong>chỉ thấy bình luận chưa bị xoá</strong>; vai trò quản trị thấy cả phần đã xoá mềm.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+    </tbody>
+  </table>
+
+  <h3>8.3 Nhóm tương tác và thông báo</h3>
+  <table class="compact">
+    <thead><tr><th class="id">Mã</th><th>Quy tắc</th><th class="w-narrow">Nhãn</th></tr></thead>
+    <tbody>
+      <tr><td class="id">BR-24</td><td><strong>Mỗi người chỉ thích một bài một lần</strong>, bảo đảm bằng ràng buộc duy nhất ở tầng dữ liệu. Bỏ thích là xoá hẳn bản ghi.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-25</td><td><strong>Theo dõi có hiệu lực tức thì</strong>, không có bước duyệt, không có trạng thái chờ. Mỗi cặp chỉ tồn tại một bản ghi. Bỏ theo dõi là xoá hẳn, và xoá luôn thông báo tương ứng.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-26</td><td><strong>Tự tương tác không sinh thông báo</strong>: tự thích bài của mình, hoặc tự bình luận bài của mình, đều không tạo thông báo nào.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-27</td><td><strong>Thông báo lượt thích được gộp</strong> thay vì tạo mới cho từng lượt. Nội dung được cập nhật thành dạng &ldquo;X và N người khác&rdquo;. Khi bỏ thích, nội dung được tính lại hoặc thông báo bị xoá nếu chỉ còn một lượt thích.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-28</td><td><strong>Một hành động bình luận chỉ sinh một thông báo cho mỗi người nhận</strong>, chọn loại có mức ưu tiên cao nhất, thay vì gửi nhiều thông báo cho cùng một người.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-29</td><td>Người nhận thông báo của một bình luận gồm: chủ bài đăng, chủ bình luận cha, và <strong>những người đã bình luận cùng bài hoặc cùng nhánh</strong>.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-30</td><td><strong>Email chỉ dùng cho hai việc</strong>: mã xác thực (bốn tình huống) và kết quả xử lý báo cáo. Mọi thông báo tương tác khác đi qua kênh giữ mở.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-31</td><td><strong>Chỉ báo đang gõ không lưu</strong> vào cơ sở dữ liệu, chỉ phát đi.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-32</td><td><strong>Tên hội thoại</strong> được ghép từ họ tên các thành viên. Người tạo tự được thêm vào danh sách thành viên nếu thiếu. Mỗi cặp hội thoại và thành viên chỉ có một bản ghi.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-33</td><td><strong>Mỗi tin nhắn cập nhật thời điểm thay đổi của hội thoại</strong>. Đây là cơ chế sắp xếp danh sách chat.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-34</td><td><strong>Bảy thiết lập cá nhân</strong>, tất cả kiểu đúng/sai. Sáu thiết lập mặc định bật; riêng <strong>cảnh báo đăng nhập từ thiết bị mới mặc định TẮT</strong>, nghĩa là luồng xác minh thiết bị mặc định không chạy.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+    </tbody>
+  </table>
+
+  <h3>8.4 Nhóm kiểm duyệt</h3>
+  <table class="compact">
+    <thead><tr><th class="id">Mã</th><th>Quy tắc</th><th class="w-narrow">Nhãn</th></tr></thead>
+    <tbody>
+      <tr><td class="id">BR-35</td><td><strong>Nội dung tố cáo</strong> bắt buộc có, tối đa 3000 ký tự. Phải chọn một trong sáu <strong>nhóm vi phạm</strong>: khiêu dâm, bạo lực, tự hại, khủng bố, nội dung rác, khác.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-36</td><td><strong>Ba loại đối tượng bị báo cáo</strong>: tài khoản, bài đăng, bình luận. Ba loại dùng chung phần dữ liệu cha và khác nhau ở khoá trỏ tới đối tượng.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-37</td><td><strong>Trạng thái báo cáo chỉ có hai giá trị</strong>: đang chờ xử lý và đã đóng. Danh sách mặc định hiển thị báo cáo đang chờ.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-38</td><td><strong>Duyệt báo cáo tài khoản</strong> → ẩn toàn bộ bài đăng đang hiện của tài khoản đó, rồi đặt trạng thái bị khoá.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-39</td><td><strong>Duyệt báo cáo bài đăng</strong> → ẩn bài đăng và toàn bộ bình luận của bài. <strong>Duyệt báo cáo bình luận</strong> → ẩn bình luận và toàn bộ nhánh con.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-40</td><td><strong>Duyệt báo cáo sinh hai thông báo</strong>: một cho người tố cáo, một cho người bị xử lý.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-41</td><td><strong>Từ chối báo cáo không sinh thông báo nào</strong> và không thay đổi đối tượng bị tố cáo.</td><td><span class="tag t-ask">CẦN LÀM RÕ</span></td></tr>
+      <tr><td class="id">BR-42</td><td><strong>Người tố cáo</strong> được ghi bằng trường người tạo; <strong>người xử lý</strong> được ghi bằng trường người thay đổi gần nhất. Không có trường riêng cho hai vai này.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+    </tbody>
+  </table>
+
+  <h3>8.5 Nhóm dữ liệu và phân trang</h3>
+  <table class="compact">
+    <thead><tr><th class="id">Mã</th><th>Quy tắc</th><th class="w-narrow">Nhãn</th></tr></thead>
+    <tbody>
+      <tr><td class="id">BR-43</td><td><strong>Bộ tham số phân trang chuẩn</strong>: trường sắp xếp (mặc định khoá chính), chiều sắp xếp (mặc định tăng dần), số phần tử mỗi trang (mặc định 12), chỉ số trang tính từ 0 (mặc định 0). Tên trường sắp xếp được kiểm tra hợp lệ; sai thì báo lỗi.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-44</td><td><strong>Cấu trúc dữ liệu phân trang trả về</strong> gồm: danh sách nội dung, số phần tử mỗi trang, chỉ số trang, tổng số trang, tổng số phần tử, số phần tử của trang hiện tại, và ba cờ trang-đầu, trang-cuối, rỗng.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-45</td><td><strong>Xoá mềm chỉ áp cho 8 trong 19 bảng</strong>: tài khoản, bài đăng, bình luận, hội thoại và bốn bảng của nhóm kiểm duyệt. Các bảng nối như lượt thích, quan hệ theo dõi, thành viên hội thoại đều bị xoá hẳn.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-46</td><td><strong>Thống kê theo thời gian cố định ba khung</strong>: 12 tháng, 4 quý và 2 năm gần nhất. Giá trị này nằm trong hàm lưu trữ của cơ sở dữ liệu, không nằm trong mã ứng dụng.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-47</td><td><strong>Điểm tương tác của một bài đăng</strong> bằng tổng số bình luận cộng số lượt thích. Bảng xếp hạng này <strong>không có khung thời gian</strong> — tính trên toàn bộ dữ liệu.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-48</td><td><strong>Hashtag nổi bật theo thời gian</strong>: khoảng thời gian suy từ đơn vị được chọn — ngày (1 ngày), tuần (1 tuần), tháng (1 tháng), quý (3 tháng), năm (1 năm). Mặc định khi đơn vị không hợp lệ là 1 năm.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">BR-49</td><td><strong>Bảng gợi ý kết bạn được làm mới mỗi 5 phút</strong> và lưu trong bộ nhớ của tiến trình. Một quan hệ theo dõi vừa tạo chưa phản ánh ngay vào gợi ý.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ======================= 9. MÔ HÌNH DỮ LIỆU ======================= -->
+<section class="sheet" id="s9">
+  <h2>9. Mô hình dữ liệu</h2>
+  <p class="lead">Tương ứng sơ đồ <code>data-model.drawio</code>, hai trang. Mục này nêu danh mục bảng và ba đặc điểm chi phối cách đọc mô hình.</p>
+
+  <h3>9.1 Danh mục bảng</h3>
+  <table class="compact">
+    <thead><tr><th class="w-narrow">Bảng</th><th class="w-narrow">Nhóm</th><th>Vai trò nghiệp vụ</th><th class="w-narrow">Xoá mềm</th></tr></thead>
+    <tbody>
+      <tr><td><code>account</code></td><td>Cốt lõi</td><td>Tài khoản người dùng — thực thể trung tâm</td><td class="ctr">Có</td></tr>
+      <tr><td><code>role</code></td><td>Cốt lõi</td><td>Vai trò hệ thống</td><td class="ctr">—</td></tr>
+      <tr><td><code>post</code></td><td>Nội dung</td><td>Bài đăng kèm chú thích và mức riêng tư</td><td class="ctr">Có</td></tr>
+      <tr><td><code>comment</code></td><td>Nội dung</td><td>Bình luận, có cấu trúc cây qua khoá tự tham chiếu</td><td class="ctr">Có</td></tr>
+      <tr><td><code>attachment</code></td><td>Nội dung</td><td>Tệp ảnh của bài đăng hoặc ảnh đại diện</td><td class="ctr">—</td></tr>
+      <tr><td><code>liking</code></td><td>Tương tác</td><td>Lượt thích — bảng nối tài khoản và bài đăng</td><td class="ctr">—</td></tr>
+      <tr><td><code>following</code></td><td>Tương tác</td><td>Quan hệ theo dõi một chiều — bảng nối tự tham chiếu</td><td class="ctr">—</td></tr>
+      <tr><td><code>hashtag</code></td><td>Nội dung</td><td>Thẻ chủ đề</td><td class="ctr">—</td></tr>
+      <tr><td><code>hashtag_rel_post</code></td><td>Nội dung</td><td>Bảng nối hashtag và bài đăng</td><td class="ctr">—</td></tr>
+      <tr><td><code>conversation</code></td><td>Nhắn tin</td><td>Hội thoại</td><td class="ctr">Có</td></tr>
+      <tr><td><code>participant</code></td><td>Nhắn tin</td><td>Thành viên hội thoại — bảng nối</td><td class="ctr">—</td></tr>
+      <tr><td><code>message</code></td><td>Nhắn tin</td><td>Tin nhắn. Trường &ldquo;người nhận&rdquo; trỏ tới <strong>hội thoại</strong>, không phải tài khoản.</td><td class="ctr">—</td></tr>
+      <tr><td><code>notification</code></td><td>Thông báo</td><td>Thông báo trong ứng dụng, 11 loại</td><td class="ctr">—</td></tr>
+      <tr><td><code>setting</code></td><td>Cấu hình</td><td>Bảy thiết lập cá nhân cho mỗi tài khoản</td><td class="ctr">—</td></tr>
+      <tr><td><code>device_metadata</code></td><td>Bảo mật</td><td>Thiết bị và vị trí đăng nhập</td><td class="ctr">—</td></tr>
+      <tr><td><code>report_template</code></td><td>Kiểm duyệt</td><td><strong>Bảng cha</strong> của ba loại báo cáo. Không phải danh mục mẫu lý do tố cáo.</td><td class="ctr">Có</td></tr>
+      <tr><td><code>account_report</code></td><td>Kiểm duyệt</td><td>Báo cáo một tài khoản</td><td class="ctr">Có</td></tr>
+      <tr><td><code>post_report</code></td><td>Kiểm duyệt</td><td>Báo cáo một bài đăng</td><td class="ctr">Có</td></tr>
+      <tr><td><code>comment_report</code></td><td>Kiểm duyệt</td><td>Báo cáo một bình luận</td><td class="ctr">Có</td></tr>
+    </tbody>
+  </table>
+
+  <h3>9.2 Ba đặc điểm chi phối mô hình</h3>
+
+  <h4>Đặc điểm 1 · Không có một quan hệ hai chiều nào</h4>
+  <p><span class="tag t-ok">XÁC NHẬN</span> Trong toàn bộ mã nguồn mô hình dữ liệu, <strong>mọi liên kết đều khai báo một chiều</strong>, từ phía &ldquo;nhiều&rdquo; trỏ về phía &ldquo;một&rdquo; bằng một khoá ngoại. Phía &ldquo;một&rdquo; không giữ danh sách con.</p>
+  <div class="box b-info">
+    <p class="box-title">Vì sao điều này quan trọng với kiến trúc, không chỉ với mã nguồn</p>
+    <p>Khi mô tả hệ thống, <strong>không nên</strong> nói &ldquo;bài đăng có danh sách bình luận&rdquo; — cấu trúc đó không tồn tại. Mỗi danh sách con và mỗi phép đếm đều là một truy vấn riêng.</p>
+    <p>Đây chính là nguyên nhân gốc của chi phí độ trễ nêu ở RB-04. Lớp chuyển đổi dữ liệu bổ sung số đếm cho từng phần tử, nên một trang danh sách mười phần tử sinh ra hàng chục lượt truy vấn. Trên cơ sở dữ liệu cục bộ chi phí này không đáng kể; với cơ sở dữ liệu cách xa 105 ms thì nó thành vấn đề. <strong>Nếu cần cải thiện hiệu năng, điểm tác động lớn nhất nằm ở lớp chuyển đổi, không nằm ở hạ tầng.</strong></p>
+  </div>
+
+  <h4>Đặc điểm 2 · Chủ sở hữu tài nguyên nằm ở lớp cha</h4>
+  <p><span class="tag t-ok">XÁC NHẬN</span> Bảng bài đăng <strong>không có trường tác giả riêng</strong>. Chủ sở hữu một bài đăng chính là trường người tạo được kế thừa từ nhóm trường theo dấu vết thay đổi. Điều này đúng với bài đăng, bình luận, hội thoại và toàn bộ nhóm kiểm duyệt.</p>
+  <p>Đây là điểm dễ mô hình hoá sai nhất khi đọc hệ thống. Nó cũng là lý do cùng một trường mang <em>hai nghĩa khác nhau</em> trong nhóm kiểm duyệt: trường người tạo là <strong>người tố cáo</strong>, còn trường người thay đổi gần nhất là <strong>người xử lý</strong>.</p>
+
+  <h4>Đặc điểm 3 · Lược đồ không có nguồn sự thật duy nhất</h4>
+  <p><span class="tag t-ok">XÁC NHẬN</span> Tệp lược đồ trong mã nguồn chỉ tạo <strong>11 trong 19 bảng</strong>. Tám bảng còn lại — thiết bị đăng nhập, hashtag, bảng nối hashtag, thông báo và bốn bảng kiểm duyệt — chỉ xuất hiện khi backend khởi động, do cơ chế tự cập nhật lược đồ sinh ra.</p>
+  <div class="box b-risk">
+    <p class="box-title">Hệ quả vận hành đã được kiểm chứng <span class="tag t-risk">RỦI RO</span></p>
+    <p>Một hàm thống kê <strong>lỗi</strong> khi lược đồ chỉ dựng từ tệp lược đồ, vì bảng thiết bị đăng nhập chưa tồn tại. Vì vậy: <strong>dựng môi trường mới phải khôi phục từ bản sao lưu dữ liệu</strong>, không dùng tệp lược đồ.</p>
+    <p>Tệp lược đồ còn lệch so với mã nguồn ở ba chỗ: bảng tài khoản thiếu ba cột, bảng tin nhắn có một cột không dùng và thiếu cột loại tin nhắn, kiểu dữ liệu của trường thời gian cũng khác. Nói cách khác, tệp đó đã hết vai trò làm nguồn sự thật. Xem GAP-22.</p>
+  </div>
+
+  <h3>9.3 Bảng mã trạng thái</h3>
+  <table class="compact">
+    <thead><tr><th class="w-narrow">Danh mục</th><th class="w-narrow">Số giá trị</th><th>Giá trị và ý nghĩa</th></tr></thead>
+    <tbody>
+      <tr><td>Trạng thái tài khoản</td><td class="ctr">4</td><td>Chưa kích hoạt · Hoạt động · Bị khoá · Không hoạt động (<em>không nơi nào gán</em>)</td></tr>
+      <tr><td>Vai trò</td><td class="ctr">3</td><td>Người dùng thường · Quản trị · Quản trị cấp cao</td></tr>
+      <tr><td>Mức riêng tư bài đăng</td><td class="ctr">3</td><td>0 chỉ mình tôi · 1 người theo dõi · 2 công khai</td></tr>
+      <tr><td>Thiết lập cá nhân</td><td class="ctr">7</td><td>Email kết quả kiểm duyệt · Email hoạt động bỏ lỡ (<em>không dùng</em>) · Thông báo bình luận · Thông báo lượt thích · Thông báo theo dõi · Hiển thị đang hoạt động · Cảnh báo thiết bị mới</td></tr>
+      <tr><td>Loại thông báo</td><td class="ctr">11</td><td>Năm loại tương tác + sáu loại kết quả kiểm duyệt (ba loại báo cáo, mỗi loại hai bản: cho người tố cáo và cho người bị xử lý)</td></tr>
+      <tr><td>Trạng thái tin nhắn</td><td class="ctr">3</td><td>Đã gửi · Đã nhận · Đã xem (<em>không có luồng cập nhật</em>)</td></tr>
+      <tr><td>Loại tin nhắn</td><td class="ctr">3</td><td>Đang gõ · Văn bản thường · Có thành viên mới</td></tr>
+      <tr><td>Nhóm vi phạm</td><td class="ctr">6</td><td>Khiêu dâm · Bạo lực · Tự hại · Khủng bố · Nội dung rác · Khác</td></tr>
+      <tr><td>Giới tính</td><td class="ctr">3</td><td>Nam · Nữ · Khác</td></tr>
+      <tr><td>Khung thời gian thống kê</td><td class="ctr">3 + 5</td><td>Tháng, quý, năm cho thống kê số lượng; ngày, tuần, tháng, quý, năm cho hashtag nổi bật</td></tr>
+    </tbody>
+  </table>
+  <p class="note">Ba danh mục có giá trị tồn tại nhưng không được dùng: trạng thái tài khoản &ldquo;không hoạt động&rdquo;, thiết lập &ldquo;email hoạt động bỏ lỡ&rdquo;, và trạng thái tin nhắn &ldquo;đã xem&rdquo;. Đây là dấu hiệu của tính năng dự kiến nhưng chưa hoàn thiện, cần quyết định giữ hay bỏ — xem Q-11, Q-13, Q-12.</p>
+</section>
+
+<!-- ======================= 10. PHI CHỨC NĂNG ======================= -->
+<section class="sheet" id="s10">
+  <h2>10. Yêu cầu phi chức năng</h2>
+  <div class="box b-warn">
+    <p class="box-title">Phần này phần lớn là khoảng trống, và đó là một phát hiện</p>
+    <p>Mã nguồn chứa <strong>ràng buộc kỹ thuật</strong> nhưng gần như không chứa <strong>mục tiêu phi chức năng</strong>. Những dòng có nhãn xác nhận dưới đây là giá trị đọc được từ cấu hình hoặc đo được; những dòng có nhãn cần làm rõ là chỗ phải lấy số từ bên nghiệp vụ. Không nên coi các giá trị hiện tại là mục tiêu — chúng chỉ là hiện trạng.</p>
+  </div>
+
+  <table class="compact">
+    <thead><tr><th class="id">Mã</th><th class="w-narrow">Nhóm</th><th>Hiện trạng đọc được từ hệ thống</th><th class="w-narrow">Nhãn</th></tr></thead>
+    <tbody>
+      <tr><td class="id">NFR-01</td><td>Hiệu năng</td><td>Một lời gọi dịch vụ đơn giản qua lớp chuyển tiếp mất <strong>328 ms</strong>, trong đó khoảng ba lượt truy vấn cơ sở dữ liệu. Cùng lời gọi đó với cơ sở dữ liệu cục bộ mất <strong>5 ms</strong>. Mỗi lượt truy vấn tới cơ sở dữ liệu hiện tại mất khoảng <strong>105 ms</strong>.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">NFR-02</td><td>Hiệu năng</td><td>Ngưỡng thời gian phản hồi mục tiêu cho từng loại nghiệp vụ: <strong>chưa có</strong>.</td><td><span class="tag t-ask">CẦN LÀM RÕ</span></td></tr>
+      <tr><td class="id">NFR-03</td><td>Quy mô</td><td>Số người dùng đồng thời mục tiêu, số bài đăng mỗi ngày: <strong>chưa có</strong>. Hiện tại không có cơ chế giới hạn tần suất gọi ở bất kỳ đâu.</td><td><span class="tag t-ask">CẦN LÀM RÕ</span></td></tr>
+      <tr><td class="id">NFR-04</td><td>Bảo mật — mật khẩu</td><td>Mật khẩu băm bằng thuật toán băm có muối chuyên dùng cho mật khẩu. Ràng buộc độ mạnh ở BR-02.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">NFR-05</td><td>Bảo mật — phiên</td><td>Phiên không trạng thái, phiếu truy cập hạn 1 giờ, phiếu làm mới hạn 100 giờ. Cơ chế kiểm soát chống giả mạo yêu cầu được tắt, phù hợp với kiến trúc không trạng thái.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">NFR-06</td><td>Bảo mật — lưu phiếu</td><td>Phiếu truy cập lưu phía trình duyệt với thuộc tính chống gửi chéo ở mức vừa, hạn lưu <strong>30 ngày</strong> — dài hơn hạn 100 giờ của phiếu làm mới. Thuộc tính chỉ-gửi-qua-kết-nối-an-toàn <strong>chưa được đặt</strong>.</td><td><span class="tag t-risk">RỦI RO</span></td></tr>
+      <tr><td class="id">NFR-07</td><td>Bảo mật — truyền dẫn</td><td>Chặng từ trình duyệt tới hệ thống và chặng từ ứng dụng tới cơ sở dữ liệu đều được mã hoá. Các chặng bên trong máy chủ đi trong mạng nội bộ của vùng chứa.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">NFR-08</td><td>Bảo mật — kiểm soát nguồn gốc</td><td>Danh sách nguồn gốc được phép là một thiết lập tường minh, điều khiển cả lời gọi giữa tên miền và kết nối hai chiều. Để trống thì mọi lời gọi chéo bị từ chối, và hệ thống ghi cảnh báo lúc khởi động.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">NFR-09</td><td>Khả dụng</td><td>Mục tiêu thời gian hoạt động, cửa sổ bảo trì: <strong>chưa có</strong>. Không có cơ chế chạy nhiều bản sao; hệ thống hiện có <strong>một điểm hỏng duy nhất</strong> ở máy ứng dụng.</td><td><span class="tag t-ask">CẦN LÀM RÕ</span></td></tr>
+      <tr><td class="id">NFR-10</td><td>Sao lưu</td><td>Có bản kết xuất dữ liệu đã kiểm chứng khôi phục được. Nhưng <strong>không có lịch sao lưu tự động</strong>, không có mục tiêu điểm phục hồi hay thời gian phục hồi.</td><td><span class="tag t-risk">RỦI RO</span></td></tr>
+      <tr><td class="id">NFR-11</td><td>Khả năng quan sát</td><td>Có đầu mối kiểm tra sức khoẻ ứng dụng và có ghi bản ghi vận hành ra tệp. Không có hệ thống thu gom bản ghi, không có chỉ số đo đếm, không có cảnh báo.</td><td><span class="tag t-risk">RỦI RO</span></td></tr>
+      <tr><td class="id">NFR-12</td><td>Khả năng tiếp cận</td><td>Giao diện có <strong>20 vị trí thiếu văn bản thay thế cho ảnh</strong>. Đây là khoảng trống thật đối với người dùng trình đọc màn hình.</td><td><span class="tag t-risk">RỦI RO</span></td></tr>
+      <tr><td class="id">NFR-13</td><td>Đa ngôn ngữ</td><td>Hai bộ ngôn ngữ: tiếng Việt và tiếng Anh. Mọi văn bản hiển thị đi qua cơ chế dịch, mỗi khoá phải có ở cả hai bộ.</td><td><span class="tag t-ok">XÁC NHẬN</span></td></tr>
+      <tr><td class="id">NFR-14</td><td>Chất lượng mã</td><td>Giao diện có <strong>412 cảnh báo</strong> từ công cụ kiểm tra tĩnh, nên quá trình xây dựng phải tắt chế độ coi cảnh báo là lỗi. Backend chỉ có một bài kiểm thử nạp ngữ cảnh, <strong>không có kiểm thử nghiệp vụ nào</strong>.</td><td><span class="tag t-risk">RỦI RO</span></td></tr>
+      <tr><td class="id">NFR-15</td><td>Tính tái lập</td><td>Tệp ghim phiên bản phụ thuộc của giao diện bị loại khỏi quản lý mã nguồn theo chủ ý của dự án, nên việc phân giải phụ thuộc <strong>không tái lập được</strong> giữa các máy.</td><td><span class="tag t-risk">RỦI RO</span></td></tr>
+      <tr><td class="id">NFR-16</td><td>Lưu giữ dữ liệu</td><td>Chính sách lưu giữ và xoá dữ liệu người dùng: <strong>chưa có</strong>. Xoá mềm nghĩa là dữ liệu không bao giờ thực sự mất.</td><td><span class="tag t-ask">CẦN LÀM RÕ</span></td></tr>
+      <tr><td class="id">NFR-17</td><td>Tuân thủ</td><td>Yêu cầu về bảo vệ dữ liệu cá nhân, quyền được xoá, quyền xuất dữ liệu: <strong>chưa có</strong>. Lưu ý hệ thống đang lưu toạ độ địa lý của người dùng.</td><td><span class="tag t-ask">CẦN LÀM RÕ</span></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ======================= 11. TIÊU CHÍ NGHIỆM THU ======================= -->
+<section class="sheet" id="s11">
+  <h2>11. Tiêu chí nghiệm thu</h2>
+
+  <h3>11.1 Cách viết và cách dùng</h3>
+  <p>Mỗi tiêu chí viết theo cấu trúc <strong>Bối cảnh — Hành động — Kết quả mong đợi</strong>, và được chọn sao cho <em>kiểm chứng được bằng một phép thử cụ thể</em>, không phải bằng nhận định chủ quan. Mỗi tiêu chí liên kết tới một quy tắc nghiệp vụ ở mục 8.</p>
+  <div class="box b-warn">
+    <p class="box-title">Hai loại tiêu chí, đừng lẫn</p>
+    <p>Những tiêu chí dưới đây mô tả <strong>hành vi hiện tại đã xác nhận</strong>, nên dùng được ngay làm bộ kiểm thử hồi quy. Chúng <strong>không</strong> bao gồm các hạng mục ở mục 12, vì những hạng mục đó cần một quyết định sửa hay chấp nhận trước khi viết thành tiêu chí. Khi quyết định đã có, mỗi hạng mục ở mục 12 sẽ sinh thêm một tiêu chí mới.</p>
+  </div>
+
+  <h3>11.2 Tiêu chí theo từng quy trình</h3>
+
+  <h4>BP-01 · Đăng ký và kích hoạt</h4>
+  <table class="compact">
+    <thead><tr><th class="id">Mã</th><th>Bối cảnh — Hành động — Kết quả mong đợi</th><th class="w-narrow">Quy tắc</th></tr></thead>
+    <tbody>
+      <tr><td class="id">AC-01</td><td><strong>Cho</strong> một email và tên đăng nhập chưa tồn tại, mật khẩu đủ bốn loại ký tự và dài trong khoảng cho phép, <strong>khi</strong> gửi yêu cầu đăng ký, <strong>thì</strong> tài khoản được tạo ở trạng thái chưa kích hoạt, mang vai trò người dùng thường, và mật khẩu lưu trong cơ sở dữ liệu không trùng chuỗi đã nhập.</td><td>BR-01..04, BR-07</td></tr>
+      <tr><td class="id">AC-02</td><td><strong>Cho</strong> một mật khẩu thiếu chữ hoa, <strong>khi</strong> gửi yêu cầu đăng ký, <strong>thì</strong> hệ thống từ chối và chỉ rõ trường mật khẩu không hợp lệ. Lặp lại tương tự với trường hợp thiếu chữ số, thiếu ký tự đặc biệt, và độ dài 7 ký tự.</td><td>BR-02</td></tr>
+      <tr><td class="id">AC-03</td><td><strong>Cho</strong> một tên đăng nhập đã tồn tại nhưng viết khác hoa thường, <strong>khi</strong> gửi yêu cầu đăng ký, <strong>thì</strong> hệ thống từ chối vì trùng.</td><td>BR-01</td></tr>
+      <tr><td class="id">AC-04</td><td><strong>Cho</strong> một tài khoản vừa đăng ký xong, <strong>khi</strong> truy vấn bảng thiết lập của tài khoản đó, <strong>thì</strong> có <strong>đúng bảy</strong> bản ghi, với sáu giá trị bật và riêng cảnh báo thiết bị mới ở giá trị tắt.</td><td>BR-08, BR-34</td></tr>
+      <tr><td class="id">AC-05</td><td><strong>Cho</strong> một mã kích hoạt đã quá mười phút, <strong>khi</strong> dùng mã đó để kích hoạt, <strong>thì</strong> hệ thống từ chối và tài khoản vẫn ở trạng thái chưa kích hoạt.</td><td>BR-05</td></tr>
+      <tr><td class="id">AC-06</td><td><strong>Cho</strong> một mã kích hoạt còn hạn, <strong>khi</strong> dùng mã để kích hoạt, <strong>thì</strong> trạng thái chuyển sang hoạt động và phản hồi chứa ngay cả phiếu truy cập và phiếu làm mới.</td><td>BR-05, BR-06</td></tr>
+    </tbody>
+  </table>
+
+  <h4>BP-02 · Đăng nhập</h4>
+  <table class="compact">
+    <thead><tr><th class="id">Mã</th><th>Bối cảnh — Hành động — Kết quả mong đợi</th><th class="w-narrow">Quy tắc</th></tr></thead>
+    <tbody>
+      <tr><td class="id">AC-07</td><td><strong>Cho</strong> một tài khoản ở trạng thái bị khoá, <strong>khi</strong> đăng nhập với mật khẩu đúng, <strong>thì</strong> hệ thống từ chối với mã nghiệp vụ <code>1001</code> và không phát hành phiếu nào.</td><td>BR-09</td></tr>
+      <tr><td class="id">AC-08</td><td><strong>Cho</strong> một tài khoản chưa kích hoạt và cơ chế bỏ qua xác thực đang tắt, <strong>khi</strong> đăng nhập với mật khẩu đúng, <strong>thì</strong> hệ thống từ chối với mã <code>1002</code> và một mã xác thực mới được sinh ra trên bản ghi tài khoản.</td><td>BR-05</td></tr>
+      <tr><td class="id">AC-09</td><td><strong>Cho</strong> một tài khoản hoạt động với thiết lập cảnh báo thiết bị mới ở giá trị mặc định, <strong>khi</strong> đăng nhập từ một thiết bị chưa từng dùng, <strong>thì</strong> hệ thống vẫn phát hành phiếu — vì thiết lập mặc định là tắt.</td><td>BR-34</td></tr>
+      <tr><td class="id">AC-10</td><td><strong>Cho</strong> cùng tài khoản đó nhưng thiết lập đã bật, <strong>khi</strong> đăng nhập từ thiết bị chưa từng dùng, <strong>thì</strong> hệ thống từ chối với mã <code>1003</code>; và <strong>khi</strong> đăng nhập lại từ thiết bị đã biết, <strong>thì</strong> phiếu được phát hành.</td><td>BR-11</td></tr>
+      <tr><td class="id">AC-11</td><td><strong>Cho</strong> một phiếu truy cập đã hết hạn và một phiếu làm mới còn hạn, <strong>khi</strong> gọi một đầu mối cần xác thực, <strong>thì</strong> giao diện tự đổi phiếu và lời gọi được thực hiện lại thành công, người dùng không bị đưa về trang đăng nhập.</td><td>BR-06</td></tr>
+      <tr><td class="id">AC-12</td><td><strong>Cho</strong> một tài khoản mang vai trò quản trị, <strong>khi</strong> đăng nhập từ một thiết bị lạ, <strong>thì</strong> phiếu được phát hành ngay và không bản ghi thiết bị nào được tạo.</td><td>BR-10</td></tr>
+    </tbody>
+  </table>
+
+  <h4>BP-05 · Tạo bài đăng</h4>
+  <table class="compact">
+    <thead><tr><th class="id">Mã</th><th>Bối cảnh — Hành động — Kết quả mong đợi</th><th class="w-narrow">Quy tắc</th></tr></thead>
+    <tbody>
+      <tr><td class="id">AC-13</td><td><strong>Cho</strong> một tệp không thuộc năm định dạng ảnh được phép, <strong>khi</strong> gửi qua đầu mối tải nhiều ảnh, <strong>thì</strong> hệ thống từ chối.</td><td>BR-13</td></tr>
+      <tr><td class="id">AC-14</td><td><strong>Cho</strong> một tệp lớn hơn 10 MB, <strong>khi</strong> tải lên, <strong>thì</strong> hệ thống từ chối.</td><td>BR-13</td></tr>
+      <tr><td class="id">AC-15</td><td><strong>Cho</strong> một chú thích dài hơn 1500 ký tự, <strong>khi</strong> tạo bài đăng, <strong>thì</strong> hệ thống từ chối. <strong>Cho</strong> danh sách ảnh rỗng, kết quả tương tự.</td><td>BR-12</td></tr>
+      <tr><td class="id">AC-16</td><td><strong>Cho</strong> một chú thích chứa hai hashtag khác nhau và một hashtag lặp lại, <strong>khi</strong> tạo bài đăng và chờ tiến trình bất đồng bộ hoàn tất, <strong>thì</strong> có đúng hai liên kết hashtag được tạo, và tên hashtag lưu kèm dấu thăng.</td><td>BR-18</td></tr>
+      <tr><td class="id">AC-17</td><td><strong>Cho</strong> một bài đăng có ba bình luận, <strong>khi</strong> xoá bài đăng, <strong>thì</strong> bài đăng và cả ba bình luận đều chuyển sang trạng thái đã ẩn, và không bản ghi nào bị xoá khỏi cơ sở dữ liệu.</td><td>BR-19</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Quyền riêng tư và dòng tin</h4>
+  <table class="compact">
+    <thead><tr><th class="id">Mã</th><th>Bối cảnh — Hành động — Kết quả mong đợi</th><th class="w-narrow">Quy tắc</th></tr></thead>
+    <tbody>
+      <tr><td class="id">AC-18</td><td><strong>Cho</strong> người dùng A có ba bài đăng, mỗi bài một mức riêng tư, và người dùng B <em>không</em> theo dõi A, <strong>khi</strong> B xem hồ sơ của A, <strong>thì</strong> B chỉ thấy bài công khai.</td><td>BR-15</td></tr>
+      <tr><td class="id">AC-19</td><td><strong>Cho</strong> cùng bối cảnh nhưng B <em>đang</em> theo dõi A, <strong>khi</strong> B xem hồ sơ của A, <strong>thì</strong> B thấy hai bài: công khai và người-theo-dõi. Không thấy bài mức chỉ-mình-tôi.</td><td>BR-15</td></tr>
+      <tr><td class="id">AC-20</td><td><strong>Cho</strong> A xem hồ sơ của chính mình, <strong>thì</strong> thấy cả ba bài.</td><td>BR-15</td></tr>
+      <tr><td class="id">AC-21</td><td><strong>Cho</strong> một tài khoản mới chưa theo dõi ai, <strong>khi</strong> mở dòng tin, <strong>thì</strong> nhận về một trang rỗng — không lỗi, không nội dung thay thế.</td><td>BR-16</td></tr>
+      <tr><td class="id">AC-22</td><td><strong>Cho</strong> B đang theo dõi A, và cả hai đều có bài đăng công khai, <strong>khi</strong> B mở dòng tin, <strong>thì</strong> thấy bài của A và <strong>không</strong> thấy bài của chính B.</td><td>BR-16</td></tr>
+      <tr><td class="id">AC-23</td><td><strong>Cho</strong> một tài khoản mới chưa có quan hệ nào, <strong>khi</strong> gọi gợi ý kết bạn, <strong>thì</strong> nhận về <strong>ít nhất sáu</strong> gợi ý lấy từ nhóm nhiều người theo dõi nhất, và không có lỗi.</td><td>BR-49</td></tr>
+    </tbody>
+  </table>
+
+  <h4>BP-06 và BP-07 · Tương tác, nhắn tin, thông báo</h4>
+  <table class="compact">
+    <thead><tr><th class="id">Mã</th><th>Bối cảnh — Hành động — Kết quả mong đợi</th><th class="w-narrow">Quy tắc</th></tr></thead>
+    <tbody>
+      <tr><td class="id">AC-24</td><td><strong>Cho</strong> một người dùng đã thích một bài đăng, <strong>khi</strong> gửi yêu cầu thích lần nữa, <strong>thì</strong> hệ thống từ chối và số lượt thích không đổi.</td><td>BR-24</td></tr>
+      <tr><td class="id">AC-25</td><td><strong>Cho</strong> một bài đăng được ba người khác nhau thích, <strong>khi</strong> kiểm tra thông báo của chủ bài đăng, <strong>thì</strong> chỉ có <strong>một</strong> bản ghi thông báo với nội dung đã gộp, không phải ba bản ghi.</td><td>BR-27</td></tr>
+      <tr><td class="id">AC-26</td><td><strong>Cho</strong> chủ bài đăng tự thích bài của mình, <strong>khi</strong> kiểm tra thông báo, <strong>thì</strong> không có thông báo nào được tạo. Lặp lại với trường hợp tự bình luận.</td><td>BR-26</td></tr>
+      <tr><td class="id">AC-27</td><td><strong>Cho</strong> chủ bài đăng đã tắt thiết lập nhận thông báo bình luận, <strong>khi</strong> người khác bình luận, <strong>thì</strong> không thông báo nào được tạo cho người đó.</td><td>BR-34, FR-E08</td></tr>
+      <tr><td class="id">AC-28</td><td><strong>Cho</strong> một bình luận cấp một có hai bình luận con, <strong>khi</strong> tác giả xoá bình luận cấp một, <strong>thì</strong> cả ba bản ghi đều chuyển sang trạng thái đã ẩn.</td><td>BR-22</td></tr>
+      <tr><td class="id">AC-29</td><td><strong>Cho</strong> một bình luận đã bị ẩn, <strong>khi</strong> người dùng thường đọc danh sách bình luận, <strong>thì</strong> không thấy bình luận đó; <strong>khi</strong> quản trị viên đọc, <strong>thì</strong> thấy.</td><td>BR-23</td></tr>
+      <tr><td class="id">AC-30</td><td><strong>Cho</strong> một bình luận cha thuộc bài đăng X, <strong>khi</strong> trả lời bình luận đó nhưng khai mã bài đăng là Y, <strong>thì</strong> hệ thống từ chối.</td><td>BR-21</td></tr>
+      <tr><td class="id">AC-31</td><td><strong>Cho</strong> hai người dùng đều đang mở kết nối hai chiều, <strong>khi</strong> một người gửi tin nhắn vào hội thoại chung, <strong>thì</strong> người kia nhận được tin nhắn mà <strong>không</strong> cần tải lại trang, và thời điểm thay đổi của hội thoại được cập nhật.</td><td>BR-33</td></tr>
+      <tr><td class="id">AC-32</td><td><strong>Cho</strong> một người dùng không phải thành viên của hội thoại, <strong>khi</strong> gửi tin nhắn vào hội thoại đó qua kênh hai chiều, <strong>thì</strong> hệ thống từ chối.</td><td>FR-E04</td></tr>
+      <tr><td class="id">AC-33</td><td><strong>Cho</strong> một người gửi chỉ báo đang gõ, <strong>khi</strong> kiểm tra cơ sở dữ liệu, <strong>thì</strong> không bản ghi tin nhắn nào được thêm.</td><td>BR-31</td></tr>
+      <tr><td class="id">AC-34</td><td><strong>Cho</strong> yêu cầu tạo hội thoại với danh sách thành viên <em>không</em> chứa người gọi, <strong>khi</strong> hội thoại được tạo, <strong>thì</strong> người gọi vẫn có mặt trong danh sách thành viên.</td><td>BR-32</td></tr>
+    </tbody>
+  </table>
+
+  <h4>BP-08 · Kiểm duyệt</h4>
+  <table class="compact">
+    <thead><tr><th class="id">Mã</th><th>Bối cảnh — Hành động — Kết quả mong đợi</th><th class="w-narrow">Quy tắc</th></tr></thead>
+    <tbody>
+      <tr><td class="id">AC-35</td><td><strong>Cho</strong> một báo cáo vừa được gửi, <strong>khi</strong> xem danh sách báo cáo ở chế độ mặc định, <strong>thì</strong> báo cáo đó xuất hiện; và người tố cáo được ghi đúng là người đã gửi.</td><td>BR-37, BR-42</td></tr>
+      <tr><td class="id">AC-36</td><td><strong>Cho</strong> một báo cáo tài khoản, <strong>khi</strong> duyệt báo cáo, <strong>thì</strong> ba việc xảy ra: tài khoản chuyển trạng thái bị khoá, toàn bộ bài đăng đang hiện của tài khoản chuyển sang đã ẩn, và tài khoản đó không đăng nhập được nữa.</td><td>BR-38, BR-09</td></tr>
+      <tr><td class="id">AC-37</td><td><strong>Cho</strong> một báo cáo bài đăng và bài đó có bình luận, <strong>khi</strong> duyệt báo cáo, <strong>thì</strong> bài đăng và toàn bộ bình luận chuyển sang đã ẩn.</td><td>BR-39</td></tr>
+      <tr><td class="id">AC-38</td><td><strong>Cho</strong> một báo cáo được duyệt, <strong>khi</strong> kiểm tra thông báo, <strong>thì</strong> có <strong>hai</strong> bản ghi: một cho người tố cáo, một cho chủ nội dung bị xử lý.</td><td>BR-40</td></tr>
+      <tr><td class="id">AC-39</td><td><strong>Cho</strong> một báo cáo bị từ chối, <strong>khi</strong> kiểm tra, <strong>thì</strong> báo cáo không còn trong danh sách đang chờ, đối tượng bị tố cáo <strong>không</strong> thay đổi, và không thông báo nào được tạo.</td><td>BR-41</td></tr>
+    </tbody>
+  </table>
+
+  <h3>11.3 Tiêu chí mức hệ thống</h3>
+  <table class="compact">
+    <thead><tr><th class="id">Mã</th><th>Bối cảnh — Hành động — Kết quả mong đợi</th><th class="w-narrow">Nhóm</th></tr></thead>
+    <tbody>
+      <tr><td class="id">AC-40</td><td><strong>Khi</strong> gọi một đầu mối cần xác thực mà không kèm phiếu truy cập, <strong>thì</strong> nhận mã lỗi chưa xác thực, không phải nội dung rỗng.</td><td>Bảo mật</td></tr>
+      <tr><td class="id">AC-41</td><td><strong>Khi</strong> người dùng thường gọi một đầu mối dưới tiền tố quản trị, <strong>thì</strong> nhận mã lỗi không đủ quyền.</td><td>Bảo mật</td></tr>
+      <tr><td class="id">AC-42</td><td><strong>Khi</strong> gửi lời gọi kiểm tra trước với một nguồn gốc <em>không</em> nằm trong danh sách được phép, <strong>thì</strong> bị từ chối và phản hồi không chứa tiêu đề cho phép nguồn gốc. <strong>Khi</strong> dùng nguồn gốc nằm trong danh sách, <strong>thì</strong> được chấp nhận với nguồn gốc cụ thể, không phải ký tự thay thế.</td><td>Bảo mật</td></tr>
+      <tr><td class="id">AC-43</td><td><strong>Khi</strong> yêu cầu bắt tay kết nối hai chiều với một nguồn gốc giả mạo dạng tên-miền-được-phép-làm-tiền-tố (ví dụ dạng <code>vercel.app.evil.com</code>), <strong>thì</strong> bị từ chối. Đây là tiêu chí quan trọng vì một cách kiểm tra sơ sài theo chuỗi con sẽ cho qua.</td><td>Bảo mật</td></tr>
+      <tr><td class="id">AC-44</td><td><strong>Khi</strong> gọi một đầu mối trả danh sách mà không truyền tham số phân trang, <strong>thì</strong> nhận về 12 phần tử, trang số 0, sắp xếp theo khoá chính tăng dần, và cấu trúc phản hồi có đủ chín trường ở BR-44.</td><td>Dữ liệu</td></tr>
+      <tr><td class="id">AC-45</td><td><strong>Khi</strong> truyền một tên trường sắp xếp không tồn tại, <strong>thì</strong> hệ thống báo lỗi tên trường không hợp lệ, không trả về dữ liệu sắp xếp sai âm thầm.</td><td>Dữ liệu</td></tr>
+      <tr><td class="id">AC-46</td><td><strong>Khi</strong> gọi lần lượt chín hàm lưu trữ mà phần thống kê phụ thuộc trên một môi trường mới dựng, <strong>thì</strong> cả chín đều trả về dữ liệu, không hàm nào báo thiếu bảng.</td><td>Dữ liệu</td></tr>
+      <tr><td class="id">AC-47</td><td><strong>Khi</strong> gọi thống kê số bài đăng theo tháng, quý và năm, <strong>thì</strong> nhận về lần lượt 12, 4 và 2 mốc thời gian.</td><td>Dữ liệu</td></tr>
+      <tr><td class="id">AC-48</td><td><strong>Khi</strong> gọi một đầu mối bất kỳ mà hệ thống không tìm thấy bản ghi, <strong>thì</strong> nhận mã lỗi không tìm thấy kèm thông điệp, không phải lỗi hệ thống.</td><td>Xử lý lỗi</td></tr>
+      <tr><td class="id">AC-49</td><td><strong>Khi</strong> mở ứng dụng ở chế độ tiếng Việt rồi chuyển sang tiếng Anh, <strong>thì</strong> không còn khoá dịch nào hiển thị thô trên giao diện.</td><td>Đa ngôn ngữ</td></tr>
+      <tr><td class="id">AC-50</td><td><strong>Khi</strong> dựng một môi trường hoàn toàn mới từ bản sao lưu dữ liệu, <strong>thì</strong> có đủ 19 bảng, 14 hàm lưu trữ, và một lời gọi dịch vụ đi qua cả ba tầng trả về đúng dữ liệu.</td><td>Vận hành</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ======================= 12. KHOẢNG TRỐNG ======================= -->
+<section class="sheet" id="s12">
+  <h2>12. Khoảng trống và rủi ro phát hiện trong mã nguồn</h2>
+  <div class="box b-risk">
+    <p class="box-title">Đọc mục này thế nào</p>
+    <p>Mỗi hạng mục dưới đây là một chỗ mã nguồn <strong>chạy khác</strong> với điều mà thiết kế rõ ràng đang nhắm tới. Chúng không phải yêu cầu, và không nên bị chuyển thành yêu cầu. Chúng là <strong>hạng mục cần quyết định</strong>: sửa, hay chấp nhận và ghi nhận.</p>
+    <p>Cột <em>Bằng chứng</em> cho biết kết luận dựa trên gì. Cột <em>Mức</em> xếp theo tác động nghiệp vụ: <strong>Cao</strong> là có thể gây thiệt hại cho người dùng hoặc dữ liệu; <strong>Trung bình</strong> là làm sai lệch nghiệp vụ; <strong>Thấp</strong> là gây nhầm lẫn hoặc nợ kỹ thuật.</p>
+  </div>
+
+  <h3>12.1 Nhóm phân quyền — bốn quy tắc không bao giờ khớp</h3>
+  <p>Bốn hạng mục đầu có cùng một nguyên nhân gốc: <strong>quy tắc phân quyền khai báo theo đường dẫn, nhưng đường dẫn khai báo không trùng với đường dẫn thật của đầu mối dịch vụ</strong>. Về mặt kỹ thuật không có gì sai, nên không có cảnh báo nào; quy tắc chỉ đơn giản là không khớp cái gì, và yêu cầu rơi xuống luật mặc định &ldquo;chỉ cần đã đăng nhập&rdquo;.</p>
+  <table class="compact">
+    <thead><tr><th class="id">Mã</th><th>Hạng mục</th><th class="w-narrow">Bằng chứng</th><th class="w-narrow">Mức</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="id">GAP-01</td>
+        <td><strong>Bất kỳ người dùng đã đăng nhập đều xoá được bài đăng của người khác.</strong> Quy tắc bảo vệ trỏ tới một đường dẫn <em>không tồn tại</em>; đầu mối xoá bài đăng thật nằm ở một đường dẫn khác có thêm một đoạn, nên quy tắc không khớp. Bản thân đầu mối đó cũng đặt tên gây nhầm: tên hàm là &ldquo;xoá bình luận&rdquo; nhưng thân hàm gọi thao tác xoá <em>bài đăng</em>.</td>
+        <td>Đã đọc trực tiếp cả hai chỗ</td>
+        <td><strong>Cao</strong></td>
+      </tr>
+      <tr>
+        <td class="id">GAP-02</td>
+        <td><strong>Bất kỳ người dùng đã đăng nhập đều đọc được tin nhắn của một hội thoại bất kỳ nếu biết mã hội thoại.</strong> Quy tắc bảo vệ dùng đường dẫn ở dạng số nhiều, còn đầu mối thật ở dạng số ít. Tầng nghiệp vụ của đầu mối đọc lịch sử tin nhắn cũng không tự kiểm tra quyền thành viên — khác với mọi thao tác qua kênh hai chiều, vốn đều kiểm tra.</td>
+        <td>Đã đọc trực tiếp cả hai chỗ</td>
+        <td><strong>Cao</strong></td>
+      </tr>
+      <tr>
+        <td class="id">GAP-03</td>
+        <td><strong>Thao tác duyệt và từ chối báo cáo không giới hạn cho quản trị viên.</strong> Sáu đầu mối duyệt/từ chối nằm ngoài tiền tố dành cho quản trị. Hệ quả: một người dùng thường có thể khoá tài khoản người khác, ẩn bài đăng và ẩn bình luận của người khác.</td>
+        <td>Đã đọc trực tiếp khai báo đường dẫn</td>
+        <td><strong>Cao</strong></td>
+      </tr>
+      <tr>
+        <td class="id">GAP-04</td>
+        <td><strong>Toàn bộ số liệu thống kê mở cho mọi người dùng đã đăng nhập.</strong> Mười hai đầu mối thống kê, gồm cả bản đồ vị trí đăng nhập của người dùng, đều nằm ngoài tiền tố quản trị. Đây vừa là vấn đề phân quyền vừa là vấn đề dữ liệu cá nhân, vì toạ độ địa lý bị phơi ra.</td>
+        <td>Đã đọc trực tiếp khai báo đường dẫn</td>
+        <td><strong>Cao</strong></td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="box b-info">
+    <p class="box-title">Khuyến nghị dành cho kiến trúc, không chỉ là sửa bốn chỗ</p>
+    <p>Sửa bốn đường dẫn là việc nửa ngày. Nhưng nguyên nhân gốc sẽ còn nguyên: <strong>không có phép kiểm chứng nào đối chiếu danh sách quy tắc phân quyền với danh sách đầu mối dịch vụ thực tế</strong>. Một bài kiểm thử tự động liệt kê mọi đầu mối rồi khẳng định mỗi đầu mối thuộc đúng một nhóm quyền dự kiến sẽ bắt được cả bốn trường hợp này, và bắt luôn trường hợp thứ năm khi ai đó thêm đầu mối mới.</p>
+  </div>
+
+  <h3>12.2 Nhóm mô hình nghiệp vụ</h3>
+  <table class="compact">
+    <thead><tr><th class="id">Mã</th><th>Hạng mục</th><th class="w-narrow">Bằng chứng</th><th class="w-narrow">Mức</th></tr></thead>
+    <tbody>
+      <tr><td class="id">GAP-05</td><td><strong>Duyệt và từ chối báo cáo không phân biệt được trong dữ liệu.</strong> Không có cột trạng thái; cả hai quyết định đều đặt cùng một cờ về giá trị đã-đóng. Khác biệt duy nhất là nhánh duyệt có ghi người xử lý, nhưng đó là dấu hiệu gián tiếp và không đáng tin. Hệ quả nghiệp vụ: không báo cáo được tỷ lệ duyệt, không truy vết lại được quyết định.</td><td>Đọc mô hình dữ liệu và cả hai nhánh xử lý</td><td><strong>Cao</strong></td></tr>
+      <tr><td class="id">GAP-06</td><td><strong>Vai trò quản trị cấp cao không xoá được bài đăng, bình luận của người khác.</strong> Phép kiểm tra quyền theo tài nguyên chỉ chấp nhận đúng giá trị vai trò quản trị thường. Ý định thiết kế không suy ra được từ mã nguồn.</td><td>Đọc trực tiếp phép kiểm tra</td><td>Trung bình</td></tr>
+      <tr><td class="id">GAP-07</td><td><strong>Cơ sở dữ liệu không ràng buộc giá trị vai trò.</strong> Tên vai trò lưu dạng chuỗi tự do. Một bản ghi sai chính tả tạo ra vai trò không khớp quy tắc nào, khiến tài khoản mất mọi quyền một cách âm thầm.</td><td>Đọc mô hình dữ liệu</td><td>Trung bình</td></tr>
+      <tr><td class="id">GAP-08</td><td><strong>Không có cơ chế chống lạm dụng báo cáo.</strong> Không chặn tự tố cáo, không chặn tố cáo trùng, không giới hạn số lần. Kết hợp với GAP-03, một người dùng có thể dùng chính cơ chế kiểm duyệt làm công cụ tấn công.</td><td>Đọc toàn bộ nhánh tạo báo cáo</td><td><strong>Cao</strong></td></tr>
+      <tr><td class="id">GAP-09</td><td><strong>Không có đường gỡ khoá tài khoản.</strong> Trạng thái bị khoá là một chiều; không có đầu mối nào đưa tài khoản trở lại hoạt động. Một quyết định sai không thể hoàn tác qua giao diện.</td><td>Tìm toàn bộ mã nguồn, không thấy</td><td>Trung bình</td></tr>
+      <tr><td class="id">GAP-10</td><td><strong>Mã xác thực không bị thu hồi sau khi dùng.</strong> Mã vẫn còn hiệu lực tới khi hết hạn hoặc bị ghi đè, nên trong cửa sổ mười phút có thể dùng lại.</td><td>Đọc cả ba luồng dùng mã</td><td>Trung bình</td></tr>
+      <tr><td class="id">GAP-11</td><td><strong>Tra cứu vị trí thất bại thì bỏ qua kiểm tra thiết bị.</strong> Khi không tra được vị trí từ địa chỉ mạng, luồng xác minh <em>cho qua</em> thay vì chặn. Đây là lựa chọn &ldquo;hỏng thì mở&rdquo;, thường gặp với địa chỉ mạng nội bộ.</td><td>Đọc nhánh xử lý khi không tra được</td><td>Trung bình</td></tr>
+      <tr><td class="id">GAP-12</td><td><strong>Hệ quả phụ bất đồng bộ không có cơ chế thử lại.</strong> Nếu một bộ xử lý lỗi, lời gọi dịch vụ vẫn báo thành công. Biểu hiện cụ thể: một thông báo thất bại sẽ mất hẳn, và hashtag của bài vừa đăng có thể chưa tìm được ngay.</td><td>Đọc toàn bộ 11 bộ xử lý sự kiện</td><td>Trung bình</td></tr>
+      <tr><td class="id">GAP-13</td><td><strong>Sàng lọc ảnh chỉ chạy ở phía trình duyệt.</strong> Backend không kiểm duyệt lại nội dung ảnh, nên một chương trình gọi dịch vụ trực tiếp bỏ qua được hoàn toàn bước này.</td><td>Xác nhận vị trí lời gọi ở mã nguồn giao diện</td><td>Trung bình</td></tr>
+      <tr><td class="id">GAP-14</td><td><strong>Chỉ đầu mối tải nhiều ảnh kiểm tra định dạng tệp.</strong> Đầu mối tải một ảnh không kiểm tra phần mở rộng.</td><td>Đọc cả hai đầu mối</td><td>Trung bình</td></tr>
+      <tr><td class="id">GAP-15</td><td><strong>Bình luận cấp ba tạo được nhưng không đọc được.</strong> Tầng ghi chỉ kiểm tra bình luận cha thuộc đúng bài đăng, không kiểm tra nó phải là cấp một. Tầng đọc chỉ có hai cấp, nên bình luận cấp ba thành dữ liệu mồ côi.</td><td>Đọc tầng ghi và hai đầu mối đọc</td><td>Thấp</td></tr>
+      <tr><td class="id">GAP-16</td><td><strong>Điều kiện gửi email kết quả kiểm duyệt đọc sai thiết lập.</strong> Cả hai thông báo — cho người tố cáo và cho người bị xử lý — đều kiểm tra thiết lập email của <em>người tố cáo</em>. Hệ quả: người bị khoá nhận hay không nhận email phụ thuộc thiết lập của người đã tố cáo họ.</td><td>Đọc cả ba bộ xử lý kiểm duyệt</td><td>Thấp</td></tr>
+      <tr><td class="id">GAP-17</td><td><strong>Đầu mối kiểm tra trùng là công khai và trả về thông tin tài khoản.</strong> Cho phép dò xem một tên đăng nhập hay email có tồn tại hay không. Đây là đánh đổi có chủ ý giữa trải nghiệm đăng ký và việc rò rỉ thông tin — cần một quyết định tường minh.</td><td>Đọc đầu mối và danh sách công khai</td><td>Thấp</td></tr>
+      <tr><td class="id">GAP-18</td><td><strong>Xoá bản ghi thiết bị không kiểm tra chủ sở hữu.</strong> Một người dùng có thể xoá bản ghi thiết bị của người khác nếu biết mã bản ghi.</td><td>Đọc tầng nghiệp vụ</td><td>Trung bình</td></tr>
+      <tr><td class="id">GAP-19</td><td><strong>Hai tham số sắp xếp bị đảo ở nhóm đầu mối quan hệ theo dõi.</strong> Tham số tên trường thực tế điều khiển chiều sắp xếp và ngược lại, do thứ tự đối số truyền vào tầng nghiệp vụ không khớp chữ ký. Ngoài ra ba nhóm đầu mối khác <em>nhận</em> tham số sắp xếp rồi bỏ qua hoàn toàn.</td><td>Đối chiếu lời gọi với chữ ký hàm</td><td>Thấp</td></tr>
+      <tr><td class="id">GAP-20</td><td><strong>Đầu mối tìm bài đăng tổng quát không thực thi quyền riêng tư phía máy chủ.</strong> Danh sách mức riêng tư cần lọc được nhận <em>từ phía gọi</em>, nên một lời gọi khai mức chỉ-mình-tôi kèm mã tác giả sẽ đọc được bài riêng tư của người khác. Đầu mối xem chi tiết một bài đăng cũng chỉ kiểm tra bài còn hiện, không kiểm tra mức riêng tư.</td><td>Đọc tầng nghiệp vụ và lớp dựng điều kiện truy vấn</td><td><strong>Cao</strong></td></tr>
+      <tr><td class="id">GAP-21</td><td><strong>Hai tham số khoảng thời gian của đầu mối hashtag nổi bật bị bỏ qua.</strong> Khoảng thời gian chỉ suy từ đơn vị được chọn. Nếu không truyền đơn vị, đầu mối trả về giá trị rỗng thay vì báo lỗi.</td><td>Đọc tầng nghiệp vụ</td><td>Thấp</td></tr>
+    </tbody>
+  </table>
+
+  <h3>12.3 Nhóm vận hành</h3>
+  <table class="compact">
+    <thead><tr><th class="id">Mã</th><th>Hạng mục</th><th class="w-narrow">Mức</th></tr></thead>
+    <tbody>
+      <tr><td class="id">GAP-22</td><td><strong>Lược đồ cơ sở dữ liệu không có nguồn sự thật duy nhất.</strong> Tệp lược đồ tạo 11 trong 19 bảng và đã lệch so với mã nguồn ở ba chỗ. Dựng môi trường mới phải khôi phục từ bản sao lưu.</td><td><strong>Cao</strong></td></tr>
+      <tr><td class="id">GAP-23</td><td><strong>Các hàm thống kê không an toàn khi gọi đồng thời.</strong> Mỗi hàm bắt đầu bằng việc xoá rồi tạo lại một khung nhìn <em>vĩnh viễn</em> trong lược đồ chung. Hai yêu cầu dashboard đến cùng lúc trên hai kết nối khác nhau sẽ tranh nhau cùng khung nhìn đó, biểu hiện là lỗi thiếu quan hệ xuất hiện thất thường và không tái lập được theo yêu cầu. Các khung nhìn này chỉ sinh một bảng lịch 12, 4 hoặc 2 dòng, nên cách sửa là viết chúng thành biểu thức truy vấn cục bộ rồi xoá khung nhìn đi.</td><td><strong>Cao</strong></td></tr>
+      <tr><td class="id">GAP-24</td><td><strong>Phiếu truy cập lưu phía trình duyệt thiếu thuộc tính chỉ-gửi-qua-kết-nối-an-toàn</strong>, và hạn lưu 30 ngày dài hơn hạn 100 giờ của phiếu làm mới. Hiện không rò rỉ vì hệ thống chạy trên kết nối an toàn, nhưng thuộc tính đó không mất gì để thêm.</td><td>Trung bình</td></tr>
+      <tr><td class="id">GAP-25</td><td><strong>Đầu mối kiểm tra sức khoẻ ứng dụng mở công khai ở tầng ứng dụng.</strong> Hiện an toàn <em>chỉ vì</em> lớp chuyển tiếp không phơi đường dẫn đó ra ngoài. Đây là an toàn nhờ cấu hình hạ tầng, không nhờ cấu hình ứng dụng.</td><td>Trung bình</td></tr>
+      <tr><td class="id">GAP-26</td><td><strong>Không có kiểm thử nghiệp vụ nào ở backend.</strong> Chỉ có một bài kiểm thử nạp ngữ cảnh. Kết hợp với GAP-01 đến GAP-04, nghĩa là không có lớp bảo vệ nào phát hiện khi một quy tắc phân quyền hỏng.</td><td><strong>Cao</strong></td></tr>
+      <tr><td class="id">GAP-27</td><td><strong>412 cảnh báo kiểm tra tĩnh ở giao diện</strong>, buộc quá trình xây dựng phải tắt chế độ coi cảnh báo là lỗi. Trong đó <strong>20 cảnh báo là thiếu văn bản thay thế cho ảnh</strong> — một khoảng trống thật về khả năng tiếp cận.</td><td>Trung bình</td></tr>
+      <tr><td class="id">GAP-28</td><td><strong>Thông tin xác thực từng được đưa vào lịch sử quản lý mã nguồn của một kho công khai.</strong> Việc xoá khỏi tệp hiện tại không hoàn tác được điều đó; phải thay đổi thông tin xác thực ở từng nhà cung cấp.</td><td><strong>Cao</strong></td></tr>
+      <tr><td class="id">GAP-29</td><td><strong>Ba giá trị danh mục tồn tại nhưng không được dùng</strong>: trạng thái tài khoản &ldquo;không hoạt động&rdquo;, thiết lập &ldquo;email hoạt động bỏ lỡ&rdquo;, trạng thái tin nhắn &ldquo;đã xem&rdquo;. Mỗi giá trị là một tính năng dự kiến nhưng chưa hoàn thiện, gây nhầm lẫn cho người đọc hệ thống về sau.</td><td>Thấp</td></tr>
+      <tr><td class="id">GAP-30</td><td><strong>Tài khoản quản trị tạo qua đầu mối quản trị không được sinh bộ thiết lập mặc định</strong>, nên mọi chỗ đọc thiết lập của tài khoản đó sẽ báo lỗi thiếu bản ghi.</td><td>Trung bình</td></tr>
+      <tr><td class="id">GAP-31</td><td><strong>Phụ thuộc của giao diện không tái lập được</strong> vì tệp ghim phiên bản bị loại khỏi quản lý mã nguồn theo chủ ý của dự án. Một khối ghim phiên bản thủ công là thứ duy nhất đang giữ cây phụ thuộc không vỡ.</td><td>Trung bình</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ======================= 13. CÂU HỎI ======================= -->
+<section class="sheet" id="s13">
+  <h2>13. Câu hỏi cần làm rõ với bên nghiệp vụ</h2>
+  <p class="lead">Những câu hỏi dưới đây <strong>không thể trả lời bằng cách đọc mã nguồn</strong>, vì chúng là lựa chọn nghiệp vụ chứ không phải sự thật kỹ thuật. Mỗi câu nêu rõ hành vi hiện tại để cuộc thảo luận có điểm neo.</p>
+
+  <h3>13.1 Mục tiêu và ngưỡng</h3>
+  <table class="compact">
+    <thead><tr><th class="id">Mã</th><th>Câu hỏi</th><th class="w-narrow">Hiện trạng</th></tr></thead>
+    <tbody>
+      <tr><td class="id">Q-01</td><td>Quy mô mục tiêu là bao nhiêu người dùng hoạt động và bao nhiêu người dùng đồng thời? Con số này quyết định có cần chạy nhiều bản sao hay không, và có cần giới hạn tần suất gọi hay không.</td><td>Chưa có số nào</td></tr>
+      <tr><td class="id">Q-02</td><td>Ngưỡng thời gian phản hồi chấp nhận được cho từng loại nghiệp vụ? Hiện một lời gọi đơn giản mất 328 ms chủ yếu do khoảng cách tới cơ sở dữ liệu. Nếu ngưỡng là 200 ms thì phải chuyển cơ sở dữ liệu về gần hơn.</td><td>328 ms cho lời gọi đơn giản</td></tr>
+      <tr><td class="id">Q-03</td><td>Thời hạn xử lý một báo cáo vi phạm là bao lâu? Có cần cơ chế nhắc hoặc leo thang khi quá hạn?</td><td>Không có thời hạn, không có nhắc</td></tr>
+      <tr><td class="id">Q-04</td><td>Một bài đăng được tối đa bao nhiêu ảnh? Hiện <strong>không có giới hạn trên</strong>, chỉ bắt buộc không rỗng.</td><td>Không giới hạn</td></tr>
+    </tbody>
+  </table>
+
+  <h3>13.2 Nội dung và quyền riêng tư</h3>
+  <table class="compact">
+    <thead><tr><th class="id">Mã</th><th>Câu hỏi</th><th class="w-narrow">Hiện trạng</th></tr></thead>
+    <tbody>
+      <tr><td class="id">Q-05</td><td>Dòng tin có nên gồm cả bài đăng của chính người dùng không? Hiện <strong>không</strong>, nên sau khi đăng bài người dùng phải vào hồ sơ của mình mới thấy.</td><td>Không gồm</td></tr>
+      <tr><td class="id">Q-06</td><td>Dòng tin đang sắp theo <strong>thời điểm thay đổi</strong>, không theo thời điểm tạo. Hệ quả: một bài cũ bị cập nhật sẽ nổi lên đầu dòng tin. Đây là chủ ý hay cần đổi?</td><td>Sắp theo thời điểm thay đổi</td></tr>
+      <tr><td class="id">Q-07</td><td>Hashtag có cần hỗ trợ tiếng Việt có dấu không? Hiện biểu thức trích xuất <strong>không nhận</strong> ký tự có dấu, nên một hashtag tiếng Việt sẽ bị cắt ngang. Và tên hashtag lưu <strong>kèm dấu thăng</strong> — có đúng ý không, vì nó ảnh hưởng tới việc tìm kiếm theo tên?</td><td>Không hỗ trợ, lưu kèm dấu thăng</td></tr>
+      <tr><td class="id">Q-08</td><td>Người dùng có được tự theo dõi chính mình không? Hiện <strong>không có kiểm tra</strong> nào chặn việc này.</td><td>Không chặn</td></tr>
+      <tr><td class="id">Q-09</td><td>Bình luận có được lồng quá hai cấp không? Nếu không, có cần chặn ngay ở tầng ghi thay vì chỉ ẩn ở tầng đọc như hiện tại?</td><td>Ghi được cấp ba, đọc không ra</td></tr>
+      <tr><td class="id">Q-10</td><td>Người dùng có cần sửa bài đăng và bình luận sau khi tạo không? Hiện <strong>không có</strong> chức năng này.</td><td>Không có</td></tr>
+    </tbody>
+  </table>
+
+  <h3>13.3 Tài khoản và kiểm duyệt</h3>
+  <table class="compact">
+    <thead><tr><th class="id">Mã</th><th>Câu hỏi</th><th class="w-narrow">Hiện trạng</th></tr></thead>
+    <tbody>
+      <tr><td class="id">Q-11</td><td>Trạng thái tài khoản &ldquo;không hoạt động&rdquo; dự định dùng cho tình huống nào? Hiện giá trị này tồn tại trong danh mục nhưng <strong>không nơi nào gán</strong>. Nếu không có mục đích, nên bỏ để tránh nhầm lẫn.</td><td>Giá trị chết</td></tr>
+      <tr><td class="id">Q-12</td><td>Phần nhắn tin có cần chức năng &ldquo;đã đọc&rdquo; và &ldquo;rời nhóm&rdquo; không? Mô hình dữ liệu đã có trạng thái đã-xem nhưng <strong>không luồng nào cập nhật</strong>; và có thể thêm thành viên nhưng không thể bớt.</td><td>Mô hình có, luồng không có</td></tr>
+      <tr><td class="id">Q-13</td><td>Thiết lập &ldquo;nhận email về hoạt động đã bỏ lỡ&rdquo; dự định làm gì? Hiện <strong>không mã nào đọc</strong> thiết lập này — nó là thiết lập chết nhưng vẫn hiện trên giao diện cho người dùng bật tắt.</td><td>Thiết lập chết</td></tr>
+      <tr><td class="id">Q-14</td><td>Thiết lập &ldquo;cảnh báo đăng nhập từ thiết bị mới&rdquo; mặc định <strong>TẮT</strong>, nghĩa là lớp bảo vệ này mặc định không chạy. Đây là chủ ý, hay nên bật mặc định?</td><td>Mặc định tắt</td></tr>
+      <tr><td class="id">Q-15</td><td>Vai trò quản trị cấp cao khác vai trò quản trị thường ở điểm nào về nghiệp vụ? Hiện mã nguồn chỉ phân biệt ở một chỗ, và ở một chỗ khác thì quản trị cấp cao lại <em>yếu hơn</em> (GAP-06).</td><td>Gần như không khác</td></tr>
+      <tr><td class="id">Q-16</td><td>Có cần phân biệt ba trạng thái báo cáo — đang chờ, đã duyệt, đã từ chối — không? Hiện chỉ có hai, và hai quyết định cuối không phân biệt được trong dữ liệu (GAP-05).</td><td>Chỉ hai trạng thái</td></tr>
+      <tr><td class="id">Q-17</td><td>Từ chối báo cáo có cần thông báo cho người tố cáo không? Hiện <strong>không</strong>, nên người gửi báo cáo không bao giờ biết kết quả.</td><td>Không thông báo</td></tr>
+      <tr><td class="id">Q-18</td><td>Tài khoản bị khoá có cần đường gỡ khoá không? Hiện <strong>không có</strong>, nên một quyết định sai không hoàn tác được qua giao diện (GAP-09).</td><td>Khoá một chiều</td></tr>
+      <tr><td class="id">Q-19</td><td>Có cần chặn tự tố cáo, chặn tố cáo trùng, giới hạn số lần báo cáo không? Hiện <strong>không có cơ chế nào</strong> (GAP-08).</td><td>Không chặn</td></tr>
+    </tbody>
+  </table>
+
+  <h3>13.4 Quyết định cần chốt về bốn lỗ hổng phân quyền</h3>
+  <div class="box b-ask">
+    <p class="box-title">Q-20 · Câu hỏi quan trọng nhất của tài liệu này</p>
+    <p>Bốn hạng mục GAP-01 đến GAP-04, cộng GAP-20, cho phép một người dùng đã đăng nhập làm những việc mà thiết kế rõ ràng không nhắm tới: xoá bài đăng của bất kỳ ai, đọc tin nhắn riêng của bất kỳ ai, khoá tài khoản của bất kỳ ai, xem toàn bộ số liệu thống kê gồm cả toạ độ địa lý, và đọc bài đăng ở mức riêng tư của người khác.</p>
+    <p><strong>Câu hỏi cần chốt:</strong> tài liệu đặc tả nên mô tả hành vi <em>hiện tại</em> hay hành vi <em>mong đợi</em>?</p>
+    <p>Khuyến nghị: coi năm hạng mục này là <strong>lỗi cần sửa trước khi chốt đặc tả</strong>, không phải là hành vi cần ghi vào yêu cầu. Lý do: cả năm đều xuất phát từ sai sót khai báo hoặc thiếu kiểm tra, chứ không phải từ một lựa chọn nghiệp vụ nào. Sau khi sửa, mục 3.3 và mục 7 cần cập nhật, và mục 11 cần thêm năm tiêu chí nghiệm thu tương ứng.</p>
+  </div>
+
+  <h3>13.5 Vận hành và tuân thủ</h3>
+  <table class="compact">
+    <thead><tr><th class="id">Mã</th><th>Câu hỏi</th><th class="w-narrow">Hiện trạng</th></tr></thead>
+    <tbody>
+      <tr><td class="id">Q-21</td><td>Chính sách lưu giữ và xoá dữ liệu người dùng là gì? Hiện xoá là xoá mềm, nghĩa là dữ liệu <strong>không bao giờ thực sự mất</strong>.</td><td>Không có chính sách</td></tr>
+      <tr><td class="id">Q-22</td><td>Hệ thống có phải tuân thủ quy định bảo vệ dữ liệu cá nhân nào không? Lưu ý hệ thống đang lưu <strong>toạ độ địa lý</strong> của người dùng, và dữ liệu đó hiện mọi người dùng đã đăng nhập đều xem được (GAP-04).</td><td>Chưa xác định</td></tr>
+      <tr><td class="id">Q-23</td><td>Mục tiêu điểm phục hồi và thời gian phục hồi khi sự cố dữ liệu là bao nhiêu? Hiện có bản kết xuất đã kiểm chứng khôi phục được, nhưng <strong>không có lịch sao lưu tự động</strong>.</td><td>Sao lưu thủ công</td></tr>
+      <tr><td class="id">Q-24</td><td>Mức độ ưu tiên của khoảng trống về khả năng tiếp cận? Hiện có 20 vị trí ảnh thiếu văn bản thay thế, ảnh hưởng trực tiếp tới người dùng trình đọc màn hình.</td><td>20 vị trí thiếu</td></tr>
+    </tbody>
+  </table>
+
+  <div class="box b-info">
+    <p class="box-title">Thứ tự đề xuất để đưa vào cuộc họp</p>
+    <p><strong>Phiên 1 — chốt phạm vi sửa lỗi:</strong> Q-20 (năm lỗ hổng phân quyền), Q-16 (trạng thái báo cáo), Q-19 (chống lạm dụng báo cáo). Ba câu này quyết định liệu đặc tả chốt được hay không.</p>
+    <p><strong>Phiên 2 — chốt mục tiêu định lượng:</strong> Q-01 đến Q-03 và Q-23. Không có bốn con số này thì không viết được yêu cầu phi chức năng.</p>
+    <p><strong>Phiên 3 — làm sạch những chỗ dở dang:</strong> Q-11 đến Q-13 (ba giá trị danh mục chết), Q-10 và Q-12 (tính năng còn thiếu). Mỗi câu chỉ cần một quyết định giữ hoặc bỏ.</p>
+  </div>
+</section>
+
+<!-- ======================= 14. PHỤ LỤC ======================= -->
+<section class="sheet" id="s14">
+  <h2>14. Phụ lục — danh mục đầu mối dịch vụ</h2>
+  <p class="lead">Dùng để viết kịch bản kiểm thử và để đối chiếu với quy tắc phân quyền. Cột <em>Quyền</em> ghi hành vi <strong>thực tế</strong>; ô có mã GAP là chỗ hành vi thực tế lệch với thiết kế hợp lý. Mọi đường dẫn nằm dưới tiền tố phiên bản một của giao diện dịch vụ.</p>
+
+  <h3>14.1 Tài khoản và xác thực</h3>
+  <table class="compact">
+    <thead><tr><th class="w-narrow">Thao tác</th><th>Đường dẫn</th><th class="w-narrow">Quyền</th></tr></thead>
+    <tbody>
+      <tr><td>GỬI</td><td><code>/login</code></td><td>Công khai</td></tr>
+      <tr><td>GỬI</td><td><code>/registration</code></td><td>Công khai</td></tr>
+      <tr><td>GỬI</td><td><code>/refresh-token</code></td><td>Công khai</td></tr>
+      <tr><td>ĐỌC</td><td><code>/account/check?username= | email=</code></td><td>Công khai <span class="tag t-risk">GAP-17</span></td></tr>
+      <tr><td>GỬI</td><td><code>/account/active</code></td><td>Công khai</td></tr>
+      <tr><td>GỬI</td><td><code>/account/verify</code></td><td>Công khai</td></tr>
+      <tr><td>GỬI</td><td><code>/account/verification_token</code></td><td>Công khai</td></tr>
+      <tr><td>GỬI</td><td><code>/account/password</code> — quên mật khẩu</td><td>Công khai</td></tr>
+      <tr><td>CẬP NHẬT</td><td><code>/account/password</code> — đổi mật khẩu</td><td>Đã đăng nhập</td></tr>
+    </tbody>
+  </table>
+
+  <h3>14.2 Hồ sơ và quan hệ xã hội</h3>
+  <table class="compact">
+    <thead><tr><th class="w-narrow">Thao tác</th><th>Đường dẫn</th><th class="w-narrow">Quyền</th></tr></thead>
+    <tbody>
+      <tr><td>ĐỌC</td><td><code>/profile/{username}</code> · <code>/profile/{username}/outline-post</code> · <code>/profile/{id}/avatar</code> · <code>/profile/info</code></td><td>Đã đăng nhập</td></tr>
+      <tr><td>GỬI / CẬP NHẬT</td><td><code>/profile/avatar</code> · <code>/profile/edit</code></td><td>Đã đăng nhập</td></tr>
+      <tr><td>ĐỌC</td><td><code>/account/recommend</code> · <code>/account/recommend/profile/{id}</code></td><td>Đã đăng nhập</td></tr>
+      <tr><td>ĐỌC</td><td><code>/account/search?keyword=</code></td><td>Đã đăng nhập</td></tr>
+      <tr><td>GỬI / XOÁ</td><td><code>/following/{id}</code></td><td>Đã đăng nhập</td></tr>
+      <tr><td>ĐỌC</td><td><code>/following/{account}</code> · <code>/follower/{account}</code></td><td>Đã đăng nhập <span class="tag t-risk">GAP-19</span></td></tr>
+    </tbody>
+  </table>
+
+  <h3>14.3 Nội dung và tương tác</h3>
+  <table class="compact">
+    <thead><tr><th class="w-narrow">Thao tác</th><th>Đường dẫn</th><th class="w-narrow">Quyền</th></tr></thead>
+    <tbody>
+      <tr><td>GỬI</td><td><code>/post</code> — tạo bài đăng</td><td>Đã đăng nhập</td></tr>
+      <tr><td>ĐỌC</td><td><code>/post?author=&amp;privacy=&amp;own=&amp;q=</code></td><td>Đã đăng nhập <span class="tag t-risk">GAP-20</span></td></tr>
+      <tr><td>ĐỌC</td><td><code>/post/{id}</code></td><td>Đã đăng nhập <span class="tag t-risk">GAP-20</span></td></tr>
+      <tr><td>XOÁ</td><td><code>/post/comment/{id}</code> — <em>thực chất xoá BÀI ĐĂNG</em></td><td>Đã đăng nhập <span class="tag t-risk">GAP-01</span></td></tr>
+      <tr><td>GỬI</td><td><code>/attachment</code> — một ảnh</td><td>Đã đăng nhập <span class="tag t-risk">GAP-14</span></td></tr>
+      <tr><td>GỬI</td><td><code>/attachments</code> — nhiều ảnh</td><td>Đã đăng nhập</td></tr>
+      <tr><td>ĐỌC</td><td><code>/newsfeed</code> · <code>/trending</code></td><td>Đã đăng nhập</td></tr>
+      <tr><td>ĐỌC</td><td><code>/hashtag/top</code> · <code>/hashtag?name=</code></td><td>Đã đăng nhập</td></tr>
+      <tr><td>GỬI / XOÁ</td><td><code>/like/{id}</code></td><td>Đã đăng nhập</td></tr>
+      <tr><td>ĐỌC</td><td><code>/like/post/{postId}</code></td><td>Đã đăng nhập</td></tr>
+      <tr><td>GỬI</td><td><code>/comment</code></td><td>Đã đăng nhập</td></tr>
+      <tr><td>XOÁ</td><td><code>/comment/{id}</code></td><td>Chủ sở hữu hoặc quản trị <span class="tag t-risk">GAP-06</span></td></tr>
+      <tr><td>ĐỌC</td><td><code>/post/{postId}/first-level-comment</code> · <code>/post/{postId}/comment/{parentId}/child-comment</code></td><td>Đã đăng nhập</td></tr>
+    </tbody>
+  </table>
+
+  <h3>14.4 Nhắn tin, thông báo, thiết lập</h3>
+  <table class="compact">
+    <thead><tr><th class="w-narrow">Kênh</th><th>Đích</th><th class="w-narrow">Quyền</th></tr></thead>
+    <tbody>
+      <tr><td>Hai chiều</td><td><code>/chat</code> — gửi tin nhắn, phát tới <code>/conversation/{id}/message</code></td><td>Phải là thành viên</td></tr>
+      <tr><td>Hai chiều</td><td><code>/conversation</code> — tạo hội thoại, phát tới từng thành viên</td><td>Đã đăng nhập</td></tr>
+      <tr><td>Hai chiều</td><td><code>/conversation/account/add</code> · <code>/conversation/typing</code></td><td>Phải là thành viên</td></tr>
+      <tr><td>ĐỌC</td><td><code>/conversation</code> · <code>/conversation/id</code> · <code>/conversation/check/{recipientId}</code> · <code>/conversation/search?keyword=</code></td><td>Đã đăng nhập</td></tr>
+      <tr><td>ĐỌC</td><td><code>/conversation/{id}/message</code> — lịch sử tin nhắn</td><td>Đã đăng nhập <span class="tag t-risk">GAP-02</span></td></tr>
+      <tr><td>ĐỌC / CẬP NHẬT</td><td><code>/notification</code> · <code>/notification/{id}</code> · <code>/notification/status/from/sent/to/received</code></td><td>Đã đăng nhập</td></tr>
+      <tr><td>ĐỌC / GỬI</td><td><code>/setting</code></td><td>Đã đăng nhập</td></tr>
+      <tr><td>ĐỌC</td><td><code>/setting/location</code></td><td>Đã đăng nhập</td></tr>
+      <tr><td>XOÁ</td><td><code>/setting/location/{id}</code></td><td>Đã đăng nhập <span class="tag t-risk">GAP-18</span></td></tr>
+    </tbody>
+  </table>
+
+  <h3>14.5 Kiểm duyệt, quản trị, thống kê</h3>
+  <table class="compact">
+    <thead><tr><th class="w-narrow">Thao tác</th><th>Đường dẫn</th><th class="w-narrow">Quyền</th></tr></thead>
+    <tbody>
+      <tr><td>GỬI</td><td><code>/accountReport</code> · <code>/postReport</code> · <code>/commentReport</code></td><td>Đã đăng nhập</td></tr>
+      <tr><td>ĐỌC</td><td>ba đường dẫn trên, có lọc theo trạng thái; và <code>/{id}</code> của mỗi loại</td><td>Đã đăng nhập <span class="tag t-risk">GAP-03</span></td></tr>
+      <tr><td>XOÁ</td><td><code>/{loại}Report/approved/{id}</code> — <em>duyệt báo cáo</em></td><td>Đã đăng nhập <span class="tag t-risk">GAP-03</span></td></tr>
+      <tr><td>XOÁ</td><td><code>/{loại}Report/rejected/{id}</code> — <em>từ chối báo cáo</em></td><td>Đã đăng nhập <span class="tag t-risk">GAP-03</span></td></tr>
+      <tr><td>ĐỌC</td><td><code>/admin/post/{id}</code> · <code>/admin/profile/{id}</code> — xem kể cả phần đã ẩn</td><td><strong>Quản trị</strong></td></tr>
+      <tr><td>ĐỌC / GỬI / XOÁ</td><td><code>/admin</code> · <code>/admin/{id}</code> — quản lý tài khoản quản trị</td><td><strong>Quản trị</strong></td></tr>
+      <tr><td>ĐỌC</td><td><code>/statistic/getStatisticData</code> — ba số tổng</td><td>Đã đăng nhập <span class="tag t-risk">GAP-04</span></td></tr>
+      <tr><td>ĐỌC</td><td><code>/statistic/post/in/months | quarters | years</code> — 12 / 4 / 2 mốc</td><td>Đã đăng nhập <span class="tag t-risk">GAP-04</span></td></tr>
+      <tr><td>ĐỌC</td><td><code>/statistic/user/in/months | quarters | years</code></td><td>Đã đăng nhập <span class="tag t-risk">GAP-04</span></td></tr>
+      <tr><td>ĐỌC</td><td><code>/statistic/user/most/followers</code> · <code>/statistic/post/top/interaction</code> · <code>/statistic/post/top/newest</code></td><td>Đã đăng nhập <span class="tag t-risk">GAP-04</span></td></tr>
+      <tr><td>ĐỌC</td><td><code>/statistic/user/location</code> — toạ độ đăng nhập của từng tài khoản</td><td>Đã đăng nhập <span class="tag t-risk">GAP-04</span></td></tr>
+      <tr><td>ĐỌC</td><td><code>/statistic/hashtag/in/time</code></td><td>Đã đăng nhập <span class="tag t-risk">GAP-21</span></td></tr>
+    </tbody>
+  </table>
+
+  <h3>14.6 Mười một sự kiện và hệ quả phụ</h3>
+  <p>Mọi bộ xử lý đều chạy bất đồng bộ, nên lời gọi dịch vụ đã trả kết quả trước khi các hệ quả này hoàn tất (xem GAP-12).</p>
+  <table class="compact">
+    <thead><tr><th class="w-narrow">Sự kiện</th><th>Hệ quả</th><th class="w-narrow">Kênh</th></tr></thead>
+    <tbody>
+      <tr><td>Đăng ký hoàn tất</td><td>Sinh bảy thiết lập mặc định, rồi gửi mã xác thực</td><td>Email</td></tr>
+      <tr><td>Yêu cầu mã mới</td><td>Sinh và gửi lại mã xác thực</td><td>Email</td></tr>
+      <tr><td>Đăng nhập khi chưa kích hoạt</td><td>Gửi mã kích hoạt</td><td>Email</td></tr>
+      <tr><td>Đăng nhập từ thiết bị lạ</td><td>Gửi cảnh báo kèm địa chỉ mạng, thiết bị, quốc gia, toạ độ và mã xác thực</td><td>Email</td></tr>
+      <tr><td>Tạo bài đăng</td><td>Trích hashtag từ chú thích, tạo hashtag và liên kết</td><td>Không gửi gì</td></tr>
+      <tr><td>Tạo bình luận</td><td>Tính danh sách người nhận, chọn thông báo ưu tiên cao nhất cho mỗi người, lưu và đẩy</td><td>Hai chiều</td></tr>
+      <tr><td>Thích bài đăng</td><td>Tạo mới hoặc gộp vào thông báo đã có</td><td>Hai chiều</td></tr>
+      <tr><td>Theo dõi</td><td>Thông báo cho người được theo dõi</td><td>Hai chiều</td></tr>
+      <tr><td>Duyệt báo cáo bài đăng</td><td>Hai thông báo: người tố cáo và chủ bài đăng</td><td>Hai chiều + Email</td></tr>
+      <tr><td>Duyệt báo cáo tài khoản</td><td>Hai thông báo: người tố cáo và chủ tài khoản</td><td>Hai chiều + Email</td></tr>
+      <tr><td>Duyệt báo cáo bình luận</td><td>Hai thông báo: người tố cáo và chủ bình luận</td><td>Hai chiều + Email</td></tr>
+    </tbody>
+  </table>
+
+  <hr class="soft">
+  <h3>14.7 Phạm vi đã đọc và phạm vi chưa đọc</h3>
+  <div class="box b-warn">
+    <p class="box-title">Minh bạch về giới hạn của tài liệu</p>
+    <p><strong>Đã đọc và dùng làm căn cứ:</strong> toàn bộ lớp điều khiển (16 lớp chính và 4 lớp kiểm duyệt), lớp nghiệp vụ, lớp truy cập dữ liệu, mô hình dữ liệu và các danh mục giá trị, cấu hình bảo mật và phân quyền, các bộ xử lý sự kiện, các bộ kiểm tra đầu vào, tệp lược đồ cơ sở dữ liệu, các hàm lưu trữ dùng cho thống kê, cấu hình triển khai, và phần giao diện liên quan tới xác thực, gọi dịch vụ và kênh hai chiều.</p>
+    <p><strong>Chưa đọc đầy đủ, nên không khẳng định gì:</strong> các bộ xử lý phiên hoạt động và vòng đời kết nối hai chiều, hai lớp phát thông báo, lớp nghiệp vụ thông báo, các lớp tích hợp dịch vụ lưu trữ ảnh, và bộ sinh dữ liệu mẫu. Nếu một kết luận trong tài liệu phụ thuộc vào những phần này, nó đã được ghi rõ là chưa xác định.</p>
+    <p><strong>Cách kiểm chứng lại:</strong> mỗi phát biểu có nhãn xác nhận đều tương ứng một chỗ cụ thể trong mã nguồn. Khi mã nguồn thay đổi, tài liệu cần được soát lại — đặc biệt mục 8 (quy tắc nghiệp vụ) và mục 12 (khoảng trống), vì hai mục này gắn chặt nhất với chi tiết hiện thực.</p>
+  </div>
+
+  <hr class="soft">
+  <p class="note ctr">Hết tài liệu · Sơ đồ kèm theo: <code>docs/diagrams/business-flow.drawio</code> · <code>system-architecture.drawio</code> · <code>main-sequence.drawio</code> · <code>data-model.drawio</code><br>Kiểm tra tính hợp lệ của sơ đồ: <code>docs/diagrams/_validate.ps1</code></p>
+</section>
+
+</body>
+</html>
