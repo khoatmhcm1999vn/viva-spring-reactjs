@@ -1,7 +1,12 @@
 # ============================================================================
 # Giai doan 1: build static
 # ============================================================================
-FROM node:16-bullseye-slim AS build
+# Node 22 de KHOP voi hai noi con lai: package.json ghim engines.node = "22.x",
+# va Vercel build tren 22.23.3. Truoc day day la node:16, tuc cung mot source duoc
+# build boi hai toolchain lech nhau 6 major version. npm install --force bo qua
+# canh bao EBADENGINE nen no khong fail ngay - no fail lech nhau ve sau, va bundle
+# tu Docker khong con la cung mot thu voi bundle tu Vercel.
+FROM node:22-bookworm-slim AS build
 
 WORKDIR /app
 
