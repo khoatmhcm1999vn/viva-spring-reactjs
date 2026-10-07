@@ -34,6 +34,7 @@ Quy ước trạng thái: 🔴 chặn · 🟠 cần sửa · 🟡 nợ kỹ thu�
 | [ISS-11](#iss-11) | Không có migration; `schema.sql` chỉ tạo 11/19 bảng | 🟠 | Mở |
 | [ISS-12](#iss-12) | `up -d` không rebuild vì có khoá `image:` | 🟡 | Mở (có chủ ý, cần biết) |
 | [ISS-13](#iss-13) | Các issue kế thừa từ `deployment.md` | ⚪ | Mở |
+| [ISS-14](#iss-14) | Steering của Vivacon nạp vào mọi session, kể cả khi làm coffee-shop | ✅ | **Đã sửa** 2026-10-08 |
 
 Lịch sử thay đổi ở [cuối file](#changelog).
 
@@ -497,6 +498,69 @@ backend` thì không.
 | Code React | **Có** | Push `main` → Vercel tự build |
 | URL backend (tunnel đổi) | **Có** | Sửa env **và redeploy** (ISS-03) |
 
+<a id="iss-14"></a>
+### ISS-14 ✅ Steering của Vivacon nạp vào mọi session — *đã sửa 2026-10-08*
+
+**Trạng thái cũ.** Bốn steering file của Vivacon không có frontmatter nên mặc định
+`inclusion: always`. Khi làm việc trong `coffee-shop/`, chúng vẫn nạp đầy đủ:
+
+| File | Bytes |
+|---|---|
+| `deployment.md` | 41 836 |
+| `tech.md` | 8 436 |
+| `structure.md` | 6 387 |
+| `product.md` | 2 072 |
+| **Vivacon, nạp mọi session** | **58 731** |
+| **Tổng `always`** | **80 721** |
+
+Tức **73% context steering là chi tiết không liên quan** khi làm app còn lại.
+
+**Một điều về cơ chế, dễ hiểu sai.** Không thể viết thêm một steering file để "tắt" các
+file kia. Tài liệu Kiro ghi steering được **merge chứ không override**, và không có khoá
+`exclude` / `disable` / `overrides` nào. Thêm file chỉ **tăng** context. Cách duy nhất có
+tác dụng là đổi `inclusion` trên chính các file gây nhiễu.
+
+**Đã làm.**
+
+- `tech.md`, `structure.md`, `product.md`, `deployment.md` → `inclusion: fileMatch`, với
+  `fileMatchPattern` dạng **mảng YAML** (dạng duy nhất được tài liệu hoá cho nhiều
+  pattern), giới hạn vào đường dẫn của Vivacon.
+- `coffee-shop-stack.md`: sửa pattern từ `'coffee-shop/**'` sang
+  `["coffee-shop/**/*", "coffee-shop/*"]`. Mọi ví dụ trong tài liệu Kiro đều dùng dạng
+  `**/*` để khớp file, nên pattern cũ có thể **không khớp gì** tuỳ glob engine — tức file
+  đó sẽ không bao giờ bật.
+- Thêm `repo-map.md` (`always`, 3.5 KB): bảng định tuyến, 4 cặp khác biệt kỹ thuật giữa
+  hai app, bảng 9 cổng, bảng steering nào áp dụng ở đâu, và đường lùi khi `fileMatch`
+  không kích hoạt.
+
+Ba file giữ `always` vì là **chính sách** dùng cho cả hai app:
+`tech-stack-version-policy.md`, `sql-query-style.md`, `database-efficiency.md`.
+
+**Kết quả: tổng `always` 80 721 → 37 494 bytes**, và không còn byte nào thuộc riêng một
+dự án mà vẫn nạp cho dự án kia.
+
+**Đã verify bằng `tools/check-steering-scope.js`.** Rủi ro thật là `coffee-shop/` *cũng*
+có `src/`, `package.json` và `docker-compose.yml` — nếu matcher không neo đầu đường dẫn
+thì `src/**/*` của Vivacon sẽ khớp cả file coffee-shop. Script test 23 đường dẫn thật
+trên **hai engine** (minimatch 3.1.5 và picomatch 4.0.7, hai thư viện VS Code và hệ sinh
+thái JS dùng):
+
+```
+Pattern Vivacon (21), Pattern Coffee Shop (2)
+minimatch: 23 truong hop, 0 loi
+picomatch: 23 truong hop, 0 loi
+```
+
+46/46 đúng. Ca quan trọng nhất: `coffee-shop/server/src/index.js` **không** khớp
+`src/**/*`, nên pattern được neo ở gốc repo đúng như mong đợi.
+
+**Còn một điều chưa xác minh được.** Script chỉ chứng minh *pattern* đúng, không chứng
+minh *Kiro kích hoạt đúng*. Tài liệu Kiro không nói dùng glob engine nào, và định nghĩa
+điều kiện kích hoạt bằng cụm "working with files that match" mà không nói rõ đó là file
+mở trong editor, file đã vào context, hay file agent đọc bằng tool. Kiểm chứng cuối phải
+làm trong **phiên mới**: mở một file trong `coffee-shop/`, hỏi một câu, rồi xem rule nào
+được inject — kỳ vọng **không** thấy `tech` / `structure` / `product` / `deployment`.
+
 <a id="iss-13"></a>
 ### ISS-13 ⚪ Issue kế thừa từ `deployment.md`
 
@@ -579,6 +643,14 @@ Get-Service -Name "Oracle*" | Select-Object Name,Status
 
 <a id="changelog"></a>
 ## Lịch sử thay đổi
+
+### 2026-10-08 — tách steering hai dự án
+
+- **ISS-14** — 4 steering file của Vivacon chuyển sang `fileMatch`; thêm `repo-map.md`
+  làm bảng định tuyến; sửa pattern của `coffee-shop-stack.md` từ `coffee-shop/**` sang
+  dạng `**/*`. Tổng `always` giảm 80 721 → 37 494 bytes.
+- Thêm `tools/check-steering-scope.js` làm regression test: 23 đường dẫn × 2 glob engine,
+  46/46 đúng, tập trung vào rủi ro `coffee-shop/` cũng có `src/`.
 
 ### 2026-10-07 — lượt sửa đầu tiên
 
