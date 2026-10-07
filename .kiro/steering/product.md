@@ -1,4 +1,14 @@
-# Product
+---
+inclusion: fileMatch
+fileMatchPattern:
+  - "src/**/*"
+  - "frontend/**/*"
+  - "docs/**/*"
+  - "BA Document/**/*"
+  - "postman_collection/**/*"
+---
+
+# Product — Vivacon
 
 **Vivacon** is a social networking web application (Instagram-style) with a Spring Boot REST/WebSocket backend and a React single-page frontend.
 

@@ -1,4 +1,24 @@
-# Tech Stack & Commands
+---
+inclusion: fileMatch
+fileMatchPattern:
+  - "src/**/*"
+  - "frontend/**/*"
+  - "pom.xml"
+  - "mvnw*"
+  - ".mvn/**/*"
+  - "Dockerfile"
+  - "docker-compose*.yml"
+  - "container/**/*"
+  - "mock_data/**/*"
+  - "postman_collection/**/*"
+  - "docs/**/*"
+  - "config/**/*"
+---
+
+# Tech Stack & Commands — Vivacon
+
+> Chỉ áp dụng cho **Vivacon** (Spring Boot + React 17 CRA ở gốc repo), không áp dụng cho
+> `coffee-shop/`. Xem `repo-map.md` để biết ranh giới hai dự án.
 
 ## Backend
 

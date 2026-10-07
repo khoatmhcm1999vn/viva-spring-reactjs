@@ -1,6 +1,8 @@
 ---
 inclusion: fileMatch
-fileMatchPattern: 'coffee-shop/**'
+fileMatchPattern:
+  - "coffee-shop/**/*"
+  - "coffee-shop/*"
 ---
 
 # Coffee Shop — tech stack và quy ước

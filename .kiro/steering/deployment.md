@@ -1,4 +1,26 @@
-# Deployment roadmap
+---
+inclusion: fileMatch
+fileMatchPattern:
+  - "Dockerfile"
+  - "docker-compose*.yml"
+  - ".dockerignore"
+  - ".env.example"
+  - "config/**/*"
+  - "container/**/*"
+  - "frontend/vercel.json"
+  - "frontend/.env*"
+  - "frontend/nginx.conf.template"
+  - "frontend/Dockerfile"
+  - "src/main/resources/application*.yml"
+  - "docs/ISSUES.md"
+---
+
+# Deployment roadmap — Vivacon
+
+> File này **41 KB** và chỉ nói về deployment của Vivacon (VM Ubuntu, Supabase,
+> Cloudflare Tunnel, Vercel). Trước đây nó `always` nên nạp vào mọi session, kể cả khi
+> đang sửa một component React không liên quan. Giờ chỉ nạp khi chạm tới file
+> deployment. Cần đọc chủ động thì mở thẳng `.kiro/steering/deployment.md`.
 
 Where the project is on the path from a local checkout to a deployed stack, and what
 is known to block each remaining step. Git history is the record of *what changed*;

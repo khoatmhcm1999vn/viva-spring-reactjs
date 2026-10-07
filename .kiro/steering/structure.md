@@ -1,4 +1,19 @@
-# Project Structure
+---
+inclusion: fileMatch
+fileMatchPattern:
+  - "src/**/*"
+  - "frontend/**/*"
+  - "pom.xml"
+  - "container/**/*"
+  - "mock_data/**/*"
+  - "postman_collection/**/*"
+  - "docs/**/*"
+---
+
+# Project Structure — Vivacon
+
+> Chỉ áp dụng cho **Vivacon**. Cấu trúc của `coffee-shop/` nằm ở
+> `coffee-shop-stack.md`.
 
 ```
 /
