@@ -1,0 +1,54 @@
+# Chi dung database. Server va client chay tren host bang "npm run dev".
+#
+# Dat ten project tuong minh de khong lan voi stack "vivacon" va
+# "vivacon-services" cung nam tren may nay.
+name: coffee-shop
+
+services:
+  db:
+    image: postgres:18
+    container_name: coffee-shop-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-coffeeshop}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      # Khong co gia tri mac dinh: thieu la compose dung ngay, thay vi khoi dong
+      # mot database khong ai biet password.
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?can dat DB_PASSWORD trong file .env}
+      TZ: UTC
+      PGTZ: UTC
+    ports:
+      # 5434, khong phai 5432 hay 5433: hai cong do da bi project
+      # vivacon-services va compose cua Vivacon giu.
+      - "${DB_PORT:-5434}:5432"
+    volumes:
+      # Named volume. Volume vo danh se bi bo roi ngay lan recreate dau tien.
+      #
+      # Mount vao /var/lib/postgresql, KHONG phai /var/lib/postgresql/data.
+      #
+      # Day la breaking change cua image chinh thuc tu phien ban 18: data duoc
+      # luu trong thu muc con theo major version (de "pg_upgrade --link" khong
+      # vuong ranh gioi mount point), nen mount dung /data se bi image coi la
+      # "unused mount/volume" va no TU CHOI khoi dong voi thong bao:
+      #   "in 18+, these Docker images are configured to store database data in
+      #    a format which is compatible with pg_ctlcluster"
+      # Chi tiet: https://github.com/docker-library/postgres/pull/1259
+      #
+      # Luu y: compose cua Vivacon dung postgres:14 va mount /var/lib/postgresql/data
+      # la DUNG cho ban 14. Dung "dong bo" hai file nay.
+      - coffee-shop-db-data:/var/lib/postgresql
+      # Postgres chay moi file trong thu muc nay theo thu tu TEN, va CHI chay
+      # khi data directory con trong (tuc lan "up" dau tien). Tien to so de
+      # schema chac chan di truoc seed.
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./db/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
+    healthcheck:
+      # Doi Postgres thuc su nhan ket noi, khong chi doi container start.
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-coffeeshop}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  coffee-shop-db-data:
+    name: coffee-shop-db-data
