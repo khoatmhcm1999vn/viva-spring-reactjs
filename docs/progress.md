@@ -5,7 +5,7 @@ Bộ hướng dẫn đã được tạo. Ứng dụng, migrations, tests và dep
 | Bước | Trạng thái | Bằng chứng / hạn chế |
 |---|---|---|
 | 01 Chốt nghiệp vụ | DONE (tài liệu) | `docs/requirements.md` (50 REQ), `docs/decisions.md` (D01-01..D01-15, Q01-01..Q01-07), `docs/test-plan.md` map REQ. Chi tiết ở mục “Bước 01” bên dưới. Chưa có code/app. |
-| 02 Phác thảo giao diện | TODO | Chưa thực hiện trong repository ứng dụng |
+| 02 Phác thảo giao diện | DONE (tài liệu) | `docs/wireframes.md` (11 màn, map route→feature→REQ, walkthrough), `docs/mockups/index.html` (11 panel tĩnh), `docs/decisions.md` D02-01..D02-15 / Q02-01..Q02-07. Chi tiết ở mục “Bước 02”. Chưa có component React nào. |
 | 03 Khởi tạo monorepo | TODO | Chưa thực hiện trong repository ứng dụng |
 | 04 Schema, migration và seed | TODO | Chưa thực hiện trong repository ứng dụng |
 | 05 Xác thực và quyền | TODO | Chưa thực hiện trong repository ứng dụng |
@@ -72,3 +72,67 @@ Không sửa `docs/diagrams/*`: chính sách vòng đời đơn không đổi so
 
 ### Bước tiếp theo
 Bước 02 — Phác thảo giao diện (`.kiro/steering/02-wireframes.md`), dựa trên UC-01..UC-13 và các REQ liên quan tới UI (REQ-101, REQ-206, REQ-503, REQ-705). Chưa đánh dấu bước nào khác hoàn thành.
+
+---
+
+## Bước 02 — Phác thảo giao diện (2026-10-09)
+
+### Dependency bước trước
+Bước 01 đã xong ở mức tài liệu (`docs/requirements.md` với REQ-001..REQ-705). Bước 02 dùng trực tiếp các REQ đó làm acceptance cho từng màn. Đã kiểm repo: `apps/web` vẫn chỉ có `README.md` và `.env.example`, **chưa có** `package.json`, Tailwind, shadcn/ui hay component nào. Không ghi đè file nào đang có.
+
+### File đổi
+| File | Thay đổi |
+|---|---|
+| `docs/wireframes.md` | **Mới**, 969 dòng. Nguyên tắc chung (mobile-first, tiền/thời gian, giá là của server, nút disabled khi gửi, không hứa realtime, a11y); bản đồ route→feature→REQ cho 3 role; navigation mobile/desktop/staff; 10 màn hình bắt buộc kèm wireframe ASCII; bảng trạng thái loading/empty/error/unauthorized cho **từng** màn; bảng xử lý 10 loại lỗi ở checkout; quy tắc chọn modifier theo min/max; chính sách session expired theo ngữ cảnh; 5 walkthrough; mục kiểm tra không lộ cấu hình kỹ thuật; bảng dữ liệu mẫu. |
+| `docs/mockups/index.html` | **Mới**, 11 panel HTML/CSS tĩnh, tự chứa, không JavaScript. Mở trực tiếp bằng browser. |
+| `docs/decisions.md` | **Bổ sung**: D02-01..D02-15, Q02-01..Q02-07. |
+| `docs/progress.md` | **Sửa**: bản ghi này + đánh dấu bước 02. |
+
+Không sửa `docs/requirements.md`, `docs/api-contract.md`, `docs/data-model.md`, `docs/diagrams/*` — bước 02 không làm đổi hợp đồng API, schema hay vòng đời đơn.
+
+### Quyết định đáng chú ý
+- **D02-04**: khối chọn Size chỉ render khi product có ≥2 variant, nên bánh/nước đóng chai không bị ép S/M/L. UI suy ra từ số lượng variant thay vì hardcode danh sách size.
+- **D02-02**: xác nhận đơn và tracking là cùng một màn `/orders/[id]?placed=1`.
+- **D02-03**: polling 7 giây ở màn chi tiết, dừng ở terminal, tạm dừng khi mất focus; màn danh sách không polling.
+- **D02-07**: nút `[Thu tiền]` không hiện ở `PLACED`, khớp D01-04 nên MVP không có đường nào cần hoàn tiền.
+- **Q02-02**: nút "Đặt lại đơn này" được đánh dấu **tuỳ chọn ngoài MVP**, cắt được — không tự thêm feature ngoài phạm vi `product.md`.
+
+### Commands đã chạy và kết quả
+
+1. Kiểm tra tham chiếu REQ trong tài liệu mới không bị treo:
+   ```powershell
+   # so moi REQ-xxx trong wireframes.md va mockup voi 50 REQ dinh nghia o requirements.md
+   ```
+   Kết quả thực tế: `REQ dinh nghia: 50`; `docs/wireframes.md : 42 REQ duy nhat, undefined:` (rỗng); `docs/mockups/index.html : 27 REQ duy nhat, undefined:` (rỗng). → **PASS**
+
+2. Kiểm tra cấu trúc mockup HTML (script tạm, đã xoá sau khi chạy):
+   ```powershell
+   node check-html.tmp.js   # EXIT=0
+   ```
+   Kết quả: `so panel: 11`, `so label[for]: 13, so id: 13`, `OK: HTML can bang, label hop le, khong co script.`
+   Script kiểm: cân bằng tag (bỏ qua void element), mọi `label[for]` trỏ tới `id` có thật, có `lang="vi"` + charset + viewport + title, có ghi chú dữ liệu giả, và **không** chứa `<script>`. → **PASS**
+
+3. Kiểm tra `docs/wireframes.md` phủ hết yêu cầu của `.kiro/steering/02-wireframes.md` (script tạm, đã xoá):
+   ```powershell
+   node check-wireframes.tmp.js   # EXIT=0
+   ```
+   Kết quả: `man hinh bat buoc: 10 · rang buoc steering: 18 · route: 9` → `OK: phu het yeu cau cua 02-wireframes.md.`
+   Script kiểm 10 màn bắt buộc (navigation, menu, dialog món, cart, checkout, confirmation, tracking, history, staff board, admin catalog); 4 trạng thái loading/empty/error/unauthorized mỗi loại xuất hiện ≥4 lần trong các bảng trạng thái; 18 ràng buộc riêng của steering (nút disabled, `PRICE_CHANGED`, `QUOTE_EXPIRED`, min/max modifier, không ép size, "Cập nhật lúc", không hứa realtime, staff board chỉ transition hợp lệ, thu tiền trước hoàn tất, route theo role không thay guard API, label/a11y, 4 walkthrough, mục không lộ cấu hình kỹ thuật, map route→feature, ghi rõ dữ liệu giả); và 9 route đều xuất hiện ≥2 lần. → **PASS**
+
+4. Mở `docs/mockups/index.html` bằng browser để xem bố cục. → **SKIP**: tôi không render được trang trong môi trường này; chỉ kiểm được cấu trúc HTML bằng script ở mục 2. Cần người kiểm bằng mắt.
+
+### Pass / Fail / Skip
+- PASS: 3 kiểm tra tự động ở trên.
+- SKIP: xem mockup bằng mắt trong browser (không render được ở đây); lint/typecheck/build/unit/E2E (**chưa tồn tại** toolchain, dựng từ bước 03); kiểm trợ năng thật bằng screen reader (cần người và thiết bị).
+- FAIL: không có.
+
+### Hạn chế
+- Bước 02 chỉ sinh **tài liệu và mockup tĩnh**. Không có màn hình nào chạy được; không một bước nào trong 5 walkthrough ở mục 13 của `wireframes.md` đã được thực thi. Chúng là kịch bản sẽ hiện thực ở bước 06–09 và kiểm ở bước 10 (T11, T12).
+- Mockup không có JavaScript nên không minh hoạ được chuyển trạng thái, đếm ngược quote hay polling — các thứ đó chỉ được mô tả bằng chữ trong `wireframes.md`.
+- Các điểm accessibility là **mục tiêu thiết kế**. Tuân thủ WCAG đầy đủ cần kiểm thủ công với trợ năng thật và rà soát bởi người có chuyên môn; wireframe không chứng minh được điều đó.
+- Chi tiết thị giác trong mockup (màu, bán kính, font) **sẽ khác** UI thật vì bước 03 mới chốt Tailwind + shadcn/ui.
+- Hai script kiểm (`check-html.tmp.js`, `check-wireframes.tmp.js`) là script dùng một lần, đã xoá sau khi chạy. Repo vẫn **không có gate tự động nào**; gate thật dựng từ bước 03.
+- Q02-01..Q02-07 còn mở. Q02-02 (nút đặt lại đơn) nằm ngoài MVP và cắt được.
+
+### Bước tiếp theo
+Bước 03 — Khởi tạo monorepo (`.kiro/steering/03-bootstrap.md`): pnpm workspaces, `apps/web` (Next.js + Tailwind + shadcn/ui), `apps/api` (NestJS + Swagger), `packages/contracts`, và dựng gate thật (lint, typecheck, build). Khi đó mới chốt và ghi lại versions vào `docs/decisions.md`. Chưa đánh dấu bước nào khác hoàn thành.

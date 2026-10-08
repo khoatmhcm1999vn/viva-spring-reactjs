@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coffee Order — Mockup tĩnh (bước 02)</title>
+<style>
+  :root{
+    --bg:#f4f1ec; --card:#fff; --ink:#23201d; --muted:#6f6760; --line:#e2dcd3;
+    --brand:#5b3a29; --brand-ink:#fff; --ok:#1f7a4d; --warn:#b4600a; --err:#b3261e;
+    --chip:#efe9e1; --disabled:#bdb5ac;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:14px/1.5 "Segoe UI",system-ui,-apple-system,Arial,sans-serif}
+  .page{max-width:1500px;margin:0 auto;padding:28px 20px 60px}
+  h1{font-size:22px;margin:0 0 6px}
+  .lede{color:var(--muted);max-width:820px;margin:0 0 10px}
+  .warnbox{background:#fff6e5;border:1px solid #f0d8a8;border-left:4px solid var(--warn);
+           padding:12px 14px;border-radius:6px;max-width:820px;margin:14px 0 26px}
+  .warnbox p{margin:4px 0}
+  .grid{display:flex;flex-wrap:wrap;gap:22px;align-items:flex-start}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:10px;
+         overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  .panel>figcaption{background:#2f2a26;color:#fff;padding:8px 12px;font-size:12px}
+  .panel>figcaption code{background:rgba(255,255,255,.14);padding:1px 5px;border-radius:3px;
+         font-size:11px;color:#fff}
+  .panel>figcaption .req{display:block;color:#cfc6bb;font-size:11px;margin-top:3px}
+  .phone{width:330px}
+  .wide{width:720px}
+  .xwide{width:980px}
+  .body{padding:0}
+  /* --- khung dien thoai --- */
+  .appbar{display:flex;align-items:center;justify-content:space-between;
+          padding:10px 12px;border-bottom:1px solid var(--line);font-weight:600}
+  .appbar .badge{background:var(--brand);color:#fff;border-radius:999px;padding:2px 9px;font-size:12px}
+  .storebar{display:flex;justify-content:space-between;padding:8px 12px;
+            border-bottom:1px solid var(--line);color:var(--muted);font-size:13px}
+  .chips{display:flex;gap:7px;padding:10px 12px;border-bottom:1px solid var(--line);overflow:hidden}
+  .chip{background:var(--chip);border-radius:999px;padding:5px 12px;font-size:13px;white-space:nowrap}
+  .chip.on{background:var(--brand);color:#fff}
+  .list{padding:4px 0}
+  .item{display:flex;gap:11px;padding:11px 12px;border-bottom:1px solid #f1ece5;align-items:center}
+  .thumb{width:58px;height:58px;border-radius:8px;background:
+         repeating-linear-gradient(45deg,#e8e1d8,#e8e1d8 7px,#ded5c9 7px,#ded5c9 14px);
+         flex:0 0 58px;display:flex;align-items:center;justify-content:center;
+         color:#9b9086;font-size:10px}
+  .item .meta{flex:1;min-width:0}
+  .item .name{font-weight:600}
+  .item .sub{color:var(--muted);font-size:12.5px}
+  .price{font-weight:600}
+  .add{width:30px;height:30px;border-radius:8px;border:1px solid var(--brand);
+       color:var(--brand);background:#fff;display:flex;align-items:center;justify-content:center;
+       font-size:17px;line-height:1;flex:0 0 30px}
+  .add.off{border-color:var(--disabled);color:var(--disabled);background:#f7f5f2}
+  .soldout{color:var(--err);font-size:12px;font-weight:600}
+  .dim{opacity:.55}
+  .tabbar{display:flex;border-top:1px solid var(--line);background:#fbf9f6}
+  .tabbar div{flex:1;text-align:center;padding:9px 0;font-size:12px;color:var(--muted)}
+  .tabbar div.on{color:var(--brand);font-weight:600}
+  /* --- chung --- */
+  .sec{padding:12px}
+  .sec+.sec{border-top:1px solid var(--line)}
+  .sec h3{margin:0 0 8px;font-size:13px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)}
+  .req0{color:var(--err)}
+  .opt{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid #f4f0ea}
+  .opt:last-child{border-bottom:0}
+  .opt .grow{flex:1}
+  .opt .extra{color:var(--muted);font-size:12.5px}
+  .dot{width:16px;height:16px;border:2px solid #b9b0a6;border-radius:50%;flex:0 0 16px}
+  .dot.on{border-color:var(--brand);background:
+          radial-gradient(circle,var(--brand) 0 42%,#fff 44%)}
+  .box{width:16px;height:16px;border:2px solid #b9b0a6;border-radius:4px;flex:0 0 16px;
+       display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff}
+  .box.on{border-color:var(--brand);background:var(--brand)}
+  .box.off,.dot.off{border-color:#dcd5cc;background:#f6f3ef}
+  .hint{color:var(--muted);font-size:12px;margin:5px 0 0}
+  .field{margin-bottom:10px}
+  .field label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:3px}
+  .input{border:1px solid #cfc7bd;border-radius:7px;padding:8px 10px;background:#fff}
+  .input.ro{background:#f7f5f2;color:var(--muted)}
+  .btn{display:block;width:100%;text-align:center;background:var(--brand);color:var(--brand-ink);
+       border-radius:9px;padding:12px;font-weight:600}
+  .btn.ghost{background:#fff;color:var(--brand);border:1px solid var(--brand)}
+  .btn.danger{background:#fff;color:var(--err);border:1px solid var(--err)}
+  .btn.off{background:#eceae6;color:var(--disabled);border:1px solid #e2ded8}
+  .btn.sm{padding:7px 12px;width:auto;display:inline-block;font-size:13px;border-radius:7px}
+  .row{display:flex;justify-content:space-between;padding:4px 0}
+  .row.total{border-top:1px solid var(--line);margin-top:7px;padding-top:9px;font-weight:700}
+  .note{background:#f6f3ef;border-radius:7px;padding:9px 10px;color:var(--muted);font-size:12.5px}
+  .count{display:flex;align-items:center;gap:12px}
+  .step{width:28px;height:28px;border:1px solid #cfc7bd;border-radius:7px;background:#fff;
+        display:flex;align-items:center;justify-content:center}
+  .step.off{color:var(--disabled);background:#f7f5f2}
+  .banner{padding:10px 12px;font-size:13px;border-radius:7px;margin:0 12px 10px}
+  .banner.ok{background:#e8f5ed;color:#145c38;border:1px solid #bfe3cf}
+  .banner.warnb{background:#fff6e5;color:#8a4a06;border:1px solid #f0d8a8}
+  .banner.errb{background:#fdeceb;color:#8c1d16;border:1px solid #f4c8c4}
+  .status{text-align:center;padding:16px 12px 6px}
+  .status .big{font-size:17px;font-weight:700;letter-spacing:.5px}
+  .status .where{color:var(--muted);font-size:12.5px;margin-top:3px}
+  .track{display:flex;padding:14px 8px 4px}
+  .track div{flex:1;text-align:center;font-size:10.5px;color:var(--muted);position:relative}
+  .track div .b{width:12px;height:12px;border-radius:50%;background:#dcd5cc;margin:0 auto 6px}
+  .track div.done .b{background:var(--brand)}
+  .track div.done{color:var(--ink);font-weight:600}
+  .upd{text-align:center;color:var(--muted);font-size:12px;padding:6px 0 12px}
+  .pill{display:inline-block;border-radius:999px;padding:2px 9px;font-size:11.5px;font-weight:600}
+  .pill.gray{background:#eceae6;color:#5c554e}
+  .pill.green{background:#e8f5ed;color:#145c38}
+  .pill.amber{background:#fff6e5;color:#8a4a06}
+  .pill.red{background:#fdeceb;color:#8c1d16}
+  .tl div{display:flex;gap:11px;padding:5px 0;font-size:13px}
+  .tl span.t{color:var(--muted);flex:0 0 48px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid #f1ece5}
+  th{font-size:11.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);
+     background:#fbf9f6}
+  .sw{width:34px;height:19px;border-radius:999px;background:var(--ok);position:relative;display:inline-block}
+  .sw i{position:absolute;top:2px;right:2px;width:15px;height:15px;border-radius:50%;background:#fff}
+  .sw.off{background:#cfc7bd}
+  .sw.off i{right:auto;left:2px}
+  .board{display:flex;gap:10px;padding:12px;align-items:flex-start}
+  .col{flex:1;background:#faf8f5;border:1px solid var(--line);border-radius:8px;padding:8px;min-width:0}
+  .col h4{margin:0 0 8px;font-size:11.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)}
+  .ocard{background:#fff;border:1px solid var(--line);border-radius:7px;padding:9px;margin-bottom:8px;
+         font-size:12.5px}
+  .ocard .code{font-weight:700}
+  .ocard .age{color:var(--muted);font-size:11.5px}
+  .ocard .btns{margin-top:7px;display:flex;flex-direction:column;gap:5px}
+  .mini{display:block;text-align:center;border-radius:6px;padding:6px;font-size:12px;font-weight:600;
+        background:var(--brand);color:#fff}
+  .mini.ghost{background:#fff;color:var(--brand);border:1px solid var(--brand)}
+  .mini.danger{background:#fff;color:var(--err);border:1px solid var(--err)}
+  .mini.off{background:#eceae6;color:var(--disabled);border:1px solid #e2ded8}
+  .dialog{width:360px}
+  .legend{margin:30px 0 0;color:var(--muted);font-size:12.5px;max-width:820px}
+  .legend code{background:#e9e4dc;padding:1px 5px;border-radius:3px}
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>Coffee Order — mockup tĩnh (bước 02)</h1>
+<p class="lede">Bố cục tham chiếu cho các màn hình trong <code>docs/wireframes.md</code>.</p>
+
+<div class="warnbox">
+  <p><strong>Đây không phải ứng dụng.</strong> File này là HTML/CSS tĩnh, không có JavaScript, không gọi API, không có state. Nút không bấm được.</p>
+  <p><strong>Toàn bộ dữ liệu là dữ liệu giả cho demo</strong> — tên món, giá, tên khách, địa chỉ, mã đơn đều được tạo ra cho bài tập này, không phải menu hay giá của doanh nghiệp nào.</p>
+  <p>File nằm trong <code>docs/</code> nên không được build hay deploy. UI thật ở bước sau dùng Tailwind + shadcn/ui nên chi tiết thị giác sẽ khác.</p>
+</div>
+
+<div class="grid">
+
+<!-- 1. MENU -->
+<figure class="panel phone">
+  <figcaption>1 · Menu — <code>/</code>
+    <span class="req">REQ-100 menu theo store · REQ-101 món hết hàng bị khóa · REQ-603 món ẩn không hiện</span>
+  </figcaption>
+  <div class="body">
+    <div class="appbar"><span>☕ Coffee Order</span><span><span class="badge">🛒 0</span> &nbsp;☰</span></div>
+    <div class="storebar"><span>📍 Cửa hàng Quận 1</span><span>▾</span></div>
+    <div class="chips">
+      <span class="chip on">Cà phê</span><span class="chip">Trà</span>
+      <span class="chip">Đá xay</span><span class="chip">Bánh</span>
+    </div>
+    <div class="list">
+      <div class="item">
+        <div class="thumb">ảnh</div>
+        <div class="meta"><div class="name">Cà phê sữa đá</div>
+          <div class="sub">Đậm, ngọt vừa</div>
+          <div class="price">từ 29.000 ₫</div></div>
+        <div class="add">+</div>
+      </div>
+      <div class="item">
+        <div class="thumb">ảnh</div>
+        <div class="meta"><div class="name">Bạc xỉu</div>
+          <div class="sub">Nhiều sữa, nhẹ vị cà phê</div>
+          <div class="price">từ 35.000 ₫</div></div>
+        <div class="add">+</div>
+      </div>
+      <div class="item dim">
+        <div class="thumb">ảnh</div>
+        <div class="meta"><div class="name">Trà sen vàng</div>
+          <div class="sub soldout">Hết hàng hôm nay</div>
+          <div class="price">từ 45.000 ₫</div></div>
+        <div class="add off">+</div>
+      </div>
+      <div class="item">
+        <div class="thumb">ảnh</div>
+        <div class="meta"><div class="name">Bánh mì chả</div>
+          <div class="sub">Món một size — không hiện chọn size</div>
+          <div class="price">25.000 ₫</div></div>
+        <div class="add">+</div>
+      </div>
+    </div>
+    <div class="tabbar"><div class="on">Menu</div><div>Đơn của tôi</div><div>Tôi</div></div>
+  </div>
+</figure>
+
+<!-- 2. DIALOG CHI TIET MON -->
+<figure class="panel phone">
+  <figcaption>2 · Chi tiết món (dialog) — <code>/</code>
+    <span class="req">REQ-203 min/max modifier · REQ-204 không gộp dòng · REQ-202 quantity 1..20</span>
+  </figcaption>
+  <div class="body">
+    <div class="appbar"><span>Cà phê sữa đá</span><span>✕</span></div>
+    <div class="sec">
+      <h3>Size <span class="req0">*</span></h3>
+      <div class="opt"><span class="dot"></span><span class="grow">Nhỏ (S)</span><span class="price">29.000 ₫</span></div>
+      <div class="opt"><span class="dot on"></span><span class="grow">Vừa (M)</span><span class="price">35.000 ₫</span></div>
+      <div class="opt"><span class="dot"></span><span class="grow">Lớn (L)</span><span class="price">45.000 ₫</span></div>
+      <p class="hint">Khối này chỉ hiện khi món có từ 2 size. Món bánh một size không hiện.</p>
+    </div>
+    <div class="sec">
+      <h3>Mức đá · chọn 1</h3>
+      <div class="opt"><span class="dot on"></span><span class="grow">Đá bình thường</span><span class="extra">+0 ₫</span></div>
+      <div class="opt"><span class="dot"></span><span class="grow">Ít đá</span><span class="extra">+0 ₫</span></div>
+      <div class="opt"><span class="dot"></span><span class="grow">Không đá</span><span class="extra">+0 ₫</span></div>
+      <p class="hint">min 1 / max 1 → radio, bắt buộc.</p>
+    </div>
+    <div class="sec">
+      <h3>Topping · chọn tối đa 2</h3>
+      <div class="opt"><span class="box on">✓</span><span class="grow">Thạch cà phê</span><span class="extra">+10.000 ₫</span></div>
+      <div class="opt"><span class="box on">✓</span><span class="grow">Kem phô mai</span><span class="extra">+15.000 ₫</span></div>
+      <div class="opt"><span class="box off"></span><span class="grow" style="color:#bdb5ac">Trân châu</span><span class="extra">+10.000 ₫</span></div>
+      <p class="hint">Đã chọn tối đa 2 — tuỳ chọn còn lại bị vô hiệu hoá.</p>
+    </div>
+    <div class="sec">
+      <div class="field"><label for="m-note">Ghi chú cho quán</label>
+        <div class="input" id="m-note">ít ngọt giúp mình</div></div>
+      <p class="hint">23/200 ký tự</p>
+    </div>
+    <div class="sec">
+      <div class="count"><span class="grow">Số lượng</span>
+        <span class="step off">−</span><strong>2</strong><span class="step">+</span></div>
+      <p class="hint">Ở số 1 thì nút − bị vô hiệu hoá; ở 20 thì nút +.</p>
+    </div>
+    <div class="sec"><span class="btn">Thêm vào giỏ · 120.000 ₫</span>
+      <p class="hint">(35.000 + 10.000 + 15.000) × 2</p></div>
+  </div>
+</figure>
+
+<!-- 3. GIO HANG -->
+<figure class="panel phone">
+  <figcaption>3 · Giỏ hàng — <code>/cart</code>
+    <span class="req">REQ-204 dòng riêng theo size/modifier/note · REQ-705 giỏ bền qua reload</span>
+  </figcaption>
+  <div class="body">
+    <div class="appbar"><span>← Giỏ hàng</span><span></span></div>
+    <div class="storebar"><span>📍 Cửa hàng Quận 1</span><span></span></div>
+    <div class="list">
+      <div class="item">
+        <div class="meta"><div class="name">Cà phê sữa đá · Vừa (M)</div>
+          <div class="sub">Đá bình thường, Thạch cà phê</div>
+          <div class="sub">“ít ngọt giúp mình”</div>
+          <div class="price">90.000 ₫</div></div>
+        <div class="count"><span class="step">−</span>2<span class="step">+</span></div>
+      </div>
+      <div class="item">
+        <div class="meta"><div class="name">Cà phê sữa đá · Lớn (L)</div>
+          <div class="sub">Ít đá</div>
+          <div class="price">45.000 ₫</div></div>
+        <div class="count"><span class="step">−</span>1<span class="step">+</span></div>
+      </div>
+      <div class="item">
+        <div class="meta"><div class="name">Bánh mì chả</div>
+          <div class="price">25.000 ₫</div></div>
+        <div class="count"><span class="step">−</span>1<span class="step">+</span></div>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="row"><span>Tạm tính (3 dòng)</span><span>160.000 ₫</span></div>
+      <div class="row"><span>Phí giao hàng</span><span>—</span></div>
+      <div class="row"><span>Giảm giá</span><span>—</span></div>
+      <p class="note">ⓘ Giá cuối do cửa hàng xác nhận ở bước tiếp theo.</p>
+    </div>
+    <div class="sec"><span class="btn">Tiếp tục đặt món</span></div>
+  </div>
+</figure>
+
+<!-- 4. CHECKOUT -->
+<figure class="panel phone">
+  <figcaption>4 · Thanh toán — <code>/checkout</code>
+    <span class="req">REQ-200 client không gửi giá · REQ-201 công thức giá · REQ-205 quote 5 phút · REQ-301 Idempotency-Key</span>
+  </figcaption>
+  <div class="body">
+    <div class="appbar"><span>← Đặt món</span><span></span></div>
+    <div class="sec">
+      <h3>Nhận món</h3>
+      <div class="opt"><span class="dot on"></span><span class="grow">Tại quầy — Cửa hàng Quận 1<br>
+        <span class="sub">12 Nguyễn Huệ, Quận 1 (địa chỉ giả)</span></span></div>
+      <p class="hint">MVP chỉ có PICKUP. Giao hàng chưa hỗ trợ.</p>
+    </div>
+    <div class="sec">
+      <h3>Người nhận</h3>
+      <div class="field"><label for="c-name">Tên <span class="req0">*</span></label>
+        <div class="input" id="c-name">Nguyễn Văn Minh</div></div>
+      <div class="field"><label for="c-phone">Số điện thoại <span class="req0">*</span></label>
+        <div class="input" id="c-phone">0901234567</div></div>
+      <div class="field"><label for="c-pnote">Ghi chú khi đến lấy</label>
+        <div class="input" id="c-pnote">mình đến khoảng 14:45</div></div>
+    </div>
+    <div class="sec">
+      <h3>Thanh toán</h3>
+      <div class="opt"><span class="dot on"></span><span class="grow">Trả tại quầy khi nhận món</span></div>
+      <p class="hint">Chưa hỗ trợ trả trước.</p>
+    </div>
+    <div class="sec">
+      <h3>Đơn của bạn</h3>
+      <div class="row"><span>2× Cà phê sữa đá (M)</span><span>90.000 ₫</span></div>
+      <div class="row"><span>1× Cà phê sữa đá (L)</span><span>45.000 ₫</span></div>
+      <div class="row"><span>1× Bánh mì chả</span><span>25.000 ₫</span></div>
+      <div class="row"><span>Tổng tiền món</span><span>160.000 ₫</span></div>
+      <div class="row"><span>Phí giao hàng</span><span>0 ₫</span></div>
+      <div class="row"><span>Giảm giá</span><span>0 ₫</span></div>
+      <div class="row total"><span>TỔNG THANH TOÁN</span><span>160.000 ₫</span></div>
+      <p class="hint">⏱ Giá giữ đến 14:37 (còn 4:12) — tổng này lấy từ quote của API.</p>
+    </div>
+    <div class="sec"><span class="btn">Đặt món</span>
+      <p class="hint">Bấm Đặt món là bạn đồng ý đến lấy và trả tại quầy.</p></div>
+  </div>
+</figure>
+
+</div>
+
+<div class="grid" style="margin-top:22px">
+
+<!-- 5. CHECKOUT - PRICE CHANGED -->
+<figure class="panel phone">
+  <figcaption>5 · Giá đổi, buộc quote lại — <code>/checkout</code>
+    <span class="req">REQ-206 PRICE_CHANGED / QUOTE_EXPIRED cần khách xác nhận lại</span>
+  </figcaption>
+  <div class="body">
+    <div class="appbar"><span>← Đặt món</span><span></span></div>
+    <div class="banner warnb" style="margin-top:10px">
+      <strong>Giá vừa thay đổi.</strong><br>
+      Tổng mới là <strong>170.000 ₫</strong> (trước đó 160.000 ₫).<br>
+      Đơn của bạn <strong>chưa</strong> được tạo.
+    </div>
+    <div class="sec">
+      <h3>Đơn của bạn (giá mới)</h3>
+      <div class="row"><span>2× Cà phê sữa đá (M)</span><span>100.000 ₫</span></div>
+      <div class="row"><span>1× Cà phê sữa đá (L)</span><span>45.000 ₫</span></div>
+      <div class="row"><span>1× Bánh mì chả</span><span>25.000 ₫</span></div>
+      <div class="row total"><span>TỔNG THANH TOÁN</span><span>170.000 ₫</span></div>
+      <p class="hint">⏱ Giá giữ đến 14:42 (còn 4:58)</p>
+    </div>
+    <div class="sec">
+      <span class="btn">Đặt món · 170.000 ₫</span>
+      <p class="hint">Khách phải xác nhận lại. UI không bao giờ tự đặt theo giá mới.</p>
+    </div>
+    <div class="sec">
+      <h3>Các trạng thái khác của nút gửi</h3>
+      <span class="btn off" style="margin-bottom:8px">⟳ Đang gửi đơn…</span>
+      <p class="hint">Nút bị vô hiệu hoá trong lúc gửi. Chống trùng đơn thật nằm ở Idempotency-Key, không ở nút.</p>
+      <div class="banner errb" style="margin:10px 0 8px">
+        Hệ thống đang lỗi, đơn của bạn <strong>chưa</strong> được tạo.<br>
+        Mã tham chiếu: <code>a1b2c3</code>
+      </div>
+      <span class="btn ghost">Thử lại</span>
+      <p class="hint">Thử lại dùng đúng Idempotency-Key cũ nên không sinh đơn thứ hai.</p>
+    </div>
+  </div>
+</figure>
+
+<!-- 6. TRACKING -->
+<figure class="panel phone">
+  <figcaption>6 · Xác nhận + theo dõi — <code>/orders/[id]</code>
+    <span class="req">REQ-501 chi tiết + timeline · REQ-503 polling 7s, dừng ở terminal · REQ-504 hủy chỉ khi PLACED</span>
+  </figcaption>
+  <div class="body">
+    <div class="appbar"><span>← Đơn CF-240109-0042</span><span></span></div>
+    <div class="banner ok" style="margin-top:10px">
+      ✅ <strong>Đã gửi đơn tới cửa hàng!</strong><br>Chờ nhân viên xác nhận.
+    </div>
+    <div class="status">
+      <div class="big">ĐANG PHA CHẾ</div>
+      <div class="where">Cửa hàng Quận 1 · Tại quầy</div>
+    </div>
+    <div class="track">
+      <div class="done"><div class="b"></div>Đặt</div>
+      <div class="done"><div class="b"></div>Xác nhận</div>
+      <div class="done"><div class="b"></div>Pha chế</div>
+      <div><div class="b"></div>Sẵn sàng</div>
+      <div><div class="b"></div>Hoàn tất</div>
+    </div>
+    <div class="upd">🕐 Cập nhật lúc 14:35:12 &nbsp; <span class="btn ghost sm">⟳ Làm mới</span>
+      <div class="hint" style="padding:0 12px">Trang tự kiểm tra lại sau mỗi vài giây. Không phải cập nhật trực tiếp.</div>
+    </div>
+    <div class="sec">
+      <h3>Thanh toán</h3>
+      <div class="row"><span>Trả tại quầy</span><span class="pill gray">CHƯA THU TIỀN</span></div>
+      <div class="row"><span>Số tiền cần trả</span><strong>160.000 ₫</strong></div>
+    </div>
+    <div class="sec">
+      <h3>Món đã đặt</h3>
+      <div class="row"><span>2× Cà phê sữa đá (M)</span><span>90.000 ₫</span></div>
+      <div class="sub" style="color:#6f6760;font-size:12.5px">Đá bình thường, Thạch cà phê · “ít ngọt giúp mình”</div>
+      <div class="row"><span>1× Cà phê sữa đá (L)</span><span>45.000 ₫</span></div>
+      <div class="row"><span>1× Bánh mì chả</span><span>25.000 ₫</span></div>
+      <div class="row total"><span>Tổng</span><span>160.000 ₫</span></div>
+      <p class="hint">Giá và tên món là bản chụp lúc đặt. Cửa hàng đổi menu không làm đổi đơn này.</p>
+    </div>
+    <div class="sec">
+      <h3>Người nhận</h3>
+      <div>Nguyễn Văn Minh · 0901234567</div>
+    </div>
+    <div class="sec">
+      <h3>Diễn biến đơn</h3>
+      <div class="tl">
+        <div><span class="t">14:35</span><span>Đang pha chế</span></div>
+        <div><span class="t">14:33</span><span>Đã xác nhận</span></div>
+        <div><span class="t">14:32</span><span>Đã gửi đơn</span></div>
+      </div>
+    </div>
+    <div class="sec">
+      <p class="hint" style="margin:0 0 8px">Đơn đã được xác nhận nên không thể tự hủy. Liên hệ nhân viên tại quầy nếu cần.</p>
+      <span class="btn danger off">Hủy đơn này</span>
+      <p class="hint">Nút hủy chỉ render khi đơn còn ở PLACED. Ở đây hiện mờ để minh hoạ.</p>
+    </div>
+  </div>
+</figure>
+
+<!-- 7. LICH SU DON -->
+<figure class="panel phone">
+  <figcaption>7 · Lịch sử đơn — <code>/orders</code>
+    <span class="req">REQ-500 chỉ đơn của mình · REQ-502 không xem đơn người khác</span>
+  </figcaption>
+  <div class="body">
+    <div class="appbar"><span>Đơn của tôi</span><span>☰</span></div>
+    <div class="chips"><span class="chip on">Đang xử lý</span><span class="chip">Tất cả</span></div>
+    <div class="list">
+      <div class="item">
+        <div class="meta">
+          <div class="name">CF-240109-0042</div>
+          <div style="margin:3px 0"><span class="pill amber">ĐANG PHA CHẾ</span></div>
+          <div class="sub">3 món · 160.000 ₫</div>
+          <div class="sub">14:32 · 09/10/2026</div>
+        </div><span>→</span>
+      </div>
+      <div class="item">
+        <div class="meta">
+          <div class="name">CF-240108-0031</div>
+          <div style="margin:3px 0"><span class="pill green">ĐÃ HOÀN TẤT</span>
+            <span class="pill green">ĐÃ THANH TOÁN</span></div>
+          <div class="sub">1 món · 45.000 ₫</div>
+          <div class="sub">08:15 · 08/10/2026</div>
+        </div><span>→</span>
+      </div>
+      <div class="item">
+        <div class="meta">
+          <div class="name">CF-240107-0019</div>
+          <div style="margin:3px 0"><span class="pill gray">ĐÃ HỦY</span></div>
+          <div class="sub">2 món · 70.000 ₫</div>
+          <div class="sub">16:40 · 07/10/2026</div>
+        </div><span>→</span>
+      </div>
+      <div class="item">
+        <div class="meta">
+          <div class="name">CF-240106-0012</div>
+          <div style="margin:3px 0"><span class="pill red">CỬA HÀNG TỪ CHỐI</span></div>
+          <div class="sub">Lý do: hết trà sen vàng hôm nay</div>
+          <div class="sub">09:02 · 06/10/2026</div>
+        </div><span>→</span>
+      </div>
+    </div>
+    <div class="sec"><span class="btn ghost">Xem thêm</span></div>
+    <div class="tabbar"><div>Menu</div><div class="on">Đơn của tôi</div><div>Tôi</div></div>
+  </div>
+</figure>
+
+<!-- 8. DIALOG THU TIEN + TU CHOI -->
+<figure class="panel dialog">
+  <figcaption>8 · Dialog thu tiền và từ chối (staff)
+    <span class="req">REQ-405 thu tiền có audit · REQ-406 không thu hai lần · REQ-404 từ chối phải có lý do</span>
+  </figcaption>
+  <div class="body">
+    <div class="sec">
+      <h3>Thu tiền đơn CF-240109-0042</h3>
+      <div class="field"><label for="p-amt">Số tiền cần thu</label>
+        <div class="input ro" id="p-amt">160.000 ₫</div></div>
+      <p class="hint">Chỉ đọc, lấy từ số tiền của đơn. Nhân viên không sửa được.</p>
+      <div class="field"><label for="p-m">Hình thức</label>
+        <div class="input ro" id="p-m">Trả tại quầy</div></div>
+      <div class="banner warnb" style="margin:10px 0">
+        ⚠ Chỉ bấm sau khi đã nhận đủ tiền. Thao tác này được ghi lại kèm tên bạn và thời điểm.
+      </div>
+      <div style="display:flex;gap:8px">
+        <span class="btn ghost">Huỷ</span><span class="btn">Đã nhận đủ tiền</span>
+      </div>
+    </div>
+    <div class="sec">
+      <h3>Từ chối đơn CF-240109-0045</h3>
+      <div class="field"><label for="r-reason">Lý do từ chối <span class="req0">*</span></label>
+        <div class="input" id="r-reason">Hết nguyên liệu &nbsp; ▾</div></div>
+      <div class="field"><label for="r-detail">Chi tiết (khách sẽ đọc được)</label>
+        <div class="input" id="r-detail">Hết trà sen vàng hôm nay</div></div>
+      <div class="banner warnb" style="margin:10px 0">
+        ⚠ Khách sẽ thấy lý do này. Đơn chưa thu tiền nên không phát sinh hoàn tiền.
+      </div>
+      <div style="display:flex;gap:8px">
+        <span class="btn ghost">Huỷ</span><span class="btn danger">Từ chối đơn</span>
+      </div>
+      <p class="hint">Nút bị vô hiệu hoá khi chưa có lý do. Chỉ hiện với đơn còn ở PLACED.</p>
+    </div>
+  </div>
+</figure>
+
+</div>
+
+<div class="grid" style="margin-top:22px">
+
+<!-- 9. STAFF BOARD -->
+<figure class="panel xwide">
+  <figcaption>9 · Bảng đơn nhân viên — <code>/staff/orders</code>
+    <span class="req">REQ-400 chỉ store được gán · REQ-402 chỉ nút transition hợp lệ · REQ-405 thu tiền riêng · REQ-407 hoàn tất cần đã thu tiền</span>
+  </figcaption>
+  <div class="body">
+    <div class="appbar">
+      <span>Đơn hàng · Cửa hàng Quận 1 ▾</span>
+      <span style="font-weight:400;color:#6f6760;font-size:12.5px">🕐 Cập nhật 14:35:12 &nbsp;
+        <span class="btn ghost sm">⟳</span> &nbsp; Trần Văn Hùng (STAFF) ▾</span>
+    </div>
+    <div class="board">
+      <div class="col">
+        <h4>Mới (2)</h4>
+        <div class="ocard">
+          <div class="code">CF-240109-0045</div><div class="age">2 phút</div>
+          <div>Minh · 3 món · 160.000 ₫</div>
+          <div style="margin-top:4px"><span class="pill gray">CHƯA THU</span></div>
+          <div class="btns"><span class="mini">Xác nhận</span><span class="mini danger">Từ chối</span></div>
+        </div>
+        <div class="ocard">
+          <div class="code">CF-240109-0046</div><div class="age">1 phút</div>
+          <div>Lan · 1 món · 45.000 ₫</div>
+          <div style="margin-top:4px"><span class="pill gray">CHƯA THU</span></div>
+          <div class="btns"><span class="mini">Xác nhận</span><span class="mini danger">Từ chối</span></div>
+        </div>
+        <p class="hint">Không có nút Thu tiền ở PLACED, và không có nút nhảy bước.</p>
+      </div>
+      <div class="col">
+        <h4>Đã xác nhận (1)</h4>
+        <div class="ocard">
+          <div class="code">CF-240109-0044</div><div class="age">5 phút</div>
+          <div>Lan · 1 món · 45.000 ₫</div>
+          <div style="margin-top:4px"><span class="pill gray">CHƯA THU</span></div>
+          <div class="btns"><span class="mini">Pha chế</span><span class="mini ghost">💰 Thu tiền</span></div>
+        </div>
+        <p class="hint">Nút Từ chối đã biến mất — chỉ từ chối được ở PLACED.</p>
+      </div>
+      <div class="col">
+        <h4>Đang pha (1)</h4>
+        <div class="ocard">
+          <div class="code">CF-240109-0042</div><div class="age">8 phút</div>
+          <div>Minh · 3 món · 160.000 ₫</div>
+          <div style="margin-top:4px"><span class="pill green">ĐÃ THU 💰</span></div>
+          <div class="btns"><span class="mini">Sẵn sàng</span></div>
+        </div>
+      </div>
+      <div class="col">
+        <h4>Sẵn sàng (2)</h4>
+        <div class="ocard">
+          <div class="code">CF-240109-0040</div><div class="age">12 phút ⚠</div>
+          <div>Tuấn · 2 món · 70.000 ₫</div>
+          <div style="margin-top:4px"><span class="pill gray">CHƯA THU</span></div>
+          <div class="btns"><span class="mini">💰 Thu tiền</span><span class="mini off">Hoàn tất</span></div>
+          <p class="hint" style="margin-top:5px">ⓘ Cần thu tiền trước khi hoàn tất.</p>
+        </div>
+        <div class="ocard">
+          <div class="code">CF-240109-0038</div><div class="age">6 phút</div>
+          <div>Hà · 1 món · 35.000 ₫</div>
+          <div style="margin-top:4px"><span class="pill green">ĐÃ THU 💰</span></div>
+          <div class="btns"><span class="mini">Hoàn tất</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="sec">
+      <p class="hint" style="margin:0">Đơn ở trạng thái kết thúc (COMPLETED / CANCELLED / REJECTED) rời bảng.
+      Bảng chỉ chứa đơn của cửa hàng được gán; API vẫn kiểm lại quyền mỗi request, route riêng chỉ để đỡ nhầm.</p>
+    </div>
+  </div>
+</figure>
+
+<!-- 10. STAFF MENU TOGGLE -->
+<figure class="panel wide">
+  <figcaption>10 · Bật/tắt món tại cửa hàng — <code>/staff/menu</code>
+    <span class="req">REQ-408 chỉ đổi khả dụng, không đổi giá · REQ-101 khách thấy món bị khóa</span>
+  </figcaption>
+  <div class="body">
+    <div class="appbar"><span>Menu · Cửa hàng Quận 1 ▾</span><span style="font-weight:400">[Tìm món…]</span></div>
+    <table>
+      <tr><th>Món</th><th>Size</th><th>Giá</th><th>Bán hôm nay</th></tr>
+      <tr><td>Cà phê sữa đá</td><td>S</td><td>29.000 ₫</td><td><span class="sw"><i></i></span></td></tr>
+      <tr><td></td><td>M</td><td>35.000 ₫</td><td><span class="sw"><i></i></span></td></tr>
+      <tr><td></td><td>L</td><td>45.000 ₫</td><td><span class="sw"><i></i></span></td></tr>
+      <tr><td>Trà sen vàng</td><td>M</td><td>45.000 ₫</td><td><span class="sw"><i></i></span></td></tr>
+      <tr><td></td><td>L</td><td>55.000 ₫</td><td><span class="sw off"><i></i></span> ⟳</td></tr>
+      <tr><td>Bánh mì chả</td><td>—</td><td>25.000 ₫</td><td><span class="sw"><i></i></span></td></tr>
+    </table>
+    <div class="sec">
+      <p class="hint" style="margin:0">Bật/tắt theo từng size vì khả dụng được lưu ở mức variant.
+      Món một size hiện “—” thay vì bịa ra S/M/L. Toggle không đổi giá và không sửa dữ liệu danh mục.</p>
+    </div>
+  </div>
+</figure>
+
+<!-- 11. ADMIN PRODUCT DETAIL -->
+<figure class="panel xwide">
+  <figcaption>11 · Admin · chi tiết món — <code>/admin/products/[id]</code>
+    <span class="req">REQ-601 variant theo size · REQ-602 gán modifier group · REQ-603 ẩn thay vì xoá · REQ-306 đơn cũ giữ giá</span>
+  </figcaption>
+  <div class="body">
+    <div class="appbar"><span>← Cà phê sữa đá</span><span><span class="btn sm">Lưu thay đổi</span></span></div>
+    <div class="sec">
+      <h3>① Thông tin</h3>
+      <div style="display:flex;gap:14px;flex-wrap:wrap">
+        <div class="field" style="flex:1;min-width:220px"><label for="a-name">Tên *</label>
+          <div class="input" id="a-name">Cà phê sữa đá</div></div>
+        <div class="field" style="flex:1;min-width:220px"><label for="a-slug">Slug *</label>
+          <div class="input" id="a-slug">ca-phe-sua-da</div></div>
+        <div class="field" style="flex:1;min-width:180px"><label for="a-cat">Danh mục *</label>
+          <div class="input" id="a-cat">Cà phê &nbsp; ▾</div></div>
+      </div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end">
+        <div class="field" style="flex:2;min-width:260px"><label for="a-desc">Mô tả</label>
+          <div class="input" id="a-desc">Đậm, ngọt vừa</div></div>
+        <div class="field"><label for="a-act">Hiển thị trong menu</label>
+          <div id="a-act"><span class="sw"><i></i></span></div></div>
+      </div>
+      <p class="hint">Không có nút Xoá. Món được ẩn thay vì xoá để giữ nguyên các đơn cũ.</p>
+    </div>
+    <div class="sec">
+      <h3>② Size và giá <span style="float:right"><span class="btn ghost sm">+ Thêm size</span></span></h3>
+      <table>
+        <tr><th>Size</th><th>SKU</th><th>Giá (VND)</th><th>Hiển thị</th><th></th></tr>
+        <tr><td>S</td><td>CFSD-S</td><td>29000 <span class="hint">= 29.000 ₫</span></td>
+            <td><span class="sw"><i></i></span></td><td><span class="btn ghost sm">Sửa</span></td></tr>
+        <tr><td>M</td><td>CFSD-M</td><td>35000 <span class="hint">= 35.000 ₫</span></td>
+            <td><span class="sw"><i></i></span></td><td><span class="btn ghost sm">Sửa</span></td></tr>
+        <tr><td>L</td><td>CFSD-L</td><td>45000 <span class="hint">= 45.000 ₫</span></td>
+            <td><span class="sw"><i></i></span></td><td><span class="btn ghost sm">Sửa</span></td></tr>
+      </table>
+      <p class="hint">ⓘ Giá là số nguyên VND, không nhập dấu chấm hay số thập phân.<br>
+         ⓘ Một món có thể chỉ có một size. Hệ thống không ép phải có S/M/L.<br>
+         ⓘ Đổi giá chỉ áp cho đơn mới. Đơn cũ giữ nguyên giá đã chốt.</p>
+    </div>
+    <div class="sec">
+      <h3>③ Nhóm tuỳ chọn áp dụng cho món này</h3>
+      <div class="opt"><span class="box on">✓</span><span class="grow">Mức đá</span>
+        <span class="extra">chọn 1 · bắt buộc</span></div>
+      <div class="opt"><span class="box on">✓</span><span class="grow">Topping</span>
+        <span class="extra">chọn tối đa 2</span></div>
+      <div class="opt"><span class="box off"></span><span class="grow">Độ ngọt</span>
+        <span class="extra">chọn 1</span></div>
+      <div class="opt"><span class="box off"></span><span class="grow">Loại sữa</span>
+        <span class="extra">chọn 1</span></div>
+      <p class="hint">ⓘ Nhóm tuỳ chọn áp dụng cho mọi size của món này.<br>
+         ⓘ Bỏ một nhóm sẽ làm khách không chọn được nhóm đó nữa. Đơn cũ không bị ảnh hưởng.</p>
+    </div>
+  </div>
+</figure>
+
+</div>
+
+<p class="legend">
+  Chú thích ký hiệu: <code>*</code> là trường bắt buộc · ô mờ là trạng thái bị vô hiệu hoá ·
+  <code>⟳</code> là đang gửi request · <code>⚠</code> trên card đơn chỉ là gợi ý thị giác khi đơn chờ lâu,
+  không phải một trạng thái mới trong vòng đời đơn.
+  Mô tả đầy đủ các trạng thái loading / empty / error / unauthorized của từng màn nằm ở
+  <code>docs/wireframes.md</code>.
+</p>
+
+</div>
+</body>
+</html>

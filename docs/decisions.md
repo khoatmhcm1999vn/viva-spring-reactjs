@@ -58,3 +58,39 @@ Chính sách vòng đời đơn **không thay đổi** so với `docs/diagrams/o
 - Thiết bị khách chủ yếu là mobile; staff dùng màn hình lớn hơn tại quầy.
 - Môi trường dev có thể dùng Postgres trong Docker, nhưng Auth vẫn dùng Supabase dev project hoặc Supabase local đã cấu hình.
 - `tools/check-no-vivacon.js` là script kiểm chứng việc dọn code của dự án trước trên nhánh này, không phải gate chất lượng của Coffee Order. Gate thật (lint/typecheck/build/test) được dựng từ bước 03 trở đi.
+
+---
+
+## Quyết định chốt ở bước 02 (giao diện)
+
+Chi tiết wireframe ở `docs/wireframes.md`. Đây là quyết định thiết kế UI, chưa có component nào được viết.
+
+| # | Quyết định | Lý do | Ảnh hưởng |
+|---|---|---|---|
+| D02-01 | Chi tiết món là **dialog / bottom sheet**, không phải trang riêng | Khách không mất vị trí scroll trong menu; đỡ một lần điều hướng | Cần bẫy focus + `Esc` + trả focus về nút đã mở |
+| D02-02 | Xác nhận đơn và tracking là **cùng một màn** `/orders/[id]`, phân biệt bằng `?placed=1` | Sau khi đặt, khách cần ngay mã đơn và trạng thái; hai trang là thừa | Banner thành công tự ẩn sau 8s |
+| D02-03 | Polling **7 giây** ở màn chi tiết đơn; dừng ở terminal; tạm dừng khi mất focus; **không** polling ở màn danh sách | Nằm trong khoảng 5–10s của rule, giảm tải mà vẫn đủ nhanh cho quầy | REQ-503 |
+| D02-04 | Khối chọn Size **chỉ render khi product có ≥2 variant** | Không ép bánh/nước đóng chai phải có S/M/L; UI suy ra từ dữ liệu | Món một size hiện giá chính xác, menu không có chữ "từ" |
+| D02-05 | Giỏ ghi nhãn **"Tạm tính"**; con số ràng buộc chỉ đến từ quote của API | Client không được là nguồn giá | REQ-200, REQ-705 |
+| D02-06 | Staff board là **4 cột theo trạng thái** (`PLACED`/`CONFIRMED`/`PREPARING`/`READY`); đơn terminal rời bảng | Khớp đúng vòng đời, nhìn ra việc cần làm ngay | Mobile xếp thành 4 section dọc |
+| D02-07 | Nút `[Thu tiền]` hiện từ `CONFIRMED` trở đi, **không** hiện ở `PLACED` | Theo D01-04; giữ đơn `PLACED` luôn chưa thu tiền | REQ-405 |
+| D02-08 | `401` xảy ra **giữa một mutation** thì hiện dialog, **không** tự chuyển trang | Tránh mất form checkout và tránh khách tưởng đơn đã gửi | Giỏ và form được giữ nguyên |
+| D02-09 | `requestId` chỉ hiện ở màn lỗi 5xx, dưới nhãn "Mã tham chiếu" | Khách cần đọc cho nhân viên khi báo lỗi, nhưng không nên thấy mã lỗi kỹ thuật | REQ-703 |
+| D02-10 | Admin **không có nút Xoá**, chỉ có toggle "Hiển thị" | Khớp REQ-603/REQ-307: ẩn thay vì xoá để giữ đơn cũ | Có tooltip giải thích tại chỗ |
+| D02-11 | Mockup là **HTML/CSS tĩnh, không JavaScript**, đặt ở `docs/mockups/`, không build/deploy | Xem được bố cục ngay bằng browser mà không kéo theo toolchain; không lẫn với code thật | Nút không bấm được; phải nói rõ đây không phải demo chức năng |
+| D02-12 | Lý do từ chối = select lý do có sẵn + ô chi tiết, và **khách đọc được** | Nhanh cho quầy, minh bạch cho khách | REQ-404 |
+| D02-13 | Toggle khả dụng ở **mức variant**, không phải mức product | `store_variants` được định nghĩa ở mức variant | Món một size chỉ có một toggle, không hiện nhãn size |
+| D02-14 | Giỏ thuộc store khác store đang chọn → hỏi "giữ cửa hàng cũ" hay "xoá giỏ và đổi" | Một đơn chỉ thuộc một store; không tự xoá dữ liệu của khách | Banner ở màn giỏ |
+| D02-15 | Mọi nút mutation `disabled` + đổi nhãn + `aria-busy` khi đang gửi | Giảm double-submit do bấm nhiều lần; **không** thay thế `Idempotency-Key` | REQ-301, REQ-302 |
+
+## Câu hỏi còn mở (giao diện)
+
+| # | Câu hỏi | Trạng thái |
+|---|---|---|
+| Q02-01 | Quầy dùng thiết bị gì để mở staff board (máy tính, tablet ngang)? Ảnh hưởng tới việc có cần tối ưu bố cục 4 cột cho tablet. | Chưa chốt; hiện thiết kế cho ≥1024px và fallback dọc |
+| Q02-02 | Nút "Đặt lại đơn này" ở đơn `COMPLETED` — có làm trong MVP? Không nằm trong danh sách MVP của `product.md`. | **Tuỳ chọn, cắt được.** Nếu làm thì chỉ nạp lại giỏ, giá vẫn quote lại |
+| Q02-03 | Staff có cần màn chi tiết đơn tối ưu cho mobile, hay chỉ cần card trên board? | Chưa chốt |
+| Q02-04 | Validate số điện thoại ở mức nào (chỉ độ dài, hay theo đầu số VN)? | Chưa chốt; chốt cùng DTO ở bước 07/08 |
+| Q02-05 | Ngưỡng badge "⚠ chờ lâu" trên card đơn (hiện đặt tạm 10 phút ở `READY`) | Chưa chốt; chỉ là gợi ý thị giác, không phải trạng thái mới. Liên quan Q01-01 |
+| Q02-06 | Upload ảnh món: dialog trong trang hay trang riêng, và dùng public read hay signed URL | Chưa chốt; phụ thuộc Q01-07, chốt ở bước 06 |
+| Q02-07 | Bộ icon và font: dùng lucide + font hệ thống, hay thêm font Việt riêng? | Chưa chốt; chốt ở bước 03 khi cài Tailwind/shadcn |
