@@ -3,9 +3,7 @@
 Boilerplate web bán cà phê: **React 19 + Vite** (client), **Express 5** (server),
 **PostgreSQL 18** (database).
 
-Quy ước và lý do chọn từng version nằm ở `.kiro/steering/coffee-shop-stack.md`. File đó
-là `inclusion: fileMatch` nên chỉ bật khi làm việc trong thư mục này, không lẫn với
-steering của Vivacon ở repo gốc.
+Quy ước và lý do chọn từng version nằm ở `.kiro/steering/coffee-shop-stack.md`.
 
 ## Chạy
 
@@ -36,8 +34,10 @@ npm run db:reset            # down -v (xoá volume) rồi up lại
 | Server (Express) | 4000 |
 | PostgreSQL | 5434 |
 
-Ba cổng này chọn để không đụng những thứ khác đang chạy trên máy dev: Vivacon dùng
-5433 / 8090 / 8091 / 3000 / 8081, project `vivacon-services` giữ 5432, Oracle XE giữ 1521.
+Ba cổng này chọn lệch khỏi mặc định phổ biến (5432 cho Postgres, 8080 cho API, 3000 cho
+dev server) để không tranh cổng với service khác trên máy dev. Trên máy đã dựng
+boilerplate này, 1521 thuộc Oracle XE và 5432 thuộc một stack Postgres khác — kiểm
+`netstat -ano | findstr LISTENING` trước khi thêm service mới.
 
 ## API
 

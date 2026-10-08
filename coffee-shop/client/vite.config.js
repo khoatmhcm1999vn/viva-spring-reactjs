@@ -4,8 +4,8 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
     plugins: [react()],
     server: {
-        // 5173 la mac dinh cua Vite. Giu nguyen vi 3000 va 8081 dang thuoc
-        // frontend cua Vivacon tren may nay.
+        // 5173 la mac dinh cua Vite. Giu nguyen de khong tranh cong voi cac
+        // dev server khac thuong dung 3000.
         port: 5173,
         proxy: {
             /*

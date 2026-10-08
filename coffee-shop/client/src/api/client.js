@@ -1,9 +1,9 @@
 /*
  * Moi HTTP call cua app di qua file nay. Component khong goi fetch truc tiep.
  *
- * VITE_API_URL bi NUNG vao bundle luc build va khong doc duoc luc chay - giong
- * REACT_APP_* cua CRA. Doi URL API thi phai build lai. Va vi no nam trong file
- * tinh cong khai, dung bao gio dat secret vao bien VITE_*.
+ * VITE_API_URL bi NUNG vao bundle luc build va khong doc duoc luc chay. Doi URL
+ * API thi phai build lai. Va vi no nam trong file tinh cong khai, dung bao gio
+ * dat secret vao bien VITE_*.
  *
  * Mac dinh la "/api" tuong doi: luc dev Vite proxy sang localhost:4000, luc
  * deploy thi reverse proxy quyet dinh backend o dau.

@@ -1,62 +1,45 @@
-HELP.md
+### Secrets — PHAI dung dau tien ###
+# Nhanh nay tung chua mot ung dung Spring Boot. Ba thu muc duoi day la artifact
+# cuc bo con sot lai VA chua credential that:
+#
+#   config/   - application-*.yml, supabase.env, vm_key (private SSH key)
+#   .env      - DB_PASSWORD cua docker compose
+#
+# Da tung suyt commit ca config/ vi ban .gitignore truoc thieu hai dong nay.
+# Dung xoa chung.
+/config/
+.env
+.env.local
+*.pem
+*.key
+!**/*.key.example
+
+### Build output ###
+# target/ la output cua Maven, con sot tu ung dung Spring Boot truoc day.
 target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
-
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
+dist/
 build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### VS Code / Kiro IDE ###
-# settings.json chứa đường dẫn JDK tuyệt đối của từng máy nên không chia sẻ được,
-# chỉ commit danh sách extension khuyến nghị.
-.vscode/*
-!.vscode/extensions.json
-
-### Kiro ###
-# mcp.json chứa connection string kèm password, không commit
-.kiro/settings/mcp.json
-# Steering (.kiro/steering/*.md) thì CÓ commit, đó là tài liệu cho cả team
+logs/
 
 ### Node ###
 node_modules/
 npm-debug.log*
 yarn-error.log*
+*.log
 
-### Local secrets ###
-# Spring Boot doc ./config/ voi do uu tien cao hon classpath.
-# Credential thật của từng máy đặt ở đây, không bao giờ commit.
-/config/
+### IDE ###
+.idea
+*.iml
+*.iws
+*.ipr
+.vscode/*
+!.vscode/extensions.json
 
-# Docker Compose tu doc file .env nay va no chua credential that.
-# Chi commit .env.example lam khuon mau.
-/.env
+### Kiro ###
+# mcp.json chua connection string kem password, khong commit.
+.kiro/settings/mcp.json
+# Steering (.kiro/steering/*.md) thi CO commit, do la tai lieu cho ca team.
 
-## Project ##
-logs/
-mock_data/sql
-!container/prepare/sql/role.sql
-container/prepare/sql/
-container/data/
+### OS ###
+Thumbs.db
+.DS_Store

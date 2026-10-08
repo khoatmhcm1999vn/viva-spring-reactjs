@@ -1,7 +1,6 @@
 # Chi dung database. Server va client chay tren host bang "npm run dev".
 #
-# Dat ten project tuong minh de khong lan voi stack "vivacon" va
-# "vivacon-services" cung nam tren may nay.
+# Dat ten project tuong minh de khong lan voi stack khac tren cung may.
 name: coffee-shop
 
 services:
@@ -18,8 +17,9 @@ services:
       TZ: UTC
       PGTZ: UTC
     ports:
-      # 5434, khong phai 5432 hay 5433: hai cong do da bi project
-      # vivacon-services va compose cua Vivacon giu.
+      # Host dung 5434 chu khong phai 5432 mac dinh, de khong tranh cong voi
+      # mot Postgres khac co the dang chay tren may dev.
+      # Phia container luon la 5432 - do la cong Postgres nghe ben trong.
       - "${DB_PORT:-5434}:5432"
     volumes:
       # Named volume. Volume vo danh se bi bo roi ngay lan recreate dau tien.
@@ -34,8 +34,8 @@ services:
       #    a format which is compatible with pg_ctlcluster"
       # Chi tiet: https://github.com/docker-library/postgres/pull/1259
       #
-      # Luu y: compose cua Vivacon dung postgres:14 va mount /var/lib/postgresql/data
-      # la DUNG cho ban 14. Dung "dong bo" hai file nay.
+      # Luu y khi doc tai lieu hay compose file cu: /var/lib/postgresql/data la
+      # DUNG cho postgres:17 tro xuong, dung copy duong dan do sang day.
       - coffee-shop-db-data:/var/lib/postgresql
       # Postgres chay moi file trong thu muc nay theo thu tu TEN, va CHI chay
       # khi data directory con trong (tuc lan "up" dau tien). Tien to so de

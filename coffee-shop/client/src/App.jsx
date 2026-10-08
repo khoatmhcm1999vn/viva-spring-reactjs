@@ -4,8 +4,8 @@ import MenuPage from "./pages/MenuPage.jsx";
 /*
  * react-router-dom 7: dung Routes/Route va element={...}.
  *
- * Khong phai API v5 (Switch, component={...}) ma Vivacon dang dung - hai du an
- * o hai major version khac nhau, dung copy pattern qua lai.
+ * Khong phai API v5 (Switch, component={...}). Nhieu vi du tren mang con theo
+ * v5, dung copy sang day.
  */
 function App() {
     return (

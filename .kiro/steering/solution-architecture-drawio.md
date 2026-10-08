@@ -8,7 +8,7 @@ inclusion: manual
 
 ## 1. Ngữ cảnh, phạm vi và nguồn
 
-- Đọc hướng dẫn dự án áp dụng và steering liên quan trong `.kiro/steering/`, đặc biệt `product.md`, `tech.md`, `structure.md`, `deployment.md` nếu tồn tại. Đọc `tech-stack-version-policy.md` và `database-efficiency.md` khi nhiệm vụ tương ứng cần chúng. Không giả định một file manual đã được nạp hoặc tự tạo thông tin còn thiếu.
+- Đọc hướng dẫn dự án áp dụng và steering liên quan trong `.kiro/steering/`. Trên nhánh này đó là `coffee-shop-stack.md`; các file `product.md`, `tech.md`, `structure.md`, `deployment.md` theo quy ước Kiro có thể tồn tại ở repo khác nhưng **không có ở đây**. Đọc `tech-stack-version-policy.md` và `database-efficiency.md` khi nhiệm vụ tương ứng cần chúng. Không giả định một file manual đã được nạp hoặc tự tạo thông tin còn thiếu.
 - Tôn trọng baseline framework/library/runtime; nhiệm vụ viết tài liệu không cho phép nâng version, sửa nghiệp vụ, cài plugin hoặc deploy.
 - Tìm README, manifest/BOM/lockfile, entrypoints, cấu hình runtime/profiles, Dockerfile/Compose, CI và tài liệu/diagram đã có. Dùng tìm kiếm và đọc có mục tiêu; bỏ qua generated files, dependencies vendored, build output và log lớn trừ khi cần bằng chứng cụ thể.
 - Chốt scope hợp lý từ yêu cầu: toàn hệ thống hay một module/use case; As-is hay To-be; môi trường nào; đối tượng đọc. Nếu thiếu chi tiết có thể giả định, ghi giả định và tiếp tục phần độc lập, không hỏi lại nền tảng đã biết.

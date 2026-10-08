@@ -17,9 +17,10 @@ app.use(express.json({ limit: "100kb" }));
 /*
  * CORS chi mo cho dung origin duoc cau hinh.
  *
- * Khong dung origin: "*" - repo nay da tung co bai hoc do o Vivacon, noi
- * addAllowedOriginPattern("*") di kem allowCredentials(true) khien bat ky trang
- * web nao cung goi duoc API tu trinh duyet cua khach.
+ * Khong dung origin: "*" di kem credentials. Ket hop do phan chieu lai bat ky
+ * header Origin nao gui den va them Access-Control-Allow-Credentials: true,
+ * nghia la moi trang web tren Internet deu goi duoc API nay tu trinh duyet cua
+ * khach va doc duoc phan hoi.
  *
  * Luc dev thuc ra khong can CORS: Vite proxy /api sang cung origin
  * (xem client/vite.config.js). Cau hinh nay danh cho khi client duoc build va
