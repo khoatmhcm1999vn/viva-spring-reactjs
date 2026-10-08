@@ -1,0 +1,11 @@
+stateDiagram-v2
+  [*] --> PLACED
+  PLACED --> CONFIRMED: staff accepts
+  CONFIRMED --> PREPARING
+  PREPARING --> READY
+  READY --> COMPLETED: payment PAID required
+  PLACED --> CANCELLED: owner cancels
+  PLACED --> REJECTED: staff rejects with reason
+  COMPLETED --> [*]
+  CANCELLED --> [*]
+  REJECTED --> [*]

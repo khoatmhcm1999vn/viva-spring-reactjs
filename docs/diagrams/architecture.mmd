@@ -1,0 +1,9 @@
+flowchart LR
+  browser[Customer / Staff / Admin] --> web[Next.js on Vercel]
+  web -->|Sign in / refresh| auth[Supabase Auth]
+  web -->|HTTPS + Bearer JWT| proxy[VM reverse proxy]
+  proxy --> api[NestJS Docker API]
+  api -->|Verify JWT| auth
+  api -->|Prisma TLS| db[(Supabase PostgreSQL)]
+  api -->|Upload / sign URL| storage[Supabase Storage]
+  web -->|Image read policy| storage

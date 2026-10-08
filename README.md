@@ -1,61 +1,22 @@
-# Coffee Shop
+# Coffee Order — Kiro steering starter
+Đây là bộ steering và tài liệu thiết kế cho Kiro, chưa phải app runnable. Không có package.json/lockfile/Prisma schema hay Docker image đã build. Các file runtime sẽ được Kiro tạo và kiểm tra theo từng bước. Không có thao tác cài vào dự án Kiro đang mở trên máy bạn.
 
-Web bán cà phê: **React 19 + Vite** (client), **Express 5** (server),
-**PostgreSQL 18** (database).
+## Nhập vào dự án
+1. Giải nén gói; nếu repo mới, mở thư mục coffee-order làm workspace root trong Kiro.
+2. Nếu đã có boilerplate, copy .kiro/steering và docs/ vào repo, so sánh/merge README và env examples; giữ code/config/.kiro hiện có. Không chọn Replace All. Nếu repo có steering trùng tên, merge có chủ đích.
+3. Kiểm tra Kiro Steering panel: product.md, tech.md, structure.md, domain-rules.md dùng inclusion: always; 12 file bước dùng inclusion: manual. Không cần model-specific configuration.
+4. Mở START-HERE.md, gửi prompt bước 1; lần lượt bước 2–12 dựa trên progress và kiểm tra thực tế. Manual files có thể chọn bằng #name hoặc slash menu tùy Kiro version. Không yêu cầu agent chạy cả 12 bước trong một lần.
+5. Với Kiro custom agent, tài liệu chính thức yêu cầu khai báo steering trong resources. Merge vào agent hiện có; ví dụ resources: ["file://.kiro/steering/product.md", "file://.kiro/steering/tech.md", "file://.kiro/steering/structure.md", "file://.kiro/steering/domain-rules.md"], rồi thêm file bước đang làm. Không ghi đè cấu hình tools/model/permissions. Đọc docs Kiro của phiên bản đang dùng.
 
-Tài liệu đầy đủ: [`coffee-shop/README.md`](coffee-shop/README.md).
-Quy ước cho agent: [`.kiro/steering/coffee-shop-stack.md`](.kiro/steering/coffee-shop-stack.md).
+## Sơ đồ có thể chỉnh sửa
+- docs/diagrams/architecture.drawio: web, API, Auth, Postgres, Storage và deploy boundaries.
+- docs/diagrams/erd.drawio: hai trang Catalog và Orders; các bảng xám là cùng entity được lặp để đọc FK, không phải bảng mới.
+- docs/diagrams/order-lifecycle.drawio: pickup states và điều kiện payment; delivery chỉ là nhánh tương lai trong tài liệu.
+- docs/diagrams/*.mmd: bản Mermaid dễ diff.
+Mở diagrams.net, chọn File → Open From → Device và chọn .drawio. Không cần cài MCP để chỉnh các file XML này. Không có live integration Kiro↔Draw.io được cấu hình trong gói.
 
-```bash
-cd coffee-shop
-cp .env.example .env        # điền DB_PASSWORD và PGPASSWORD
-npm run install:all
-npm run db:up               # Postgres :5434
-npm run dev                 # server :4000, client :5173
-```
+## Cấu trúc
+apps/web và apps/api, packages/contracts là thư mục đích cho code; infra/ là vị trí tạo Dockerfile.api và compose.prod.yml ở bước 11. README trong từng thư mục ghi mục đích. docs/data-model.md và docs/api-contract.md là thiết kế chi tiết.
 
-Cần **Node 24+** và Docker.
-
----
-
-## ⛔ KHÔNG MERGE NHÁNH NÀY VÀO `main`
-
-Nhánh `feature/coffee-shop-boilerplate` đã **xoá toàn bộ ứng dụng Vivacon** (Spring Boot
-+ React 17) — 622 file, gồm `src/`, `frontend/`, `pom.xml`, `mvnw`, `Dockerfile`, cả ba
-`docker-compose*.yml` ở gốc, và 4 steering file của Vivacon.
-
-`main` là **tổ tiên** của nhánh này. Nên merge nó vào `main` sẽ **xoá Vivacon khỏi
-`main`**, không phải chỉ thêm app cà phê vào. Diff sẽ gồm 622 dòng `D`.
-
-Vivacon còn nguyên ở hai nơi, đã push:
-
-| Nhánh | Commit |
-|---|---|
-| `main` | `e12d3e0` |
-| `feature/ai-assisted-dev-setup` | `ca46696` |
-
-Lấy lại một file hoặc cả cây:
-
-```bash
-git checkout main -- src frontend pom.xml        # một phần
-git checkout main                                 # toàn bộ
-```
-
-### Nếu muốn coffee-shop tách hẳn
-
-Xoá file trên nhánh này **không** làm sạch history: 14 commit trong history vẫn chạm
-`pom.xml` và `src/`, nên `git log`, `git show` hay checkout commit cũ vẫn ra đủ Vivacon.
-Muốn isolation thật thì cần nhánh orphan hoặc repository riêng:
-
-```bash
-git subtree split --prefix=coffee-shop -b coffee-shop-only
-```
-
-### Kiểm tra isolation
-
-```bash
-node tools/check-no-vivacon.js
-```
-
-Script assert không còn source, config Docker, cổng hay chuỗi nào của Vivacon trong các
-file đang được track. Exit 0 là sạch.
+## Lưu ý
+Không có secrets trong gói. Env examples chỉ chứa tên biến, cần giá trị từ project của bạn. Dữ liệu/giá dùng cho demo phải ghi rõ giả lập. Các nguồn và giới hạn xác minh nằm trong docs/sources.md. Bộ tài liệu không xác minh tên/khả năng model trong tài khoản Kiro của bạn.

@@ -1,25 +1,26 @@
 ### Secrets — PHAI dung dau tien ###
-# Nhanh nay tung chua mot ung dung Spring Boot. Ba thu muc duoi day la artifact
-# cuc bo con sot lai VA chua credential that:
+# Cac duong dan duoi day tung chua credential that tren nhanh nay.
+# Khong xoa chung khi nhap bo starter moi.
 #
 #   config/   - application-*.yml, supabase.env, vm_key (private SSH key)
 #   .env      - DB_PASSWORD cua docker compose
 #
-# Da tung suyt commit ca config/ vi ban .gitignore truoc thieu hai dong nay.
-# Dung xoa chung.
 /config/
 .env
-.env.local
+.env.*
+!.env.example
 *.pem
 *.key
 !**/*.key.example
 
 ### Build output ###
-# target/ la output cua Maven, con sot tu ung dung Spring Boot truoc day.
+# target/ va logs/ la artifact cuc bo con sot tu ung dung truoc day.
 target/
-dist/
 build/
+dist/
 logs/
+coverage/
+.next/
 
 ### Node ###
 node_modules/

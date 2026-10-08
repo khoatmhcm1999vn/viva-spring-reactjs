@@ -1,0 +1,165 @@
+<mxfile host="app.diagrams.net" type="device" version="24.7.17">
+  <diagram id="ERD-Catalog" name="ERD - Catalog">
+    <mxGraphModel dx="1500" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1250" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t" value="&lt;b&gt;CATALOG / ACCESS — PK, FK, UQ shown; crow’s-foot = 1:N&lt;/b&gt;&lt;br&gt;Association tables express N:M; integer money; boolean availability (no stock reservation MVP)." style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="30" y="15" width="1480" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="categories" value="&lt;b&gt;categories&lt;/b&gt;&lt;hr&gt;PK id&lt;br&gt;UQ slug&lt;br&gt;name, sort_order, is_active" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#64748b;fontSize=14;align=left;verticalAlign=top;spacing=12;" vertex="1" parent="1">
+          <mxGeometry x="30" y="130" width="285" height="136" as="geometry" />
+        </mxCell>
+        <mxCell id="products" value="&lt;b&gt;products&lt;/b&gt;&lt;hr&gt;PK id&lt;br&gt;FK category_id&lt;br&gt;UQ slug&lt;br&gt;name, description, image_path&lt;br&gt;is_active" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#64748b;fontSize=14;align=left;verticalAlign=top;spacing=12;" vertex="1" parent="1">
+          <mxGeometry x="410" y="130" width="285" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="product_variants" value="&lt;b&gt;product_variants&lt;/b&gt;&lt;hr&gt;PK id&lt;br&gt;FK product_id&lt;br&gt;UQ sku; UQ(product_id,size)&lt;br&gt;size, price_vnd, is_active" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#64748b;fontSize=14;align=left;verticalAlign=top;spacing=12;" vertex="1" parent="1">
+          <mxGeometry x="800" y="130" width="285" height="158" as="geometry" />
+        </mxCell>
+        <mxCell id="modifier_groups" value="&lt;b&gt;modifier_groups&lt;/b&gt;&lt;hr&gt;PK id&lt;br&gt;name&lt;br&gt;min_select, max_select" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#64748b;fontSize=14;align=left;verticalAlign=top;spacing=12;" vertex="1" parent="1">
+          <mxGeometry x="30" y="470" width="285" height="136" as="geometry" />
+        </mxCell>
+        <mxCell id="product_modifier_groups" value="&lt;b&gt;product_modifier_groups&lt;/b&gt;&lt;hr&gt;PK/FK product_id&lt;br&gt;PK/FK group_id" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#64748b;fontSize=14;align=left;verticalAlign=top;spacing=12;" vertex="1" parent="1">
+          <mxGeometry x="410" y="470" width="285" height="114" as="geometry" />
+        </mxCell>
+        <mxCell id="modifier_options" value="&lt;b&gt;modifier_options&lt;/b&gt;&lt;hr&gt;PK id&lt;br&gt;FK group_id&lt;br&gt;name, extra_price_vnd&lt;br&gt;is_active" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#64748b;fontSize=14;align=left;verticalAlign=top;spacing=12;" vertex="1" parent="1">
+          <mxGeometry x="800" y="470" width="285" height="158" as="geometry" />
+        </mxCell>
+        <mxCell id="stores" value="&lt;b&gt;stores&lt;/b&gt;&lt;hr&gt;PK id; UQ code&lt;br&gt;name, address, is_active" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#64748b;fontSize=14;align=left;verticalAlign=top;spacing=12;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="130" width="285" height="114" as="geometry" />
+        </mxCell>
+        <mxCell id="store_variants" value="&lt;b&gt;store_variants&lt;/b&gt;&lt;hr&gt;PK/FK store_id&lt;br&gt;PK/FK variant_id&lt;br&gt;is_available" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#64748b;fontSize=14;align=left;verticalAlign=top;spacing=12;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="470" width="285" height="136" as="geometry" />
+        </mxCell>
+        <mxCell id="profiles" value="&lt;b&gt;profiles&lt;/b&gt;&lt;hr&gt;PK/FK id → auth.users&lt;br&gt;full_name, phone&lt;br&gt;role, is_active" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#64748b;fontSize=14;align=left;verticalAlign=top;spacing=12;" vertex="1" parent="1">
+          <mxGeometry x="30" y="850" width="285" height="136" as="geometry" />
+        </mxCell>
+        <mxCell id="store_staff" value="&lt;b&gt;store_staff&lt;/b&gt;&lt;hr&gt;PK/FK store_id&lt;br&gt;PK/FK user_id" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#64748b;fontSize=14;align=left;verticalAlign=top;spacing=12;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="850" width="285" height="114" as="geometry" />
+        </mxCell>
+        <mxCell id="fk0" value="category_id" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#475569;fontSize=11;labelBackgroundColor=#ffffff;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;" edge="1" parent="1" source="categories" target="products">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fk1" value="product_id" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#475569;fontSize=11;labelBackgroundColor=#ffffff;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;" edge="1" parent="1" source="products" target="product_variants">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fk2" value="product_id" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#475569;fontSize=11;labelBackgroundColor=#ffffff;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;" edge="1" parent="1" source="products" target="product_modifier_groups">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fk3" value="group_id" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#475569;fontSize=11;labelBackgroundColor=#ffffff;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;" edge="1" parent="1" source="modifier_groups" target="product_modifier_groups">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fk4" value="group_id" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#475569;fontSize=11;labelBackgroundColor=#ffffff;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;" edge="1" parent="1" source="modifier_groups" target="modifier_options">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fk5" value="store_id" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#475569;fontSize=11;labelBackgroundColor=#ffffff;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;" edge="1" parent="1" source="stores" target="store_variants">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fk6" value="variant_id" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#475569;fontSize=11;labelBackgroundColor=#ffffff;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;" edge="1" parent="1" source="product_variants" target="store_variants">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fk7" value="store_id" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#475569;fontSize=11;labelBackgroundColor=#ffffff;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;" edge="1" parent="1" source="stores" target="store_staff">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fk8" value="user_id" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#475569;fontSize=11;labelBackgroundColor=#ffffff;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;" edge="1" parent="1" source="profiles" target="store_staff">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="legend" value="&lt;b&gt;Rules&lt;/b&gt;&lt;br&gt;Role: CUSTOMER / STAFF / ADMIN. STAFF scope comes from store_staff.&lt;br&gt;Product modifiers apply to all sizes in MVP. Catalog deactivation preserves existing order snapshots.&lt;br&gt;auth.users is external managed Auth identity; vanilla test DB needs explicit test mapping policy." style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="410" y="850" width="700" height="160" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="ERD-Orders" name="ERD - Orders">
+    <mxGraphModel dx="1500" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2000" pageHeight="1500" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t" value="&lt;b&gt;ORDERS — logical relationships / snapshot fields&lt;/b&gt;&lt;br&gt;Gray tables repeat Catalog entities. Crow’s-foot shows collection relationships; optional/unique constraints below refine cardinality." style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="30" y="15" width="1920" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="profiles" value="&lt;b&gt;profiles&lt;/b&gt;&lt;hr&gt;PK/FK id → auth.users&lt;br&gt;role (server controlled)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#64748b;fontSize=14;align=left;verticalAlign=top;spacing=12;" vertex="1" parent="1">
+          <mxGeometry x="30" y="130" width="285" height="114" as="geometry" />
+        </mxCell>
+        <mxCell id="stores" value="&lt;b&gt;stores&lt;/b&gt;&lt;hr&gt;PK id&lt;br&gt;name, address" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#64748b;fontSize=14;align=left;verticalAlign=top;spacing=12;" vertex="1" parent="1">
+          <mxGeometry x="410" y="130" width="285" height="114" as="geometry" />
+        </mxCell>
+        <mxCell id="checkout_quotes" value="&lt;b&gt;checkout_quotes&lt;/b&gt;&lt;hr&gt;PK id&lt;br&gt;FK user_id, store_id&lt;br&gt;request_hash, normalized_payload&lt;br&gt;price_snapshot, total_vnd&lt;br&gt;expires_at" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#64748b;fontSize=14;align=left;verticalAlign=top;spacing=12;" vertex="1" parent="1">
+          <mxGeometry x="800" y="130" width="285" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="orders" value="&lt;b&gt;orders&lt;/b&gt;&lt;hr&gt;PK id; UQ code&lt;br&gt;FK user_id, store_id&lt;br&gt;FK quote_id UNIQUE&lt;br&gt;status, fulfillment_type, version&lt;br&gt;subtotal/shipping/discount/total_vnd&lt;br&gt;recipient + store snapshots&lt;br&gt;created_at, updated_at" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#64748b;fontSize=14;align=left;verticalAlign=top;spacing=12;" vertex="1" parent="1">
+          <mxGeometry x="800" y="500" width="285" height="224" as="geometry" />
+        </mxCell>
+        <mxCell id="order_items" value="&lt;b&gt;order_items&lt;/b&gt;&lt;hr&gt;PK id&lt;br&gt;FK order_id, variant_id&lt;br&gt;product_name/size snapshots&lt;br&gt;base_price_vnd, unit_price_vnd&lt;br&gt;quantity, line_total_vnd, note" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#64748b;fontSize=14;align=left;verticalAlign=top;spacing=12;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="500" width="285" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="order_item_modifiers" value="&lt;b&gt;order_item_modifiers&lt;/b&gt;&lt;hr&gt;PK id&lt;br&gt;FK order_item_id, option_id&lt;br&gt;group/option name snapshots&lt;br&gt;extra_price_vnd&lt;br&gt;UQ(order_item_id,option_id)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#64748b;fontSize=14;align=left;verticalAlign=top;spacing=12;" vertex="1" parent="1">
+          <mxGeometry x="1600" y="500" width="285" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="payments" value="&lt;b&gt;payments&lt;/b&gt;&lt;hr&gt;PK id; FK order_id&lt;br&gt;method, status, amount_vnd&lt;br&gt;provider_reference UQ nullable&lt;br&gt;FK collected_by nullable&lt;br&gt;paid_at, version" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#64748b;fontSize=14;align=left;verticalAlign=top;spacing=12;" vertex="1" parent="1">
+          <mxGeometry x="30" y="900" width="285" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="order_status_history" value="&lt;b&gt;order_status_history&lt;/b&gt;&lt;hr&gt;PK id; FK order_id&lt;br&gt;FK actor_id&lt;br&gt;from_status nullable, to_status&lt;br&gt;reason, created_at (append-only)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#64748b;fontSize=14;align=left;verticalAlign=top;spacing=12;" vertex="1" parent="1">
+          <mxGeometry x="410" y="900" width="285" height="158" as="geometry" />
+        </mxCell>
+        <mxCell id="idempotency_keys" value="&lt;b&gt;idempotency_keys&lt;/b&gt;&lt;hr&gt;PK id; FK user_id&lt;br&gt;FK order_id UNIQUE&lt;br&gt;key, request_hash&lt;br&gt;UQ(user_id,key), created_at" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#64748b;fontSize=14;align=left;verticalAlign=top;spacing=12;" vertex="1" parent="1">
+          <mxGeometry x="800" y="1000" width="285" height="158" as="geometry" />
+        </mxCell>
+        <mxCell id="product_variants" value="&lt;b&gt;product_variants&lt;/b&gt;&lt;hr&gt;PK id&lt;br&gt;catalog reference; no delete" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#64748b;fontSize=14;align=left;verticalAlign=top;spacing=12;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="130" width="285" height="114" as="geometry" />
+        </mxCell>
+        <mxCell id="modifier_options" value="&lt;b&gt;modifier_options&lt;/b&gt;&lt;hr&gt;PK id&lt;br&gt;catalog reference; no delete" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#64748b;fontSize=14;align=left;verticalAlign=top;spacing=12;" vertex="1" parent="1">
+          <mxGeometry x="1600" y="130" width="285" height="114" as="geometry" />
+        </mxCell>
+        <mxCell id="fk0" value="user_id" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#475569;fontSize=11;labelBackgroundColor=#ffffff;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;" edge="1" parent="1" source="profiles" target="orders">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fk1" value="store_id" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#475569;fontSize=11;labelBackgroundColor=#ffffff;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;" edge="1" parent="1" source="stores" target="orders">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fk2" value="user_id" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#475569;fontSize=11;labelBackgroundColor=#ffffff;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;" edge="1" parent="1" source="profiles" target="checkout_quotes">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fk3" value="store_id" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#475569;fontSize=11;labelBackgroundColor=#ffffff;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;" edge="1" parent="1" source="stores" target="checkout_quotes">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fk4" value="quote_id UNIQUE: quote 0..1 order" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#475569;fontSize=11;labelBackgroundColor=#ffffff;startArrow=ERone;startFill=0;endArrow=ERzeroToOne;endFill=0;" edge="1" parent="1" source="checkout_quotes" target="orders">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fk5" value="order_id" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#475569;fontSize=11;labelBackgroundColor=#ffffff;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;" edge="1" parent="1" source="orders" target="order_items">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fk6" value="variant_id" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#475569;fontSize=11;labelBackgroundColor=#ffffff;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;" edge="1" parent="1" source="product_variants" target="order_items">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fk7" value="order_item_id" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#475569;fontSize=11;labelBackgroundColor=#ffffff;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;" edge="1" parent="1" source="order_items" target="order_item_modifiers">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fk8" value="option_id" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#475569;fontSize=11;labelBackgroundColor=#ffffff;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;" edge="1" parent="1" source="modifier_options" target="order_item_modifiers">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fk9" value="order_id: MVP exactly 1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#475569;fontSize=11;labelBackgroundColor=#ffffff;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;" edge="1" parent="1" source="orders" target="payments">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fk10" value="collected_by: nullable" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#475569;fontSize=11;labelBackgroundColor=#ffffff;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;" edge="1" parent="1" source="profiles" target="payments">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fk11" value="order_id" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#475569;fontSize=11;labelBackgroundColor=#ffffff;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;" edge="1" parent="1" source="orders" target="order_status_history">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fk12" value="actor_id" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#475569;fontSize=11;labelBackgroundColor=#ffffff;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;" edge="1" parent="1" source="profiles" target="order_status_history">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fk13" value="user_id" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#475569;fontSize=11;labelBackgroundColor=#ffffff;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;" edge="1" parent="1" source="profiles" target="idempotency_keys">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fk14" value="order_id UNIQUE: 0..1 key" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#475569;fontSize=11;labelBackgroundColor=#ffffff;startArrow=ERone;startFill=0;endArrow=ERzeroToOne;endFill=0;" edge="1" parent="1" source="orders" target="idempotency_keys">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="notes" value="&lt;b&gt;Consistency&lt;/b&gt;&lt;br&gt;One transaction creates order + items + modifiers + payment + initial history + idempotency mapping.&lt;br&gt;Unique(user_id,key) and request hash protect retries. Unique quote_id prevents double checkout.&lt;br&gt;Money and recipient/catalog snapshots remain unchanged after menu/profile edits.&lt;br&gt;CAS version guards status and payment updates; all changes are authorized server-side.&lt;br&gt;Payment attempts 1:N future; MVP enforces one PAY_AT_COUNTER record. See data-model.md for constraints." style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="30" y="1270" width="1880" height="190" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
