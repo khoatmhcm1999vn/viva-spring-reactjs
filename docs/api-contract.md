@@ -6,8 +6,8 @@ Base /v1; JSON camelCase, enum UPPER_SNAKE_CASE, UUID IDs, integer VND, timestam
 | GET /health, /ready | public minimal liveness/readiness |
 | GET /categories, /products, /products/:id | public catalog; store availability — **đã hiện thực bước 06** |
 | GET /me | authenticated profile |
-| POST /checkout/quote | CUSTOMER, canonical cart→persisted quote |
-| POST /orders | CUSTOMER, quoteId + cart, Idempotency-Key |
+| POST /checkout/quote | CUSTOMER, canonical cart→persisted quote — **đã hiện thực bước 07** |
+| POST /orders | CUSTOMER, quoteId + cart, Idempotency-Key — **đã hiện thực bước 08** |
 | GET /me/orders | owner list |
 | GET /orders/:id, /orders/:id/history | owner / assigned staff / admin |
 | POST /orders/:id/cancel | owner, PLACED, expectedVersion |

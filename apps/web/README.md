@@ -42,5 +42,11 @@ Mọi biến `NEXT_PUBLIC_*` đều **đi ra bundle client** và người dùng 
 - `src/features/cart/use-cart-hydrated.ts` — chờ persist rehydrate xong, tránh hydration mismatch.
 - `src/features/cart/quote.ts` — `buildQuoteRequest` dựng payload (chính là cart payload mà POST /orders sẽ gửi), `requestQuote` gọi `POST /v1/checkout/quote`.
 
+## Đặt đơn (bước 08)
+`src/features/cart/place-order.ts`:
+- `startPlaceOrderSession(quoteId, cart)` sinh **một** `Idempotency-Key` cho một nội dung đơn. Retry phải dùng lại **đúng key đó**; chỉ sinh key mới khi có quote mới (nội dung đơn đổi).
+- `placeOrder(session)` gọi `POST /v1/orders`. Gọi lại với cùng session là an toàn — server trả lại đúng đơn cũ (200), không tạo đơn thứ hai.
+- **Không xóa giỏ trước khi nhận response thành công.**
+
 ## Chưa có
-Trang đăng nhập/đăng ký và UI menu/giỏ/checkout (dùng khi dựng màn ở các bước sau). Component shadcn/ui (`components.json` đã cấu hình sẵn). React Hook Form + Zod cho form (bước 08).
+Trang đăng nhập/đăng ký và UI menu/giỏ/checkout/tracking (dựng màn ở các bước sau). Component shadcn/ui (`components.json` đã cấu hình sẵn). React Hook Form + Zod cho form.

@@ -102,5 +102,20 @@ Lỗi: slug/SKU trùng, size trùng, `maxSelect < minSelect`, giá âm → **400
 
 `QuotePricingService` được export để bước 08 (tạo đơn) gọi lại cùng logic trong transaction. `canonicalizeQuote`/`normalizeNote` ở `packages/contracts` (dùng chung client/server để hash khớp).
 
+## Đặt đơn (bước 08)
+| Route | Mô tả |
+|---|---|
+| `POST /v1/orders` | `@Roles("CUSTOMER")`. **Bắt buộc header `Idempotency-Key`**. Body: `{quoteId, ...cart payload đã báo giá}`. **201** khi tạo mới, **200** khi replay đúng key + đúng nội dung. `Cache-Control: no-store`. |
+| `GET /v1/orders/:id` | Chủ đơn xem đơn của mình. Đơn của người khác → **404** (không lộ tồn tại/PII). |
+
+Trình tự an toàn:
+1. Băm canonical cart payload (không gồm quoteId/transport/thời gian).
+2. **Kiểm replay TRƯỚC khi kiểm quote expiry** — request đã thành công luôn trả lại đơn cũ, kể cả khi quote đã hết hạn.
+3. Kiểm quote: thuộc đúng user (sai → 404), đúng store, hash khớp, chưa hết hạn (→ **410 QUOTE_EXPIRED**).
+4. Trong **một transaction**: claim `idempotency_keys` → `SELECT ... FOR UPDATE` các `product_variants` **theo thứ tự ID** (chống deadlock) → tính lại giá bằng `QuotePricingService` → so với tổng của quote (lệch → **409 PRICE_CHANGED**) → insert order + items + modifiers snapshot + payment UNPAID + history đầu + gán order vào mapping key.
+5. Xung đột unique xử lý **sau rollback** (không query trong transaction đã abort): `orders_quote_id_key` → **409 QUOTE_ALREADY_USED**; `idempotency_keys_user_id_key_key` → đọc lại bản ghi đã commit và trả đúng đơn đó (200); `orders_code_key` → sinh mã mới, chạy lại transaction.
+
+Không gọi network trong transaction. Mã đơn `CF-YYMMDD-XXXX` (ngày theo `Asia/Ho_Chi_Minh`, 4 ký tự Crockford-base32 bỏ I/L/O/U, sinh bằng `crypto.randomInt`) — dễ đọc nhưng **không phải secret cấp quyền**; ID nội bộ vẫn là UUID.
+
 ## Chưa có
-Đặt đơn (bước 08), xử lý đơn + thanh toán (bước 09). **Upload ảnh món** (Q06-01, chưa có Supabase project). Profile staff/admin **không** được seed. FK `profiles.id → auth.users.id` (Q04-01) chưa hiện thực.
+Xử lý đơn + thanh toán + tracking (bước 09). **Upload ảnh món** (Q06-01, chưa có Supabase project). Profile staff/admin **không** được seed. FK `profiles.id → auth.users.id` (Q04-01) chưa hiện thực. Rate limit (Q07-01).

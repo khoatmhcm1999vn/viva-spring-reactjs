@@ -7,6 +7,7 @@ import { CatalogModule } from "./modules/catalog/catalog.module";
 import { CheckoutModule } from "./modules/checkout/checkout.module";
 import { HealthModule } from "./modules/health/health.module";
 import { MeModule } from "./modules/me/me.module";
+import { OrdersModule } from "./modules/orders/orders.module";
 import { PrismaModule } from "./prisma/prisma.module";
 
 @Module({
@@ -22,6 +23,7 @@ import { PrismaModule } from "./prisma/prisma.module";
     MeModule,
     CatalogModule,
     CheckoutModule,
+    OrdersModule,
   ],
 })
 export class AppModule implements NestModule {

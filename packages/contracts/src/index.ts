@@ -319,6 +319,75 @@ export interface QuoteResponse {
 }
 
 /* ------------------------------------------------------------------ */
+/* Don hang (bước 08)                                                  */
+/* ------------------------------------------------------------------ */
+
+/** Request tao don: quoteId + DUNG cart payload da bao gia. */
+export interface CreateOrderRequest extends QuoteRequest {
+  quoteId: string;
+}
+
+/** Modifier snapshot trong mot dong don. Gia la ban chup luc dat. */
+export interface OrderItemModifierDto {
+  optionId: string;
+  groupName: string;
+  optionName: string;
+  extraPriceVnd: number;
+}
+
+/** Dong don voi snapshot ten/size/gia - khong doi khi menu doi (REQ-306). */
+export interface OrderItemDto {
+  id: string;
+  variantId: string;
+  productName: string;
+  size: string;
+  basePriceVnd: number;
+  unitPriceVnd: number;
+  quantity: number;
+  lineTotalVnd: number;
+  note: string | null;
+  modifiers: OrderItemModifierDto[];
+}
+
+/** Thanh toan cua don. MVP: dung mot ban ghi PAY_AT_COUNTER. */
+export interface OrderPaymentDto {
+  id: string;
+  method: PaymentMethod;
+  status: PaymentStatus;
+  amountVnd: number;
+  paidAt: string | null;
+  version: number;
+}
+
+/** Tong tien cua don. MVP shipping = discount = 0. */
+export interface OrderTotalsDto {
+  subtotalVnd: number;
+  shippingFeeVnd: number;
+  discountVnd: number;
+  totalVnd: number;
+}
+
+/** Response cua POST /orders va GET /orders/:id. */
+export interface OrderResponse {
+  id: string;
+  code: string;
+  status: OrderStatus;
+  /** Dung cho CAS khi chuyen trang thai (bước 09). */
+  version: number;
+  fulfillmentType: FulfillmentType;
+  storeId: string;
+  storeName: string;
+  storeAddress: string;
+  recipientName: string;
+  recipientPhone: string;
+  pickupNote: string | null;
+  items: OrderItemDto[];
+  totals: OrderTotalsDto;
+  payment: OrderPaymentDto;
+  createdAt: string;
+}
+
+/* ------------------------------------------------------------------ */
 /* Hang so dung chung                                                  */
 /* ------------------------------------------------------------------ */
 

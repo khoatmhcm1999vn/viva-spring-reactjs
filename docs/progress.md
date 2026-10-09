@@ -11,7 +11,7 @@ Bộ hướng dẫn đã được tạo. Ứng dụng, migrations, tests và dep
 | 05 Xác thực và quyền | **DONE (đã chạy)** | Verify Supabase token (jose: chữ ký JWKS/HS256 + issuer + audience + expiry); map sub→profiles auto-provision CUSTOMER; AuthGuard+RolesGuard global; StoreAccessService ở service layer; `/v1/me`; FE bearer + 401 refresh một lần. 25/25 unit + 11/11 auth integration + 11/11 HTTP smoke pass. Chi tiết mục “Bước 05”. |
 | 06 Quản lý danh mục và món | **DONE (đã chạy)** | Catalog công khai (categories/products/products/:id, store availability, phân trang, search) + admin CRUD (category/product/variant/modifier) + staff toggle availability theo store (StoreAccessService). 25 unit + 42 integration pass; HTTP smoke đọc seed thật (4 cat, 12 món). Chi tiết mục “Bước 06”. |
 | 07 Giỏ hàng và báo giá | **DONE (đã chạy)** | `POST /v1/checkout/quote` tính giá server-side từ catalog (base+modifiers×qty), validate store/availability/modifier min-max-membership, lưu checkout_quotes (request_hash SHA-256, price_snapshot, expires_at 5′). Giỏ Zustand persist (lineKey, một store, migrate reset). 33 unit + 61 integration pass; HTTP smoke tính giá seed thật + persist. Chi tiết mục “Bước 07”. |
-| 08 Tạo đơn an toàn | TODO | Chưa thực hiện trong repository ứng dụng |
+| 08 Tạo đơn an toàn | **DONE (đã chạy)** | `POST /v1/orders` + `Idempotency-Key`: replay trước expiry, transaction claim key → FOR UPDATE catalog theo thứ tự ID → tính lại giá → so snapshot → insert order+items+modifiers+payment UNPAID+history+mapping. PRICE_CHANGED/QUOTE_EXPIRED/ITEM_UNAVAILABLE/IDEMPOTENCY_CONFLICT/QUOTE_ALREADY_USED. 37 unit + 77 integration pass; smoke 17/17 gồm concurrent thật. Chi tiết mục “Bước 08”. |
 | 09 Xử lý đơn và tracking | TODO | Chưa thực hiện trong repository ứng dụng |
 | 10 Kiểm thử theo rủi ro | TODO | Chưa thực hiện trong repository ứng dụng |
 | 11 Triển khai | TODO | Chưa thực hiện trong repository ứng dụng |
@@ -508,3 +508,58 @@ pnpm --filter @coffee-order/api run test:int     # 61/61 pass (19 quote + 24 cat
 
 ### Bước tiếp theo
 Bước 08 — Tạo đơn an toàn (`.kiro/steering/08-create-order.md`): `POST /v1/orders` với `Idempotency-Key`, dùng lại `QuotePricingService` trong transaction, so khớp snapshot (QUOTE_EXPIRED/PRICE_CHANGED/ITEM_UNAVAILABLE), ghi order+items+modifiers+payment+history+idempotency trong một transaction, chống retry/đua. Không đánh dấu bước nào khác hoàn thành.
+
+---
+
+## Bước 08 — Tạo đơn an toàn (2026-10-09) — **DONE**
+
+### Dependency bước trước
+Bước 07 (`QuotePricingService`, `checkout_quotes`, canonical hash) và bước 04 (schema orders/items/modifiers/payments/history/idempotency_keys + partial unique payment + CHECK công thức tiền). Bước 08 dùng lại **nguyên** logic tính giá của bước 07 nhưng chạy trong transaction tạo đơn.
+
+### Đã kiểm repo trước khi sửa
+Chưa có module orders. Không ghi đè file bước trước; chỉ **thêm** module `orders`, feature `place-order` ở web, và contract types cho order.
+
+### File đổi
+| File | Thay đổi |
+|---|---|
+| `packages/contracts/src/index.ts` | **Sửa**: thêm `CreateOrderRequest`, `OrderItemDto`, `OrderItemModifierDto`, `OrderPaymentDto`, `OrderTotalsDto`, `OrderResponse`. |
+| `apps/api/src/modules/orders/orders.service.ts` | **Mới**: `createOrder` (replay → kiểm quote → transaction → xử lý xung đột sau rollback), `getOrderForOwner`, `loadOrder`, `uniqueIndexOf`, `insertItems` (protected), `lockCatalogRows`. |
+| `apps/api/src/modules/orders/order-code.ts` | **Mới**: `generateOrderCode` — `CF-YYMMDD-XXXX`, ngày theo Asia/Ho_Chi_Minh, base32 bỏ I/L/O/U, `crypto.randomInt`. |
+| `apps/api/src/modules/orders/dto/create-order.dto.ts` | **Mới**: kế thừa `QuoteRequestDto` + `quoteId`. |
+| `apps/api/src/modules/orders/orders.controller.ts` | **Mới**: `POST /v1/orders` (Idempotency-Key bắt buộc, 201/200, `Cache-Control: no-store`), `GET /v1/orders/:id`. |
+| `apps/api/src/modules/orders/orders.module.ts` | **Mới**: import `CheckoutModule` để dùng `QuotePricingService`. |
+| `apps/api/src/app.module.ts` | **Sửa**: import `OrdersModule`. |
+| `apps/api/src/modules/orders/order-code.spec.ts` | **Mới**: 4 unit test. |
+| `apps/api/test/orders.int-spec.ts` | **Mới**: 16 integration test (gồm subclass `FailingOrdersService` để test rollback). |
+| `apps/web/src/features/cart/place-order.ts` | **Mới**: session giữ `Idempotency-Key` qua retry; không xóa giỏ trước khi thành công. |
+| `apps/api/README.md`, `apps/web/README.md`, `docs/api-contract.md`, `docs/decisions.md` | **Sửa**: ghi endpoint + F08-01..03, D08-01..12, Q08. |
+
+### Hai bug thật đã phát hiện và sửa (có probe làm bằng chứng)
+1. **Prisma 7 + adapter-pg không điền `meta.target`** cho P2002 — tên constraint ở `meta.driverAdapterError.cause.constraint.index`. Bản đầu đọc `meta.target` (undefined) → trả `""`, mà `"".includes("code")` là `true`, nên **mọi** unique violation bị hiểu sai thành trùng order code. Hệ quả quan sát được: quote-reuse trả **500** thay vì 409. Đã viết `uniqueIndexOf()` đọc đúng chỗ + fallback, và khớp **chính xác** tên index (vì `orders_quote_id_key` chứa `"key"`, `orders_code_key` chứa `"code"`).
+2. **CHECK trả P2039, không phải P2002**, và `chk_quote_expiry_after_created` (bước 04) chặn việc chỉ set `expires_at` về quá khứ. Test ban đầu sai — phải lùi **cả** `created_at` và `expires_at`. Constraint hoạt động đúng.
+
+### Commands đã chạy và kết quả thật
+```powershell
+pnpm run lint / typecheck / build / test        # tat ca EXIT 0; unit 37/37 (5 suite)
+pnpm --filter @coffee-order/web typecheck/build  # EXIT 0
+pnpm --filter @coffee-order/api run test:int     # 77/77 pass (16 orders + 19 quote + 24 catalog + 11 auth + 7 schema)
+# HTTP smoke end-to-end (API 3001 + DB dev seed): 17/17 PASS
+```
+
+**Integration orders (16)** phủ đúng checklist steering: thiếu Idempotency-Key→400; tạo đơn 201 + kiểm **atomic trong DB** (1 item, 2 modifiers, 1 payment UNPAID, 1 history `from_status=null`/`actorId`, mapping có orderId); **double-click** cùng key→200 cùng đơn, DB chỉ 1 đơn; **concurrent** 2 request song song→đúng 1 đơn commit, một 201 một 200, cùng id; **timeout retry**→trả đơn cũ; **replay vẫn trả đơn cũ kể cả khi quote đã hết hạn**; cùng key khác payload→409 IDEMPOTENCY_CONFLICT; **quote reuse** key khác→409 QUOTE_ALREADY_USED; quote hết hạn→410 QUOTE_EXPIRED; **giá đổi sau báo giá**→409 PRICE_CHANGED + không tạo đơn; tắt availability sau báo giá→409 ITEM_UNAVAILABLE + không tạo đơn; payload không khớp quote→400; quote người khác→404; **lỗi giữa chuỗi insert item→rollback sạch** (không còn đơn/mapping) và đặt lại cùng quote vẫn thành công; **đổi menu sau khi đặt→snapshot đơn cũ không đổi** (tên món, giá, tên+giá option đều giữ nguyên); chủ đơn đọc được, người khác→404 không lộ PII.
+
+**HTTP smoke (17)** với API chạy thật trên seed: quote→order 201 (mã `CF-261009-0ZTX`), PLACED, payment UNPAID pay-at-counter, total khớp quote, `Cache-Control: no-store`; double-submit→200 cùng đơn; **concurrent thật→201/200 cùng id**; quote reuse→409 QUOTE_ALREADY_USED; cùng key khác payload→409 IDEMPOTENCY_CONFLICT; chủ đơn đọc 200; người khác 404 không lộ PII. Query DB xác nhận atomic (2 orders ↔ 2 items ↔ 4 modifiers ↔ 2 payments ↔ 2 history ↔ 2 keys); đã dọn dữ liệu smoke, seed catalog còn nguyên.
+
+### Pass / Fail / Skip
+- **PASS**: lint, typecheck (api+web), build (api+web), unit 37/37, integration 77/77, HTTP smoke 17/17, atomicity + rollback + snapshot bất biến đều kiểm trên PostgreSQL thật.
+- **FAIL**: không còn. Hai bug thật ở trên đã sửa và kiểm lại.
+- **SKIP / chưa làm**: rate limit `POST /orders` (Q07-01/Q01-06, bước 11); hủy đơn / `GET /me/orders` / timeline — **bước 09**; UI checkout + confirmation (chưa có màn web); dọn quote/key hết hạn (Q08-01/02).
+
+### Hạn chế
+- Chưa có UI: luồng đặt đơn chỉ chạy qua API (đã chứng minh bằng smoke + integration), chưa có màn checkout cho khách.
+- Chưa có rate limit nên chưa chống được lạm dụng tạo quote/đơn ở mức hạ tầng.
+- `GET /orders/:id` hiện **chỉ** cho chủ đơn; quyền staff/admin xem đơn theo store sẽ thêm ở bước 09.
+- Transaction dùng isolation mặc định (Read Committed) + `FOR UPDATE` trên `product_variants`. Đủ cho bất biến giá của MVP; chưa khóa `modifier_options` (giá option đổi giữa lúc kiểm vẫn được bắt bằng so tổng với quote, nhưng không bị khóa).
+
+### Bước tiếp theo
+Bước 09 — Xử lý đơn và tracking (`.kiro/steering/09-tracking.md`): chuyển trạng thái với CAS theo `version`, staff đúng store, thu tiền PAY_AT_COUNTER có audit, `COMPLETED` chỉ khi READY và PAID, hủy/từ chối có lý do, `GET /me/orders` + `GET /orders/:id/history`, polling phía web. Không đánh dấu bước nào khác hoàn thành.

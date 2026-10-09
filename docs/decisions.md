@@ -388,3 +388,43 @@ Toàn bộ đã **chạy thật** trên PostgreSQL 16 (Docker): 2 migration áp 
 |---|---|---|
 | Q07-01 | Rate limit cho endpoint quote (ngưỡng/cửa sổ) | Chưa; nối Q01-06, chốt bước 08/11. |
 | Q07-02 | Có cho phép quote lại tự động khi giá đổi, hay luôn buộc khách xác nhận? | Thiết kế (wireframe D02): buộc xác nhận. Logic ở bước 08. |
+
+---
+
+## Bước 08 — Tạo đơn an toàn (2026-10-09)
+
+Đã **chạy thật**: 37 unit + 77 integration (16 orders) pass; HTTP smoke 17/17 end-to-end gồm double-submit và concurrent thật.
+
+### Phát hiện kỹ thuật
+| # | Phát hiện (bằng chứng từ probe thật) | Hệ quả |
+|---|---|---|
+| F08-01 | **Prisma 7 + `@prisma/adapter-pg` KHÔNG điền `meta.target`** cho lỗi unique (P2002). Tên constraint nằm ở `meta.driverAdapterError.cause.constraint.index` (ví dụ `"orders_quote_id_key"`). Probe trực tiếp xác nhận. | Viết `uniqueIndexOf()` đọc `driverAdapterError.cause.constraint.index`, fallback `meta.target`, fallback parse `originalMessage`. **Bug thật đã sửa**: bản đầu đọc `meta.target` (undefined) → trả `""`, và `"".includes("code")` là `true` nên mọi unique violation bị hiểu sai thành trùng order code → quote-reuse trả 500 thay vì 409. |
+| F08-02 | So khớp tên constraint bằng `includes` là **sai**: `orders_quote_id_key` và `orders_code_key` đều chứa `"key"`, còn `orders_code_key` chứa `"code"`. | Khớp **chính xác** tên index qua hằng `UNIQUE_INDEX`, và kiểm `quote_id` trước `key`. |
+| F08-03 | Vi phạm CHECK trả **P2039** (không phải P2002). CHECK `chk_quote_expiry_after_created` (bước 04) **chặn** việc chỉ set `expires_at` về quá khứ. | Test làm quote hết hạn phải lùi **cả** `created_at` và `expires_at` bằng raw SQL. Constraint đúng — test ban đầu sai. |
+
+### Quyết định
+| # | Quyết định | Lý do |
+|---|---|---|
+| D08-01 | **Kiểm replay TRƯỚC khi kiểm quote expiry** | Steering nêu rõ: request đã thành công phải luôn trả lại đơn cũ, kể cả khi quote đã hết hạn. Có test khẳng định. |
+| D08-02 | Canonical hash chỉ gồm **cart payload**, không gồm `quoteId` | Cho phép phát hiện "cùng key nhưng nội dung khác" độc lập với quote; `quoteId` được kiểm riêng bằng `requestHash` của quote. |
+| D08-03 | Claim `idempotency_keys` **đầu tiên** trong transaction (orderId tạm null), gán orderId ở cuối cùng transaction | Hai request song song cùng key: luồng thua chặn ở unique index, rollback, rồi đọc bản ghi đã commit → trả đúng đơn của luồng thắng. Mapping đã commit **luôn** có orderId. |
+| D08-04 | Khóa `product_variants` bằng `SELECT ... FOR UPDATE` **sắp xếp theo id** | domain-rules: thứ tự khóa cố định để không deadlock; thay đổi catalog đồng thời phải chờ transaction commit → chống giá đổi giữa lúc kiểm và lưu. |
+| D08-05 | Tính **lại** giá trong transaction rồi so với `quote.totalVnd`; lệch → 409 PRICE_CHANGED | Không tin snapshot cũng không tin client. Giá lưu vào đơn là giá vừa tính từ catalog đã khóa. |
+| D08-06 | Payload không khớp quote → **400 VALIDATION_ERROR** | Không nằm trong bộ 3 QUOTE_EXPIRED/PRICE_CHANGED/ITEM_UNAVAILABLE của domain-rules; đây là lỗi dùng API sai, không phải thay đổi trạng thái. |
+| D08-07 | Quote của người khác → **404 NOT_FOUND** | REQ-502: không tiết lộ tồn tại tài nguyên của người khác. |
+| D08-08 | Replay trả **200**, tạo mới trả **201** | docs/api-contract.md; client phân biệt được "vừa tạo" với "đã có". |
+| D08-09 | Mã đơn `CF-YYMMDD-XXXX`, base32 Crockford bỏ I/L/O/U, `crypto.randomInt` (chốt Q01-04) | Dễ đọc tại quầy, không đoán tuần tự được. Unique bởi `UNIQUE(orders.code)` + retry transaction tối đa 3 lần. Không phải secret cấp quyền. |
+| D08-10 | `insertItems` là `protected` để test subclass ghi đè và nén lỗi giữa chuỗi insert | Chứng minh rollback **không cần** fault-injection trong code production. |
+| D08-11 | Mọi xử lý xung đột nằm **ngoài** `$transaction` | PostgreSQL không cho query trong transaction đã abort (steering nêu rõ). |
+| D08-12 | FE: `Idempotency-Key` sinh **một lần cho một nội dung đơn**, retry dùng lại; **không xóa giỏ** trước khi có response thành công | REQ-301/302 + steering. |
+
+### Chưa làm / ghi rõ
+- Rate limit cho `POST /orders` (Q07-01/Q01-06): chưa có. Chốt ở bước 11.
+- Hủy đơn (`POST /orders/:id/cancel`), danh sách `GET /me/orders`, timeline `GET /orders/:id/history`: thuộc **bước 09**.
+- UI checkout/confirmation: chưa có màn web.
+
+### Câu hỏi còn mở
+| # | Câu hỏi | Trạng thái |
+|---|---|---|
+| Q08-01 | Có cần dọn `checkout_quotes` hết hạn định kỳ? | Chưa; cân nhắc job ở bước 11. |
+| Q08-02 | Có cần TTL/dọn `idempotency_keys` cũ? | Chưa; bảng nhỏ ở quy mô MVP. |
