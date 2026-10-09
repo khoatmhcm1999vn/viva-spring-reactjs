@@ -16,7 +16,7 @@ import { formatDateTimeHcm } from "@/lib/utils";
 export default function SmokePage() {
   const health = useQuery({
     queryKey: ["health"],
-    queryFn: () => apiFetch<HealthResponse>("/health"),
+    queryFn: () => apiFetch<HealthResponse>("/health", { auth: false }),
     retry: false,
   });
 
@@ -25,7 +25,7 @@ export default function SmokePage() {
     // /v1/ready tra 503 khi NOT_READY, nen doc ca truong hop loi co body.
     queryFn: async (): Promise<ReadyResponse> => {
       try {
-        return await apiFetch<ReadyResponse>("/ready");
+        return await apiFetch<ReadyResponse>("/ready", { auth: false });
       } catch (err) {
         if (err instanceof ApiRequestError && err.status === 503) {
           return {

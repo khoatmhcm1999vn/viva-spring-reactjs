@@ -276,3 +276,46 @@ Toàn bộ đã **chạy thật** trên PostgreSQL 16 (Docker): 2 migration áp 
 | Q04-02 | Định dạng `orders.code` (Q01-04) | Chưa chốt; sinh ở bước 08 khi tạo đơn. |
 | Q04-03 | `migrate deploy` trong CI/Docker và chuẩn hóa `prisma generate` bước build | Chốt ở bước 11. |
 | Q04-04 | Readiness có nên kiểm cả độ trễ query / pool, hay chỉ `SELECT 1`? | Hiện chỉ `SELECT 1`; đủ cho MVP. |
+
+---
+
+## Bước 05 — Xác thực và quyền (2026-10-09)
+
+Đã **chạy thật**: 25/25 unit test + 11/11 auth integration test (DB thật) + 11/11 HTTP smoke với API chạy trên DB dev, dùng token HS256 tự ký cục bộ (chưa có Supabase project).
+
+### Phiên bản chốt
+| Gói | Phiên bản | Ghi chú |
+|---|---|---|
+| `jose` (api) | **5.10.0** | Verify JWT (chữ ký/issuer/audience/expiry). Bản 6.x là ESM-only, không import được từ NestJS CommonJS (giống F03-01); 5.10.0 là bản cuối còn `exports.require`. |
+| `@supabase/supabase-js` (web) | 2.117.3 | |
+| `@supabase/ssr` (web) | 0.12.7 | Browser client + tự refresh session cho Next App Router. |
+
+### Phát hiện kỹ thuật
+| # | Phát hiện | Hệ quả |
+|---|---|---|
+| F05-01 | Supabase hỗ trợ **hai hệ ký**: ES256/RS256 (signing keys mới, verify qua JWKS endpoint `/auth/v1/.well-known/jwks.json`) và HS256 (JWT secret legacy). | `TokenVerifierService` hỗ trợ cả hai: ưu tiên JWKS khi có `SUPABASE_URL`, fallback HS256 khi chỉ có `SUPABASE_JWT_SECRET`. Verify đầy đủ chữ ký + issuer + audience + expiry bằng `jose`, không tự viết crypto, không chỉ decode. |
+| F05-02 | `jose` 6 ESM-only. | Dùng `jose` 5.10.0 (CommonJS) để khớp NestJS 11 CJS. |
+
+### Quyết định
+| # | Quyết định | Lý do |
+|---|---|---|
+| D05-01 | `AuthGuard` + `RolesGuard` đăng ký **global** qua `APP_GUARD`; opt-out bằng `@Public()` | Mặc định an toàn: quên gắn guard thì route vẫn được bảo vệ, thay vì quên thì hở. |
+| D05-02 | Role đọc từ `profiles.role` trong DB mỗi request (auto-provision CUSTOMER lần đầu), **không** từ token/metadata | REQ-001/REQ-003; admin đổi role có hiệu lực ngay (đã test). |
+| D05-03 | Secret (`SUPABASE_JWT_SECRET`, `SUPABASE_SECRET_KEY`) theo pattern cờ boolean trong config, đọc `process.env` tại chỗ dùng | Không lưu giá trị secret vào `AppConfig` (có test khẳng định); giống cách `PrismaService` đọc `DATABASE_URL`. `SUPABASE_URL`/issuer/audience không bí mật nên lưu trực tiếp. |
+| D05-04 | Quyền theo cửa hàng kiểm ở **service** (`StoreAccessService.assertCanActForStore`), không chỉ guard | Steering + domain-rules: internal call giữa service không được bypass qua việc không đi qua route guard. |
+| D05-05 | FE: 401 → refresh phiên **đúng một lần** rồi gọi lại; không vòng lặp retry | Steering yêu cầu refresh có giới hạn; tránh bão request khi phiên hỏng. |
+| D05-06 | Auto-provision profile bằng `upsert` theo `id = sub`, `update: {}` | Chạy đồng thời không tạo trùng; không ghi đè role đã có của user cũ. |
+| D05-07 | Profile `isActive = false` → 403 ngay ở `AuthService.resolveUser` | Vô hiệu hóa tài khoản chặn được mọi route bảo vệ. |
+
+### Chưa làm / cần cấu hình khi có Supabase thật
+- Chưa có Supabase project → test dùng HS256 secret cục bộ. Khi có project: đặt `SUPABASE_URL` để dùng JWKS (an toàn hơn secret).
+- **Phải tắt Data API cho bảng nghiệp vụ** (orders/payments/history) trong Supabase, hoặc để ngoài schema expose — browser không ghi trực tiếp. Chưa kiểm được vì chưa có project (ghi vào README + progress như việc cần làm).
+- FK `profiles.id → auth.users.id` (Q04-01) vẫn mở: hiện profile auto-provision theo `sub`, chưa ràng buộc cứng với `auth.users` của Supabase.
+- Trang đăng nhập/đăng ký UI để bước 06+.
+
+### Câu hỏi còn mở
+| # | Câu hỏi | Trạng thái |
+|---|---|---|
+| Q05-01 | Dùng JWKS (ES256) hay HS256 ở production? | Khuyến nghị JWKS; chốt khi tạo Supabase project. |
+| Q05-02 | Verify + tắt Data API trên Supabase thật | Chưa kiểm được, cần project. Ghi là việc bắt buộc trước deploy (bước 11). |
+| Q05-03 | Có cần cache kết quả verify/profile để giảm query mỗi request? | Chưa; MVP query profile mỗi request cho đúng role. Cân nhắc ở bước 10/11 nếu cần. |

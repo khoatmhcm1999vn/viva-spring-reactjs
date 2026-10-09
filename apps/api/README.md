@@ -62,5 +62,19 @@ pnpm --filter @coffee-order/api run test:int
 ```
 Suite tự **skip** nếu `TEST_DATABASE_URL` chưa đặt, nên `pnpm test` mặc định không chạm DB. Có guard từ chối chạy nếu URL trỏ production hoặc trùng DB dev (vì test gọi `migrate reset`).
 
+## Xác thực và phân quyền (bước 05)
+- `GET /v1/me` — hồ sơ người dùng đang đăng nhập (cần Bearer token).
+- `AuthGuard` + `RolesGuard` đăng ký **global** (APP_GUARD). Mọi route cần token trừ route gắn `@Public()` (health, và catalog ở bước 06).
+- Token verify server-side bằng `jose`: chữ ký (JWKS ES256/RS256 qua `SUPABASE_URL`, hoặc HS256 qua `SUPABASE_JWT_SECRET`) + issuer + audience + expiry. Không chỉ decode.
+- `sub` → `profiles` (auto-provision role CUSTOMER lần đầu). Role luôn đọc từ DB, không từ token/metadata.
+- Quyền theo cửa hàng kiểm ở service (`StoreAccessService.assertCanActForStore`), không chỉ ở guard, để internal call không bypass được.
+
+Decorators: `@Public()`, `@Roles(...)`, `@CurrentUser()` ở `src/modules/auth/auth.decorators.ts`.
+
+### Cấu hình Supabase cần làm khi có project thật
+- Đặt `SUPABASE_URL` (ưu tiên JWKS) hoặc `SUPABASE_JWT_SECRET` (HS256 legacy) trong `apps/api/.env`.
+- Trong Supabase: **tắt Data API cho các bảng nghiệp vụ** (orders, payments, order_status_history, ...) hoặc đặt chúng ngoài schema expose — browser không được ghi trực tiếp qua Data API. Mọi thay đổi đơn chỉ qua API NestJS. Prisma dùng role riêng ở backend, không dựa vào RLS để bảo vệ.
+- Nâng role (STAFF/ADMIN) chỉ qua flow admin trong DB, không qua `user_metadata` của signup.
+
 ## Chưa có
-Xác thực Supabase và guard phân quyền (bước 05). Module nghiệp vụ catalog/checkout/orders/payments (bước 06–09). Profile staff/admin **không** được seed — phải tạo qua Supabase Auth thật ở bước 05.
+Module nghiệp vụ catalog/checkout/orders/payments (bước 06–09). Profile staff/admin **không** được seed — phải tạo qua Supabase Auth thật rồi nâng role trong DB. FK `profiles.id → auth.users.id` của Supabase (Q04-01) chưa hiện thực; profile được auto-provision theo `sub` khi gọi API lần đầu.

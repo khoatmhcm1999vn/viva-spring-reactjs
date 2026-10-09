@@ -154,6 +154,33 @@ export interface ReadyResponse {
 }
 
 /* ------------------------------------------------------------------ */
+/* Nguoi dung da xac thuc                                              */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Thong tin nguoi dung sau khi backend xac minh Supabase access token va map
+ * sub -> profiles. role LUON lay tu DB (profiles.role), khong tu token/metadata.
+ */
+export interface AuthenticatedUser {
+  /** = profiles.id = Supabase auth sub */
+  id: string;
+  role: UserRole;
+  isActive: boolean;
+  email: string | null;
+}
+
+/** Response cua GET /v1/me. Khong chua token hay bat ky secret nao. */
+export interface MeResponse {
+  id: string;
+  role: UserRole;
+  fullName: string | null;
+  phone: string | null;
+  isActive: boolean;
+  /** Danh sach store_id ma user duoc gan lam STAFF (rong voi CUSTOMER/ADMIN). */
+  staffStoreIds: string[];
+}
+
+/* ------------------------------------------------------------------ */
 /* Hang so dung chung                                                  */
 /* ------------------------------------------------------------------ */
 

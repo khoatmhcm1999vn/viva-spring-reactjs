@@ -31,5 +31,10 @@ src/
 ## Ranh giới bắt buộc
 Mọi biến `NEXT_PUBLIC_*` đều **đi ra bundle client** và người dùng đọc được. Không đặt `DATABASE_URL`, service-role key hay bất kỳ secret nào vào `NEXT_PUBLIC_`. Không import Prisma client/model hay dependency chỉ chạy được trên Node vào đây.
 
+## Xác thực (bước 05)
+- `src/lib/supabase.ts` — Supabase browser client (`@supabase/ssr`), `getAccessToken()`, `refreshSessionOnce()`. Chỉ dùng key publishable/anon; không bao giờ đặt secret vào `NEXT_PUBLIC_`.
+- `src/lib/api.ts` — tự gắn `Authorization: Bearer <token>` cho request có `auth !== false`; khi API trả 401 thì **refresh phiên đúng một lần** rồi gọi lại, không vòng lặp retry.
+- Chưa cấu hình `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` thì client Supabase trả null, request đi mà không có token (phù hợp cho catalog công khai).
+
 ## Chưa có
-Component shadcn/ui (`components.json` đã cấu hình sẵn, component được thêm từ bước 06). Zustand cho giỏ, React Hook Form + Zod cho form — thêm khi dùng ở bước 07–08. Supabase Auth client (bước 05).
+Trang đăng nhập/đăng ký và UI gọi `/me` (bước 06+). Component shadcn/ui (`components.json` đã cấu hình sẵn). Zustand cho giỏ, React Hook Form + Zod cho form (bước 07–08).

@@ -22,3 +22,16 @@ export const API_BASE_URL = required(
   "NEXT_PUBLIC_API_BASE_URL",
   process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:3001/v1",
 );
+
+/**
+ * Cau hinh Supabase client phia browser.
+ *
+ * CHI dung key publishable/anon (cong khai theo thiet ke). Tuyet doi khong dat
+ * secret/service-role vao NEXT_PUBLIC_. Tra null khi chua cau hinh de app van
+ * build/chay duoc o moi truong chua co Supabase (vi du dev chi test catalog).
+ */
+export const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim() || null;
+export const SUPABASE_PUBLISHABLE_KEY =
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY?.trim() || null;
+
+export const isSupabaseConfigured = SUPABASE_URL !== null && SUPABASE_PUBLISHABLE_KEY !== null;

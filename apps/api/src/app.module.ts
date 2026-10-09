@@ -2,7 +2,9 @@ import { type MiddlewareConsumer, Module, type NestModule } from "@nestjs/common
 import { ConfigModule } from "@nestjs/config";
 import { AppConfigModule } from "./common/config/app-config.module";
 import { RequestIdMiddleware } from "./common/middleware/request-id.middleware";
+import { AuthModule } from "./modules/auth/auth.module";
 import { HealthModule } from "./modules/health/health.module";
+import { MeModule } from "./modules/me/me.module";
 import { PrismaModule } from "./prisma/prisma.module";
 
 @Module({
@@ -11,7 +13,11 @@ import { PrismaModule } from "./prisma/prisma.module";
     ConfigModule.forRoot({ isGlobal: true, cache: true }),
     AppConfigModule,
     PrismaModule,
+    // AuthModule dang ky APP_GUARD global (AuthGuard + RolesGuard). Dat sau Prisma
+    // (phu thuoc) va truoc cac module co route de guard ap cho moi route.
+    AuthModule,
     HealthModule,
+    MeModule,
   ],
 })
 export class AppModule implements NestModule {

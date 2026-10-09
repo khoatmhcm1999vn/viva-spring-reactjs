@@ -8,7 +8,7 @@ Bộ hướng dẫn đã được tạo. Ứng dụng, migrations, tests và dep
 | 02 Phác thảo giao diện | DONE (tài liệu) | `docs/wireframes.md` (11 màn, map route→feature→REQ, walkthrough), `docs/mockups/index.html` (11 panel tĩnh), `docs/decisions.md` D02-01..D02-15 / Q02-01..Q02-07. Chi tiết ở mục “Bước 02”. Chưa có component React nào. |
 | 03 Khởi tạo monorepo | **DONE (đã chạy)** | pnpm workspaces 4 project. `install --frozen-lockfile`, `lint`, `typecheck`, `build`, `test` đều exit 0; 7/7 jest pass; 24/24 smoke HTTP pass; web gọi được `/v1/health` thật. Phiên bản chốt ở `docs/decisions.md`. Chi tiết ở mục “Bước 03”. |
 | 04 Schema, migration và seed | **DONE (đã chạy)** | Prisma 7.10 schema theo data-model; 2 migration áp lên PostgreSQL thật; seed idempotent (1 store, 4 cat, 12 món, 19 variant, 3 group, 9 option); 7/7 integration test pass (CHECK/FK/UNIQUE/rollback); `/v1/ready` trả READY qua `SELECT 1`. Chi tiết ở mục “Bước 04”. |
-| 05 Xác thực và quyền | TODO | Chưa thực hiện trong repository ứng dụng |
+| 05 Xác thực và quyền | **DONE (đã chạy)** | Verify Supabase token (jose: chữ ký JWKS/HS256 + issuer + audience + expiry); map sub→profiles auto-provision CUSTOMER; AuthGuard+RolesGuard global; StoreAccessService ở service layer; `/v1/me`; FE bearer + 401 refresh một lần. 25/25 unit + 11/11 auth integration + 11/11 HTTP smoke pass. Chi tiết mục “Bước 05”. |
 | 06 Quản lý danh mục và món | TODO | Chưa thực hiện trong repository ứng dụng |
 | 07 Giỏ hàng và báo giá | TODO | Chưa thực hiện trong repository ứng dụng |
 | 08 Tạo đơn an toàn | TODO | Chưa thực hiện trong repository ứng dụng |
@@ -329,3 +329,67 @@ pnpm --filter @coffee-order/api run test:int          # 7/7 integration pass (TE
 
 ### Bước tiếp theo
 Bước 05 — Xác thực và quyền (`.kiro/steering/05-auth-rbac.md`): xác minh Supabase access token (chữ ký/issuer/expiry/audience), map `sub → profiles`, guard theo role và store, và quyết định FK `profiles.id → auth.users.id` (Q04-01). Không đánh dấu bước nào khác hoàn thành.
+
+---
+
+## Bước 05 — Xác thực và quyền (2026-10-09) — **DONE**
+
+### Dependency bước trước
+Bước 04 xong (schema + Prisma + 2 DB Docker). Bước 05 dùng `profiles`/`store_staff` và `PrismaService` đã có.
+
+### Môi trường
+**Chưa có Supabase project** (không có `SUPABASE_URL`/key trong env). Giống bước 03/04, tôi triển khai đầy đủ phần verify/RBAC **chạy và test được không cần Supabase**, bằng token HS256 tự ký với secret cục bộ. Khi có project thật chỉ cần đặt `SUPABASE_URL` (JWKS) hoặc `SUPABASE_JWT_SECRET`.
+
+### File đổi
+| File | Thay đổi |
+|---|---|
+| `packages/contracts/src/index.ts` | **Sửa**: thêm `AuthenticatedUser`, `MeResponse`. |
+| `apps/api/src/common/config/app-config.ts` | **Sửa**: thêm `auth` (configured/supabaseUrl/jwtIssuer/jwtAudience/jwtSecretConfigured); parser suy ra issuer từ URL; **không** lưu giá trị secret. |
+| `apps/api/src/modules/auth/token-verifier.service.ts` | **Mới**: verify token bằng `jose` — JWKS (ES256/RS256) hoặc HS256, kiểm chữ ký + issuer + audience + expiry. |
+| `apps/api/src/modules/auth/auth.service.ts` | **Mới**: map `sub → profiles`, auto-provision CUSTOMER (`upsert`), chặn tài khoản `isActive=false`. |
+| `apps/api/src/modules/auth/auth.guard.ts` | **Mới**: global AuthGuard, đọc Bearer, verify, gắn `req.user`; `@Public()` bỏ qua. |
+| `apps/api/src/modules/auth/roles.guard.ts` | **Mới**: kiểm `@Roles(...)`; 403 FORBIDDEN không lộ PII. |
+| `apps/api/src/modules/auth/store-access.service.ts` | **Mới**: `canActForStore`/`assertCanActForStore`/`staffStoreIds` — kiểm quyền store ở service layer. |
+| `apps/api/src/modules/auth/auth.decorators.ts` | **Mới**: `@Public`, `@Roles`, `@CurrentUser`, token `AUTH_USER_KEY`. |
+| `apps/api/src/modules/auth/auth.module.ts` | **Mới**: `@Global`, đăng ký APP_GUARD (AuthGuard rồi RolesGuard). |
+| `apps/api/src/modules/me/*` | **Mới**: `GET /v1/me` (controller + service). |
+| `apps/api/src/modules/health/health.controller.ts` | **Sửa**: `@Public()` cho health/ready. |
+| `apps/api/src/app.module.ts` | **Sửa**: import `AuthModule`, `MeModule`. |
+| `apps/api/src/modules/auth/auth.spec.ts`, `store-access.spec.ts` | **Mới**: unit test config/verifier/RolesGuard/StoreAccess. |
+| `apps/api/test/auth.int-spec.ts` | **Mới**: integration RBAC qua HTTP + DB thật. |
+| `apps/web/src/lib/supabase.ts` | **Mới**: browser client + `getAccessToken`/`refreshSessionOnce`. |
+| `apps/web/src/lib/api.ts` | **Sửa**: gắn Bearer; 401 → refresh một lần rồi gọi lại, không vòng lặp. |
+| `apps/web/src/lib/env.ts` | **Sửa**: `SUPABASE_URL`/`PUBLISHABLE_KEY`/`isSupabaseConfigured`. |
+| `apps/web/src/app/smoke/page.tsx` | **Sửa**: health/ready gọi với `auth: false`. |
+| `apps/api/package.json`, `apps/web/package.json` | **Sửa**: thêm `jose@5.10.0` / `@supabase/{supabase-js,ssr}`. |
+| `apps/api/.env` (gitignored), `.env.example`, 2 README | **Sửa**: biến auth + hướng dẫn + việc cần làm trên Supabase thật. |
+| `docs/decisions.md` | **Sửa**: mục “Bước 05” (F05-01..02, D05-01..07, Q05-01..03). |
+
+### Commands đã chạy và kết quả thật
+```powershell
+pnpm run lint / typecheck / build / test        # tat ca EXIT 0; unit 25/25 pass (3 suite)
+pnpm --filter @coffee-order/web run typecheck/build  # EXIT 0
+# Integration (DB test 5435):
+pnpm --filter @coffee-order/api run test:int    # 18/18 pass (7 schema + 11 auth/rbac)
+# HTTP smoke (API 3001 + DB dev, HS256 cuc bo): 11/11 PASS
+```
+
+**Unit (25/25)**: config suy ra issuer từ URL / không lưu secret; verifier chấp nhận token hợp lệ, từ chối hết hạn / sai chữ ký / sai audience / sai issuer / không phải JWT; RolesGuard cho ADMIN qua, CUSTOMER→admin ném 403; StoreAccess cho STAFF store A, từ chối store B, ADMIN mọi store, CUSTOMER không quyền staff.
+
+**Integration auth (11)** qua HTTP + DB thật: `@Public` không cần token; thiếu token→401 UNAUTHENTICATED; token rác→401; token hợp lệ lần đầu→auto-provision CUSTOMER, `/me` trả role CUSTOMER; CUSTOMER→admin 403; ADMIN→admin 200; STAFF store A→200; **STAFF store A đụng store B→403 (cross-store)**; CUSTOMER store-scope→403; `/me` của STAFF liệt kê đúng store; **đổi role trong DB có hiệu lực ngay** ở lần gọi sau.
+
+**HTTP smoke (11)** với API chạy thật: health public 200; `/me` thiếu/rác/hết hạn/sai chữ ký/sai issuer đều 401; token hợp lệ→200 auto-provision CUSTOMER; body lỗi và `/me` **không lộ secret**. Query DB xác nhận profile được tạo; đã xóa row test sau đó.
+
+### Pass / Fail / Skip
+- **PASS**: lint, typecheck (api+web), build (api+web), unit 25/25, integration 18/18, HTTP smoke 11/11, provision profile thật.
+- **FAIL**: không còn. Lỗi thật đã sửa trong lúc làm: `jose@6` ESM không import được từ CJS → hạ `jose@5.10.0`; import thừa trong auth.spec; bỏ biến global trong int test (dùng header `x-test-store`).
+- **SKIP / chưa kiểm được**: xác minh với **Supabase project thật** (JWKS ES256) — chưa có project, dùng HS256 cục bộ thay thế; **tắt Data API cho bảng nghiệp vụ** trên Supabase (Q05-02) — cần project, ghi là việc bắt buộc trước deploy; trang login/signup UI (bước 06+).
+
+### Hạn chế
+- Chưa chạy với Supabase thật; luồng JWKS ES256 chưa được verify end-to-end (code có nhánh JWKS nhưng test chạy nhánh HS256). Cần kiểm lại khi có project.
+- FK `profiles.id → auth.users.id` (Q04-01) vẫn chưa ràng buộc cứng; profile auto-provision theo `sub`.
+- Chống ghi trực tiếp qua Supabase Data API (REQ-005) là **cấu hình phía Supabase**, chưa thực hiện được vì chưa có project — đã ghi rõ trong README + decisions.
+- `apps/api/.env` nay có thêm HS256 secret **dev cục bộ** (đã gitignore), không phải secret production.
+
+### Bước tiếp theo
+Bước 06 — Quản lý danh mục và món (`.kiro/steering/06-catalog.md`): endpoint catalog công khai (`@Public`) + admin CRUD (`@Roles("ADMIN")`) + staff toggle availability theo store (dùng `StoreAccessService`), kèm DTO class-validator và test. Không đánh dấu bước nào khác hoàn thành.
