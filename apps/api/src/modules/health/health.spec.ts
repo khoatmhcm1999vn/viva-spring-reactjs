@@ -5,6 +5,7 @@ import request from "supertest";
 import { AppConfigModule } from "../../common/config/app-config.module";
 import { AllExceptionsFilter } from "../../common/filters/all-exceptions.filter";
 import { loadAppConfig } from "../../common/config/app-config";
+import { PrismaService } from "../../prisma/prisma.service";
 import { HealthModule } from "./health.module";
 
 describe("app-config", () => {
@@ -40,9 +41,20 @@ describe("health endpoints", () => {
   beforeAll(async () => {
     delete process.env.DATABASE_URL;
 
+    // Thay PrismaService that bang stub: unit test khong can DB. Khi
+    // databaseConfigured=false, readiness tra NOT_CONFIGURED nen pingDatabase
+    // khong duoc goi. Cung cap stub nhu mot provider vi HealthModule khong tu
+    // import PrismaModule (binh thuong la @Global o app.module).
+    const prismaStub: Pick<PrismaService, "pingDatabase"> = {
+      pingDatabase: async () => false,
+    };
+
     const moduleRef = await Test.createTestingModule({
       imports: [AppConfigModule, HealthModule],
-    }).compile();
+    })
+      .overrideProvider(PrismaService)
+      .useValue(prismaStub)
+      .compile();
 
     app = moduleRef.createNestApplication();
     app.setGlobalPrefix("v1");

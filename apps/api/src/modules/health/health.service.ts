@@ -5,10 +5,14 @@ import {
   type ReadyResponse,
 } from "@coffee-order/contracts";
 import { APP_CONFIG, type AppConfig } from "../../common/config/app-config";
+import { PrismaService } from "../../prisma/prisma.service";
 
 @Injectable()
 export class HealthService {
-  constructor(@Inject(APP_CONFIG) private readonly config: AppConfig) {}
+  constructor(
+    @Inject(APP_CONFIG) private readonly config: AppConfig,
+    private readonly prisma: PrismaService,
+  ) {}
 
   /**
    * Liveness: process con song va phuc vu duoc HTTP.
@@ -26,13 +30,19 @@ export class HealthService {
   /**
    * Readiness: du dieu kien nhan traffic that chua.
    *
-   * Buoc 03 chua co Prisma nen chi kiem DATABASE_URL da duoc dat hay chua.
-   * Buoc 04 se thay cho nay bang mot truy van thuc (`SELECT 1`) qua Prisma.
+   * Tu buoc 04: thuc hien `SELECT 1` qua Prisma. NOT_CONFIGURED khi chua co
+   * DATABASE_URL; ERROR khi co cau hinh nhung ket noi/truy van that bai;
+   * OK khi truy van thanh cong.
    */
-  readiness(): ReadyResponse {
-    const database = this.config.databaseConfigured
-      ? ReadinessCheckStatus.OK
-      : ReadinessCheckStatus.NOT_CONFIGURED;
+  async readiness(): Promise<ReadyResponse> {
+    let database: ReadinessCheckStatus;
+    if (!this.config.databaseConfigured) {
+      database = ReadinessCheckStatus.NOT_CONFIGURED;
+    } else {
+      database = (await this.prisma.pingDatabase())
+        ? ReadinessCheckStatus.OK
+        : ReadinessCheckStatus.ERROR;
+    }
 
     return {
       status: database === ReadinessCheckStatus.OK ? "READY" : "NOT_READY",

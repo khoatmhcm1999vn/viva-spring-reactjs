@@ -225,3 +225,54 @@ Toàn bộ số dưới đây **đã cài và chạy được**: `pnpm install -
 | Q03-03 | `pnpm` đang cài global qua npm vì `corepack enable` thiếu quyền admin. Có chuẩn hoá lại bằng corepack trong CI/Docker không? | Chốt ở bước 11 cùng Dockerfile. |
 | Q03-04 | `eslint-plugin-*` của `eslint-config-next` chưa khai báo hỗ trợ ESLint 10. | Theo dõi; lint hiện chạy exit 0. Nếu vỡ thì lùi `apps/web` về ESLint 9 và ghi lại. |
 | Q03-05 | Chưa có CI chạy các gate này tự động. | Chốt ở bước 11. |
+
+---
+
+## Bước 04 — Schema, migration, seed (2026-10-09)
+
+Toàn bộ đã **chạy thật** trên PostgreSQL 16 (Docker): 2 migration áp dụng lên DB trống, seed idempotent, 7/7 integration test pass, `/v1/ready` trả READY qua `SELECT 1` thật.
+
+### Phiên bản chốt (đã cài, lockfile commit)
+
+| Gói | Phiên bản | Ghi chú |
+|---|---|---|
+| `prisma` / `@prisma/client` | **7.10.0** | Dùng dist-tag `prev` (stable). `latest` đang là `8.0.0-rc.22` (RC) — không dùng. |
+| `@prisma/adapter-pg` | 7.10.0 | Prisma 7 **bắt buộc** driver adapter; postgres dùng adapter này. |
+| `pg` / `@types/pg` | 8.23.1 | Driver mà adapter chạy trên đó. |
+| `dotenv` | 18.0.6 | `prisma.config.ts` nạp `.env` khi chạy CLI local. |
+| `tsx` | 4.23.15 | Chạy `seed.ts` (TypeScript) trực tiếp. |
+| `cross-env` | 10.1.0 | Đặt `NODE_OPTIONS` cross-platform cho `test:int`. |
+| Postgres (dev/test) | `postgres:16-alpine` | Docker, cổng 5434 (dev) / 5435 (test). |
+
+### Prisma 7 là thay đổi lớn — 4 điều khác hẳn Prisma 6
+
+| # | Khác biệt (xác nhận từ docs prisma.io v7 + lỗi thực tế) | Hệ quả |
+|---|---|---|
+| F04-01 | **`url` không còn trong datasource của schema.** Connection URL khai ở `prisma.config.ts` qua `defineConfig` + `env()`. | Thêm `apps/api/prisma.config.ts`; datasource chỉ còn `provider = "postgresql"`. |
+| F04-02 | **PrismaClient bắt buộc driver adapter.** `new PrismaClient()` không adapter sẽ lỗi. | `PrismaService` dựng `new PrismaPg({connectionString})` và truyền `adapter`. |
+| F04-03 | **Client sinh vào source**, không còn `node_modules/.prisma` mặc định; `output` là bắt buộc. | Generator `provider = "prisma-client"`, `output = "../src/generated/prisma"`; gitignore `apps/api/src/generated/`; CI/Docker phải `prisma generate` trước build. |
+| F04-04 | Client sinh ra dùng **ESM import có đuôi `.js`**; ts-jest dưới `node16`/CommonJS không resolve được, và adapter cần dynamic import. | jest thêm `moduleNameMapper` bỏ `.js`; `test:int` chạy với `NODE_OPTIONS=--experimental-vm-modules`. |
+
+### Quyết định schema/migration
+
+| # | Quyết định | Lý do |
+|---|---|---|
+| D04-01 | Hai migration tách biệt: `init` (Prisma sinh) + `add_check_constraints` (SQL tay) | Prisma không biểu diễn được CHECK, partial unique, biểu thức. Tách để migration gốc tái sinh được từ schema. |
+| D04-02 | CHECK ở tầng DB cho mọi bất biến tiền/quantity/công thức | Toàn vẹn ở DB là lớp phòng thủ cuối; **không thay thế** validation ở service (bước 07–08). |
+| D04-03 | Partial unique `payments(order_id) WHERE method='PAY_AT_COUNTER'` thay vì UNIQUE(order_id) toàn cục | Đúng khuyến cáo `data-model.md`: MVP một payment/đơn nhưng không khóa cứng nhánh prepay nhiều lần sau này. |
+| D04-04 | CHECK `fulfillment_type = 'PICKUP'` ở tầng DB | MVP chỉ pickup; chặn tạo đơn DELIVERY ngay cả khi code lỡ gửi. Gỡ bằng migration riêng khi bật delivery. |
+| D04-05 | FK tới catalog/profile/store mà order/history tham chiếu là **Restrict**; `order_items`/`modifiers`/`history`/`payments` **Cascade** theo order | Giữ snapshot hóa đơn (REQ-306/307): không cho xóa món đang được đơn tham chiếu, nhưng xóa đơn thì dọn con. |
+| D04-06 | Seed **không** tạo profile staff/admin | Theo steering: tài khoản có role phải từ Supabase Auth thật (bước 05). Seed chỉ catalog + 1 store. Tránh ghi password/token vào Git. |
+| D04-07 | Seed idempotent theo natural key (store.code, slug, sku, (group,name)) | Chạy lại không nhân bản — đã kiểm: lần 2 mọi count giữ nguyên. |
+| D04-08 | DB dev (5434) và DB test (5435) tách biệt, volume riêng | `test:int` gọi `migrate reset` (xóa sạch) nên phải là DB riêng; có guard từ chối nếu URL trùng DB dev hoặc trỏ production. |
+| D04-09 | `PrismaService` không làm sập process khi kết nối DB lỗi lúc khởi động | `/v1/health` (liveness) vẫn chạy khi DB chưa sẵn sàng; readiness phản ánh trạng thái. |
+| D04-10 | `test:int` tách khỏi `pnpm test` (jest config riêng, tự skip khi thiếu `TEST_DATABASE_URL`) | `pnpm test` trên máy/CI chưa có DB vẫn pass; integration chỉ chạy khi có DB thật. |
+
+### Câu hỏi còn mở
+
+| # | Câu hỏi | Trạng thái |
+|---|---|---|
+| Q04-01 | FK `profiles.id → auth.users.id` của Supabase hiện thực ở đâu? Schema Prisma để `profiles.id` là UUID độc lập. | Chốt ở bước 05 (SQL riêng của Supabase hoặc trigger). Integration test hiện tạo profile với UUID tùy ý. |
+| Q04-02 | Định dạng `orders.code` (Q01-04) | Chưa chốt; sinh ở bước 08 khi tạo đơn. |
+| Q04-03 | `migrate deploy` trong CI/Docker và chuẩn hóa `prisma generate` bước build | Chốt ở bước 11. |
+| Q04-04 | Readiness có nên kiểm cả độ trễ query / pool, hay chỉ `SELECT 1`? | Hiện chỉ `SELECT 1`; đủ cho MVP. |

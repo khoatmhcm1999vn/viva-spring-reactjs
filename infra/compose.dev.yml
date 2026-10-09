@@ -1,0 +1,57 @@
+# Postgres cho DEV/LOCAL. Khong dung cho production.
+#
+# Cong host 5434 (khong phai 5432 mac dinh) de tranh dung voi Postgres khac
+# dang chay tren may. Container noi bo van la 5432.
+#
+# Du lieu nam trong volume co ten; `docker compose -f infra/compose.dev.yml down -v`
+# se xoa het du lieu dev - khong chay lenh do tren DB chia se hay production.
+#
+# Khoi dong:
+#   docker compose -f infra/compose.dev.yml up -d
+# DATABASE_URL tuong ung (dat trong apps/api/.env, KHONG commit):
+#   postgresql://coffee:coffee_dev_pw@localhost:5434/coffee_order?schema=public
+
+services:
+  db-dev:
+    image: postgres:16-alpine
+    container_name: coffee-order-db-dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: coffee
+      POSTGRES_PASSWORD: coffee_dev_pw
+      POSTGRES_DB: coffee_order
+      TZ: UTC
+    ports:
+      - "5434:5432"
+    volumes:
+      - coffee_pgdata_dev:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U coffee -d coffee_order"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # DB rieng cho integration test (buoc 10). Cong 5435, database khac,
+  # volume khac - de test co the reset ma khong dung toi DB dev.
+  db-test:
+    image: postgres:16-alpine
+    container_name: coffee-order-db-test
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: coffee
+      POSTGRES_PASSWORD: coffee_test_pw
+      POSTGRES_DB: coffee_order_test
+      TZ: UTC
+    ports:
+      - "5435:5432"
+    volumes:
+      - coffee_pgdata_test:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U coffee -d coffee_order_test"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  coffee_pgdata_dev:
+  coffee_pgdata_test:

@@ -38,6 +38,11 @@ yarn-error.log*
 next-env.d.ts
 .vercel
 
+### Prisma ###
+# Client sinh ra tu `prisma generate` (Prisma 7 dat vao src/). Sinh lai duoc,
+# khong commit. CI/Docker phai chay `prisma generate` truoc khi build.
+apps/api/src/generated/
+
 ### IDE ###
 .idea
 *.iml

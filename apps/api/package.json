@@ -12,7 +12,16 @@
     "lint": "eslint \"src/**/*.ts\"",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "jest --passWithNoTests",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "test:int": "cross-env NODE_OPTIONS=--experimental-vm-modules jest -c jest.int.config.js --passWithNoTests",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate:dev": "prisma migrate dev",
+    "prisma:migrate:deploy": "prisma migrate deploy",
+    "prisma:validate": "prisma validate",
+    "db:seed": "tsx prisma/seed.ts"
+  },
+  "prisma": {
+    "schema": "prisma/schema.prisma"
   },
   "dependencies": {
     "@coffee-order/contracts": "workspace:*",
@@ -21,8 +30,12 @@
     "@nestjs/core": "11.2.7",
     "@nestjs/platform-express": "11.2.7",
     "@nestjs/swagger": "11.4.7",
+    "@prisma/adapter-pg": "7.10.0",
+    "@prisma/client": "7.10.0",
     "class-transformer": "0.5.1",
     "class-validator": "0.15.1",
+    "dotenv": "18.0.6",
+    "pg": "8.23.1",
     "reflect-metadata": "0.2.2",
     "rxjs": "7.8.2"
   },
@@ -33,11 +46,15 @@
     "@types/express": "5.0.6",
     "@types/jest": "30.0.0",
     "@types/node": "24.19.1",
+    "@types/pg": "8.23.1",
     "@types/supertest": "7.2.1",
+    "cross-env": "10.1.0",
     "eslint": "10.12.0",
     "jest": "30.5.2",
+    "prisma": "7.10.0",
     "supertest": "7.3.1",
     "ts-jest": "29.4.14",
+    "tsx": "4.23.15",
     "typescript": "5.9.3",
     "typescript-eslint": "8.71.1"
   }

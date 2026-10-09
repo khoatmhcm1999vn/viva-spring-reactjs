@@ -7,7 +7,7 @@ Bộ hướng dẫn đã được tạo. Ứng dụng, migrations, tests và dep
 | 01 Chốt nghiệp vụ | DONE (tài liệu) | `docs/requirements.md` (50 REQ), `docs/decisions.md` (D01-01..D01-15, Q01-01..Q01-07), `docs/test-plan.md` map REQ. Chi tiết ở mục “Bước 01” bên dưới. Chưa có code/app. |
 | 02 Phác thảo giao diện | DONE (tài liệu) | `docs/wireframes.md` (11 màn, map route→feature→REQ, walkthrough), `docs/mockups/index.html` (11 panel tĩnh), `docs/decisions.md` D02-01..D02-15 / Q02-01..Q02-07. Chi tiết ở mục “Bước 02”. Chưa có component React nào. |
 | 03 Khởi tạo monorepo | **DONE (đã chạy)** | pnpm workspaces 4 project. `install --frozen-lockfile`, `lint`, `typecheck`, `build`, `test` đều exit 0; 7/7 jest pass; 24/24 smoke HTTP pass; web gọi được `/v1/health` thật. Phiên bản chốt ở `docs/decisions.md`. Chi tiết ở mục “Bước 03”. |
-| 04 Schema, migration và seed | TODO | Chưa thực hiện trong repository ứng dụng |
+| 04 Schema, migration và seed | **DONE (đã chạy)** | Prisma 7.10 schema theo data-model; 2 migration áp lên PostgreSQL thật; seed idempotent (1 store, 4 cat, 12 món, 19 variant, 3 group, 9 option); 7/7 integration test pass (CHECK/FK/UNIQUE/rollback); `/v1/ready` trả READY qua `SELECT 1`. Chi tiết ở mục “Bước 04”. |
 | 05 Xác thực và quyền | TODO | Chưa thực hiện trong repository ứng dụng |
 | 06 Quản lý danh mục và món | TODO | Chưa thực hiện trong repository ứng dụng |
 | 07 Giỏ hàng và báo giá | TODO | Chưa thực hiện trong repository ứng dụng |
@@ -257,3 +257,75 @@ Smoke phát hiện **một lỗi thật đã sửa**: Swagger vừa có `setGlob
 
 ### Bước tiếp theo
 Bước 04 — Schema, migration và seed (`.kiro/steering/04-database.md`): Prisma **7.10.0** (không dùng tag `latest` vì đang là RC 8), schema theo `docs/data-model.md`, migration đầu tiên, seed một store demo, và đổi `/v1/ready` sang truy vấn DB thật. Không đánh dấu bước nào khác hoàn thành.
+
+---
+
+## Bước 04 — Schema, migration và seed (2026-10-09) — **DONE**
+
+### Dependency bước trước
+Bước 03 đã xong (monorepo chạy được, `/v1/ready` trả 503 khi chưa có DB). Bước 04 cần một PostgreSQL thật.
+
+### Môi trường DB
+Máy có Docker đang chạy, không có `psql`/Postgres cài sẵn. `tech.md` cho phép Postgres Docker ở dev. Tôi dựng `infra/compose.dev.yml`: **db-dev** cổng 5434 và **db-test** cổng 5435 (tránh 5432 theo quy ước repo), hai volume + database riêng. Cả hai `postgres:16-alpine`, healthcheck `pg_isready`. `apps/api/.env` (gitignored) trỏ `DATABASE_URL` tới db-dev.
+
+### Đã kiểm repo trước khi sửa
+`apps/api` đã có code bước 03. Không có `prisma/` nào. Không ghi đè file bước 03; chỉ **thêm** Prisma và sửa `health.*` để ping DB thật.
+
+### File đổi
+
+| File | Thay đổi |
+|---|---|
+| `apps/api/prisma/schema.prisma` | **Mới**. 16 model theo `docs/data-model.md` + 5 enum. Generator `prisma-client` output `src/generated/prisma`; datasource chỉ `provider` (Prisma 7). |
+| `apps/api/prisma.config.ts` | **Mới**. Prisma 7: `DATABASE_URL` qua `env()`, đường dẫn migration + seed. |
+| `apps/api/prisma/migrations/20261009135935_init/` | **Mới**. Migration gốc Prisma sinh: enum, 16 bảng, FK, unique, index. |
+| `apps/api/prisma/migrations/20261009140000_add_check_constraints/` | **Mới**. SQL tay: CHECK tiền/quantity/công thức, partial unique payment, chặn DELIVERY, quote expiry. |
+| `apps/api/prisma/seed.ts` | **Mới**. Seed idempotent theo natural key; **không** seed staff/admin; guard từ chối DB production. |
+| `apps/api/src/prisma/prisma.service.ts` | **Mới**. PrismaClient + `@prisma/adapter-pg`; không sập khi DB lỗi; `pingDatabase()` cho readiness. |
+| `apps/api/src/prisma/prisma.module.ts` | **Mới**. `@Global`. |
+| `apps/api/src/modules/health/health.service.ts` | **Sửa**. Readiness gọi `SELECT 1` qua Prisma (OK/NOT_CONFIGURED/ERROR). |
+| `apps/api/src/modules/health/health.controller.ts` | **Sửa**. `getReady` thành async. |
+| `apps/api/src/modules/health/health.module.ts` | **Sửa**. Import `PrismaModule` để resolve độc lập khi test. |
+| `apps/api/src/modules/health/health.spec.ts` | **Sửa**. Stub `PrismaService` qua `overrideProvider`; vẫn 7/7 pass. |
+| `apps/api/src/app.module.ts` | **Sửa**. Thêm `PrismaModule`. |
+| `apps/api/test/db-schema.int-spec.ts` | **Mới**. 7 integration test; tự skip khi thiếu `TEST_DATABASE_URL`; guard chống chạy trên dev/prod. |
+| `apps/api/jest.int.config.js`, `tsconfig.spec.json` | **Mới**. Config test tích hợp + typecheck test dir. |
+| `apps/api/jest.config.js` | **Sửa**. `moduleNameMapper` bỏ `.js` cho client Prisma; loại `generated/**` khỏi coverage. |
+| `apps/api/package.json` | **Sửa**. Thêm Prisma/pg/dotenv/tsx/cross-env; scripts `prisma:*`, `db:seed`, `test:int`. |
+| `infra/compose.dev.yml` | **Mới**. Postgres dev + test. |
+| `.gitignore` | **Sửa**. Thêm `apps/api/src/generated/`. |
+| `pnpm-workspace.yaml` | **Sửa**. `allowBuilds`: `prisma`/`@prisma/engines`/`@prisma/client`/`esbuild` = true (cần postinstall). |
+| `docs/data-model.md`, `docs/decisions.md` | **Sửa**. Ghi constraint đã hiện thực + mục “Bước 04” (F04-01..04, D04-01..10, Q04-01..04). |
+
+### Commands đã chạy và kết quả thật
+
+```powershell
+docker compose -f infra/compose.dev.yml up -d        # db-dev(5434) + db-test(5435) healthy
+prisma validate                                       # "The schema is valid"
+prisma migrate dev --name init                        # tao + ap migration 1
+prisma migrate dev                                    # ap migration 2 (check constraints)
+prisma generate                                       # sinh client vao src/generated/prisma
+node --import tsx prisma/seed.ts                       # seed lan 1
+node --import tsx prisma/seed.ts                       # seed lan 2 -> counts KHONG doi (idempotent)
+pnpm run lint / typecheck / build / test              # tat ca EXIT 0; unit 7/7 pass
+pnpm --filter @coffee-order/api run test:int          # 7/7 integration pass (TEST_DATABASE_URL -> 5435)
+```
+
+- **Migrate trên DB trống**: `migrate reset --force` trên db-test áp cả 2 migration từ đầu, không lỗi; integration test đầu khẳng định bảng rỗng (count=0).
+- **Seed idempotent**: lần 1 và lần 2 cho cùng con số — stores=1, categories=4, products=12, product_variants=19, modifier_groups=3, modifier_options=9. Query trực tiếp sau restart container xác nhận persisted (thêm product_modifier_groups=23).
+- **Integration 7/7 pass**: migrate-trống; CHECK price âm bị từ chối; CHECK group max<min bị từ chối; UNIQUE(product,size) bị từ chối; FK RESTRICT xóa category có món bị từ chối; CHECK order total sai công thức bị từ chối; **rollback transaction** — lỗi inject giữa transaction không để lại dữ liệu mồ côi.
+- **Readiness thật**: khởi động API với DATABASE_URL trỏ db-dev → log "Da ket noi database"; `GET /v1/ready` trả **HTTP 200 `{"status":"READY","checks":{"database":"OK"}}`** (bước 03 trả 503, giờ là query `SELECT 1` thật).
+
+### Pass / Fail / Skip
+- **PASS**: migrate (2), validate, generate, seed idempotent (×2), lint, typecheck, build, unit test (7/7), integration test (7/7), readiness READY thật, seed persist sau restart.
+- **FAIL**: không còn. Trong quá trình có các lỗi thật đã sửa: Prisma 7 bỏ `url` khỏi schema (phải tạo `prisma.config.ts`); client sinh ra ESM `.js` làm ts-jest/Nest không resolve (thêm `moduleNameMapper` + import PrismaModule vào HealthModule); `migrate reset` Prisma 7 không có `--skip-seed`; adapter cần `--experimental-vm-modules` dưới jest.
+- **SKIP**: FK `profiles.id → auth.users.id` của Supabase (Q04-01, bước 05); `migrate deploy` trong CI/Docker (bước 11). Không có test nào bị skip ngoài ý muốn — integration suite **đã chạy** vì tôi dựng được DB test.
+
+### Hạn chế
+- Chưa có xác thực/phân quyền; chưa có module nghiệp vụ nào. Chưa có endpoint đọc/ghi catalog.
+- Profile staff/admin **chưa tồn tại** (chủ ý — bước 05 tạo qua Supabase Auth). Integration test tạo profile bằng UUID tùy ý, không qua Auth.
+- DB chạy bằng Docker local; **chưa** có Supabase/cloud. Chưa tạo tài nguyên trả phí nào.
+- Client Prisma gitignored; mọi lần clone/CI phải chạy `prisma generate` trước build (đã ghi trong README).
+- `apps/api/.env` chứa mật khẩu DB **dev** (của container local), đã gitignore, không phải secret production.
+
+### Bước tiếp theo
+Bước 05 — Xác thực và quyền (`.kiro/steering/05-auth-rbac.md`): xác minh Supabase access token (chữ ký/issuer/expiry/audience), map `sub → profiles`, guard theo role và store, và quyết định FK `profiles.id → auth.users.id` (Q04-01). Không đánh dấu bước nào khác hoàn thành.

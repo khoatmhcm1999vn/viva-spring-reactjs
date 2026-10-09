@@ -1,5 +1,18 @@
-# Mô hình dữ liệu thiết kế — chưa phải migration đã chạy
+# Mô hình dữ liệu thiết kế
+
+> **Cập nhật bước 04 (2026-10-09):** mô hình này **đã được hiện thực** bằng Prisma schema (`apps/api/prisma/schema.prisma`) và 2 migration đã áp dụng lên PostgreSQL thật. Nguồn chuẩn thực thi giờ là **Prisma migrations**; tài liệu này là mô tả thiết kế đi kèm. Chi tiết các constraint đã chạy và bằng chứng test ở `docs/progress.md` mục “Bước 04”.
+
 UUID PK mặc định trừ bảng liên kết; tiền integer VND >=0, quantity integer >0; timestamp dùng timestamptz. Các trường updated_at và created_at dùng cho entity mutable, đã lược bớt trong ERD cho dễ đọc.
+
+**Ràng buộc tầng DB đã hiện thực** (migration `20261009140000_add_check_constraints`, phần Prisma không biểu diễn được):
+- CHECK tiền ≥ 0: `product_variants.price_vnd`, `modifier_options.extra_price_vnd`, `checkout_quotes.total_vnd`, `payments.amount_vnd`, các cột tiền của `orders` và `order_items`.
+- CHECK `modifier_groups`: `min_select >= 0 AND max_select >= min_select`.
+- CHECK `order_items`: `quantity` trong 1..20 (REQ-202), `line_total_vnd = unit_price_vnd * quantity` (REQ-201).
+- CHECK `orders`: `total_vnd = subtotal_vnd + shipping_fee_vnd - discount_vnd`; `version >= 0`.
+- CHECK `payments.version >= 0`.
+- **Partial unique** `uq_payment_counter_per_order` trên `payments(order_id) WHERE method='PAY_AT_COUNTER'`: MVP đúng một payment pay-at-counter mỗi đơn, nới được khi thêm prepay bằng migration riêng.
+- CHECK `orders.fulfillment_type = 'PICKUP'`: chặn tạo đơn DELIVERY ở tầng DB cho tới khi bật delivery (có migration riêng).
+- CHECK `checkout_quotes.expires_at > created_at`.
 
 | Bảng | Cột và ràng buộc |
 |---|---|

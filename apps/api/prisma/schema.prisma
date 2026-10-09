@@ -1,0 +1,375 @@
+// Schema Coffee Order. Nguon thiet ke: docs/data-model.md va docs/diagrams/erd.*.
+//
+// Quy uoc:
+//  - PK UUID mac dinh tru bang lien ket (dung khoa composite).
+//  - Tien la integer VND >= 0; quantity integer > 0. Rang buoc >=0/>0 va cac
+//    CHECK khac duoc bo sung bang SQL migration vi Prisma khong bieu dien duoc.
+//  - Thoi gian la timestamptz (@db.Timestamptz). Luu UTC, hien thi Asia/Ho_Chi_Minh.
+//  - FK toi catalog/profile/store ma lich su don tham chieu dung Restrict/NoAction;
+//    deactivate (is_active=false) thay vi xoa vat ly.
+
+// Prisma 7: client sinh vao source (khong con node_modules mac dinh); connection
+// URL khai o prisma.config.ts; PrismaClient bat buoc driver adapter (@prisma/adapter-pg).
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// --------------------------------------------------------------------------
+// Enum
+// --------------------------------------------------------------------------
+
+enum UserRole {
+  CUSTOMER
+  STAFF
+  ADMIN
+}
+
+enum FulfillmentType {
+  PICKUP
+  DELIVERY // Tat o MVP, giu cho nhanh tuong lai.
+}
+
+enum PaymentMethod {
+  PAY_AT_COUNTER
+}
+
+enum OrderStatus {
+  PLACED
+  CONFIRMED
+  PREPARING
+  READY
+  COMPLETED
+  CANCELLED
+  REJECTED
+}
+
+enum PaymentStatus {
+  UNPAID
+  PENDING
+  PAID
+  FAILED
+  REFUND_PENDING
+  REFUNDED
+}
+
+// --------------------------------------------------------------------------
+// Nguoi dung va cua hang
+// --------------------------------------------------------------------------
+
+/// profiles.id = auth.users.id cua Supabase. FK sang auth.users chi ton tai
+/// trong migration cua Supabase, khong khai o day (xem docs/data-model.md).
+model Profile {
+  id        String   @id @db.Uuid
+  fullName  String?  @map("full_name")
+  phone     String?
+  role      UserRole @default(CUSTOMER)
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  storeStaff    StoreStaff[]
+  orders        Order[]
+  quotes        CheckoutQuote[]
+  statusHistory OrderStatusHistory[]
+  paymentsTaken Payment[]            @relation("PaymentCollectedBy")
+  idempotency   IdempotencyKey[]
+
+  @@map("profiles")
+}
+
+model Store {
+  id        String   @id @default(uuid()) @db.Uuid
+  code      String   @unique
+  name      String
+  address   String
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  staff         StoreStaff[]
+  storeVariants StoreVariant[]
+  orders        Order[]
+  quotes        CheckoutQuote[]
+
+  @@map("stores")
+}
+
+model StoreStaff {
+  storeId   String   @map("store_id") @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  store Store   @relation(fields: [storeId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  user  Profile @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@id([storeId, userId])
+  @@index([userId])
+  @@map("store_staff")
+}
+
+// --------------------------------------------------------------------------
+// Catalog
+// --------------------------------------------------------------------------
+
+model Category {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  slug      String   @unique
+  sortOrder Int      @default(0) @map("sort_order")
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  products Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id          String   @id @default(uuid()) @db.Uuid
+  categoryId  String   @map("category_id") @db.Uuid
+  name        String
+  slug        String   @unique
+  description String?
+  imagePath   String?  @map("image_path")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Restrict: khong cho xoa category con mon dang tham chieu.
+  category       Category                @relation(fields: [categoryId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  variants       ProductVariant[]
+  modifierGroups ProductModifierGroup[]
+
+  @@index([categoryId, isActive])
+  @@map("products")
+}
+
+model ProductVariant {
+  id        String   @id @default(uuid()) @db.Uuid
+  productId String   @map("product_id") @db.Uuid
+  sku       String   @unique
+  size      String
+  priceVnd  Int      @map("price_vnd")
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  product       Product        @relation(fields: [productId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  storeVariants StoreVariant[]
+  orderItems    OrderItem[]
+
+  @@unique([productId, size])
+  @@index([productId])
+  @@map("product_variants")
+}
+
+model ModifierGroup {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  minSelect Int      @default(0) @map("min_select")
+  maxSelect Int      @map("max_select")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  options        ModifierOption[]
+  productGroups  ProductModifierGroup[]
+
+  @@map("modifier_groups")
+}
+
+model ModifierOption {
+  id            String   @id @default(uuid()) @db.Uuid
+  groupId       String   @map("group_id") @db.Uuid
+  name          String
+  extraPriceVnd Int      @map("extra_price_vnd")
+  isActive      Boolean  @default(true) @map("is_active")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  group      ModifierGroup       @relation(fields: [groupId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  orderItems OrderItemModifier[]
+
+  @@unique([groupId, name])
+  @@index([groupId])
+  @@map("modifier_options")
+}
+
+model ProductModifierGroup {
+  productId String @map("product_id") @db.Uuid
+  groupId   String @map("group_id") @db.Uuid
+
+  product Product       @relation(fields: [productId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  group   ModifierGroup @relation(fields: [groupId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@id([productId, groupId])
+  @@map("product_modifier_groups")
+}
+
+model StoreVariant {
+  storeId     String  @map("store_id") @db.Uuid
+  variantId   String  @map("variant_id") @db.Uuid
+  isAvailable Boolean @default(true) @map("is_available")
+
+  store   Store          @relation(fields: [storeId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@id([storeId, variantId])
+  @@index([variantId])
+  @@map("store_variants")
+}
+
+// --------------------------------------------------------------------------
+// Quote (bước 7-8 dung quote persisted, khong tin gia tu browser)
+// --------------------------------------------------------------------------
+
+model CheckoutQuote {
+  id            String   @id @default(uuid()) @db.Uuid
+  userId        String   @map("user_id") @db.Uuid
+  storeId       String   @map("store_id") @db.Uuid
+  requestHash   String   @map("request_hash")
+  normalizedPayload Json @map("normalized_payload")
+  priceSnapshot Json     @map("price_snapshot")
+  totalVnd      Int      @map("total_vnd")
+  expiresAt     DateTime @map("expires_at") @db.Timestamptz(6)
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user  Profile @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  store Store   @relation(fields: [storeId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  order Order?
+
+  @@index([userId, expiresAt])
+  @@map("checkout_quotes")
+}
+
+// --------------------------------------------------------------------------
+// Don hang, item, modifier snapshot
+// --------------------------------------------------------------------------
+
+model Order {
+  id                      String          @id @default(uuid()) @db.Uuid
+  code                    String          @unique
+  userId                  String          @map("user_id") @db.Uuid
+  storeId                 String          @map("store_id") @db.Uuid
+  quoteId                 String          @unique @map("quote_id") @db.Uuid
+  fulfillmentType         FulfillmentType @default(PICKUP) @map("fulfillment_type")
+  status                  OrderStatus     @default(PLACED)
+  subtotalVnd             Int             @map("subtotal_vnd")
+  shippingFeeVnd          Int             @default(0) @map("shipping_fee_vnd")
+  discountVnd             Int             @default(0) @map("discount_vnd")
+  totalVnd                Int             @map("total_vnd")
+  recipientName           String          @map("recipient_name")
+  recipientPhone          String          @map("recipient_phone")
+  pickupNote              String?         @map("pickup_note")
+  storeNameSnapshot       String          @map("store_name_snapshot")
+  storeAddressSnapshot    String          @map("store_address_snapshot")
+  deliveryAddressSnapshot String?         @map("delivery_address_snapshot")
+  version                 Int             @default(0)
+  createdAt               DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt               DateTime        @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  user          Profile              @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  store         Store                @relation(fields: [storeId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  quote         CheckoutQuote        @relation(fields: [quoteId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  items         OrderItem[]
+  payments      Payment[]
+  statusHistory OrderStatusHistory[]
+  idempotency   IdempotencyKey[]
+
+  @@index([userId, createdAt])
+  @@index([storeId, status, createdAt])
+  @@map("orders")
+}
+
+model OrderItem {
+  id                  String   @id @default(uuid()) @db.Uuid
+  orderId             String   @map("order_id") @db.Uuid
+  variantId           String   @map("variant_id") @db.Uuid
+  productNameSnapshot String   @map("product_name_snapshot")
+  sizeSnapshot        String   @map("size_snapshot")
+  basePriceVnd        Int      @map("base_price_vnd")
+  unitPriceVnd        Int      @map("unit_price_vnd")
+  quantity            Int
+  lineTotalVnd        Int      @map("line_total_vnd")
+  note                String?
+
+  // Order xoa thi item xoa theo; variant RESTRICT de giu snapshot hoa don.
+  order    Order               @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  variant  ProductVariant      @relation(fields: [variantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  modifiers OrderItemModifier[]
+
+  @@index([orderId])
+  @@map("order_items")
+}
+
+model OrderItemModifier {
+  id                String @id @default(uuid()) @db.Uuid
+  orderItemId       String @map("order_item_id") @db.Uuid
+  optionId          String @map("option_id") @db.Uuid
+  groupNameSnapshot String @map("group_name_snapshot")
+  optionNameSnapshot String @map("option_name_snapshot")
+  extraPriceVnd     Int    @map("extra_price_vnd")
+
+  orderItem OrderItem      @relation(fields: [orderItemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  option    ModifierOption @relation(fields: [optionId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@unique([orderItemId, optionId])
+  @@index([orderItemId])
+  @@map("order_item_modifiers")
+}
+
+model OrderStatusHistory {
+  id         String       @id @default(uuid()) @db.Uuid
+  orderId    String       @map("order_id") @db.Uuid
+  fromStatus OrderStatus? @map("from_status")
+  toStatus   OrderStatus  @map("to_status")
+  actorId    String?      @map("actor_id") @db.Uuid
+  reason     String?
+  createdAt  DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  order Order    @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  actor Profile? @relation(fields: [actorId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([orderId, createdAt, id])
+  @@map("order_status_history")
+}
+
+model Payment {
+  id                String        @id @default(uuid()) @db.Uuid
+  orderId           String        @map("order_id") @db.Uuid
+  method            PaymentMethod
+  status            PaymentStatus @default(UNPAID)
+  amountVnd         Int           @map("amount_vnd")
+  providerReference String?       @unique @map("provider_reference")
+  collectedBy       String?       @map("collected_by") @db.Uuid
+  paidAt            DateTime?     @map("paid_at") @db.Timestamptz(6)
+  version           Int           @default(0)
+  createdAt         DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  collector Profile? @relation("PaymentCollectedBy", fields: [collectedBy], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([orderId])
+  @@map("payments")
+}
+
+model IdempotencyKey {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @map("user_id") @db.Uuid
+  key         String
+  requestHash String   @map("request_hash")
+  orderId     String?  @unique @map("order_id") @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user  Profile @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  order Order?  @relation(fields: [orderId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@unique([userId, key])
+  @@map("idempotency_keys")
+}

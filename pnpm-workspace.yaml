@@ -2,8 +2,8 @@ packages:
   - "apps/*"
   - "packages/*"
 
-# pnpm 12 chan install script cua dependency theo mac dinh. Moi goi duoi day la
-# mot quyet dinh co y, khong phai de pnpm tu hoi lai moi lan install.
+# pnpm 12 chan install script cua dependency theo mac dinh. Moi gia tri duoi day
+# la mot quyet dinh co y, khong phai de pnpm tu hoi lai moi lan install.
 allowBuilds:
   # sharp co prebuilt binary cho win32-x64; khong can build tu nguon.
   sharp: false
@@ -13,3 +13,9 @@ allowBuilds:
   "@parcel/watcher": false
   # script telemetry cua nha phat hanh. Khong cho chay.
   "@scarf/scarf": false
+  # Prisma CAN postinstall de tai query engine va sinh client. Cho phep co y.
+  prisma: true
+  "@prisma/engines": true
+  "@prisma/client": true
+  # esbuild (phu thuoc cua tsx) can postinstall de lay binary.
+  esbuild: true

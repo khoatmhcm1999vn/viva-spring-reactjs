@@ -25,8 +25,8 @@ export class HealthController {
   @ApiOperation({ summary: "Readiness - du dieu kien nhan traffic chua" })
   @ApiResponse({ status: 200, description: "San sang" })
   @ApiResponse({ status: 503, description: "Chua san sang" })
-  getReady(@Res({ passthrough: true }) res: Response): ReadyResponse {
-    const body = this.health.readiness();
+  async getReady(@Res({ passthrough: true }) res: Response): Promise<ReadyResponse> {
+    const body = await this.health.readiness();
     res.status(body.status === "READY" ? 200 : 503);
     return body;
   }
