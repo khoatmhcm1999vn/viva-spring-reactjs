@@ -181,8 +181,79 @@ export interface MeResponse {
 }
 
 /* ------------------------------------------------------------------ */
+/* Catalog (bước 06)                                                   */
+/* ------------------------------------------------------------------ */
+
+/** Danh muc cong khai. */
+export interface CategoryDto {
+  id: string;
+  name: string;
+  slug: string;
+  sortOrder: number;
+  isActive: boolean;
+}
+
+/**
+ * Variant (size) trong response catalog.
+ * `available` chi co khi truy van kem storeId: phan anh store_variants.is_available
+ * cua dung store do. Khong co storeId -> available = null (khong xet theo store).
+ */
+export interface VariantDto {
+  id: string;
+  sku: string;
+  size: string;
+  priceVnd: number;
+  isActive: boolean;
+  /** null khi khong loc theo store; true/false khi co storeId. */
+  available: boolean | null;
+}
+
+/** Tuy chon trong mot nhom modifier. */
+export interface ModifierOptionDto {
+  id: string;
+  name: string;
+  extraPriceVnd: number;
+  isActive: boolean;
+}
+
+/** Nhom modifier ap dung cho mot mon, kem luat min/max. */
+export interface ModifierGroupDto {
+  id: string;
+  name: string;
+  minSelect: number;
+  maxSelect: number;
+  options: ModifierOptionDto[];
+}
+
+/** Mon trong danh sach (chua kem modifier chi tiet). */
+export interface ProductListItemDto {
+  id: string;
+  categoryId: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  imagePath: string | null;
+  isActive: boolean;
+  variants: VariantDto[];
+  /** Gia variant thap nhat con ban (sau khi loc theo store neu co). null khi khong co variant kha dung. */
+  fromPriceVnd: number | null;
+}
+
+/** Chi tiet mon: them modifier rules. */
+export interface ProductDetailDto extends ProductListItemDto {
+  modifierGroups: ModifierGroupDto[];
+}
+
+/* ------------------------------------------------------------------ */
 /* Hang so dung chung                                                  */
 /* ------------------------------------------------------------------ */
+
+/** Gioi han phan trang danh sach. limit toi da 100 (xem docs/api-contract.md). */
+export const PAGINATION = {
+  defaultPage: 1,
+  defaultLimit: 20,
+  maxLimit: 100,
+} as const;
 
 /** Gioi hanh gio hang, dong bo voi REQ-202 trong docs/requirements.md. */
 export const CART_LIMITS = {

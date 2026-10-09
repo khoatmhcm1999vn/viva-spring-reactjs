@@ -319,3 +319,36 @@ Toàn bộ đã **chạy thật** trên PostgreSQL 16 (Docker): 2 migration áp 
 | Q05-01 | Dùng JWKS (ES256) hay HS256 ở production? | Khuyến nghị JWKS; chốt khi tạo Supabase project. |
 | Q05-02 | Verify + tắt Data API trên Supabase thật | Chưa kiểm được, cần project. Ghi là việc bắt buộc trước deploy (bước 11). |
 | Q05-03 | Có cần cache kết quả verify/profile để giảm query mỗi request? | Chưa; MVP query profile mỗi request cho đúng role. Cân nhắc ở bước 10/11 nếu cần. |
+
+---
+
+## Bước 06 — Quản lý danh mục và món (2026-10-09)
+
+Đã **chạy thật**: 25 unit + 42 integration (DB thật, trong đó 24 catalog) pass; HTTP smoke đọc catalog từ seed thật (4 category, 12 món, availability theo store, search, phân trang).
+
+### Quyết định
+| # | Quyết định | Lý do |
+|---|---|---|
+| D06-01 | Response contract (`CategoryDto`, `ProductListItemDto`, `ProductDetailDto`, `VariantDto`, `ModifierGroupDto`) khai trong `packages/contracts`; viết tay (chưa sinh từ OpenAPI) | Backend là nguồn chuẩn; web dùng chung type. Tiếp tục Q03-01 (chưa sinh từ OpenAPI). |
+| D06-02 | `VariantDto.available`: `null` khi query không kèm `storeId`, `true/false` khi có | Phân biệt rõ "không xét theo store" với "hết hàng tại store". UI khách luôn truyền `storeId`. |
+| D06-03 | Chưa có `store_variants` cho một variant tại store → coi là **không bán** (`available=false`) tại store đó | An toàn: món chỉ hiện bán khi admin/staff chủ động bật. Khớp REQ-101. |
+| D06-04 | `fromPriceVnd` = giá variant rẻ nhất **còn bán** (lọc theo store nếu có); `null` khi không có variant khả dụng | Menu hiển thị "từ X đ"; món hết sạch tại store không có giá "từ". |
+| D06-05 | slug/SKU trùng, size trùng, `maxSelect<minSelect`, giá âm → **400 VALIDATION_ERROR** (không phải 409) | 409 trong dự án dành cho xung đột trạng thái/đồng thời (VERSION_CONFLICT...). Lỗi nhập liệu là 400. Bắt `P2002` của Prisma → 400. |
+| D06-06 | Cửa hàng `isActive=false` khi truy vấn catalog theo store → **409 ITEM_UNAVAILABLE** | REQ-102; phân biệt với 404 (store không tồn tại). |
+| D06-07 | `PUT /admin/products/:id/modifier-groups` thay **cả tập** nhóm trong transaction (deleteMany + createMany) | Idempotent, khớp wireframe (admin tick/bỏ tick cả nhóm). Kiểm mọi groupId tồn tại trước. |
+| D06-08 | Không có endpoint **xóa vật lý** category/product/variant/option | REQ-603/307: ẩn bằng `isActive` để giữ snapshot đơn cũ. FK RESTRICT ở DB cũng chặn xóa khi có tham chiếu. |
+| D06-09 | Staff toggle gọi `StoreAccessService.assertCanActForStore` trong **service** trước khi ghi `store_variants` | Chống cross-store ngay cả khi internal call; không chỉ dựa `@Roles`. |
+| D06-10 | Toggle availability dùng `upsert` theo `storeId_variantId` | Lần đầu tạo bản ghi, lần sau cập nhật; idempotent. |
+| D06-11 | Query DTO dùng `@Type(() => Number)` cho page/limit | `ValidationPipe` có `enableImplicitConversion=false` (chốt bước 03), nên phải ép kiểu tường minh. |
+
+### Chưa làm trong phạm vi (ghi rõ)
+- **Upload ảnh món**: steering nhắc signed upload qua Storage. **Chưa có Supabase project** nên chưa làm được signed URL/kiểm mime/size thật. Hiện `imagePath` là string path admin tự cung cấp (validate độ dài). Không lưu ảnh vào filesystem container. → Q06-01.
+- **Phối hợp khóa catalog ↔ checkout** để chống giá đổi giữa lúc kiểm và lưu đơn: thuộc bước 07–08 (quote + tạo đơn), chưa thuộc đọc catalog. Catalog đọc không cache ở server nên không có nguy cơ "checkout tin giá cũ" từ phía API; client invalidate query là phần của bước 07+.
+- `includeInactive` cho category/admin listing đầy đủ: hiện danh sách công khai chỉ trả active; màn admin xem cả inactive sẽ hoàn thiện khi làm UI (bước sau).
+
+### Câu hỏi còn mở
+| # | Câu hỏi | Trạng thái |
+|---|---|---|
+| Q06-01 | Upload ảnh: signed upload Supabase Storage + public read hay signed URL? | Chưa chốt; cần project. Hiện nhận `imagePath` string. Nối tiếp Q01-07. |
+| Q06-02 | Có cần endpoint admin liệt kê product/category gồm cả inactive (có phân trang riêng)? | Chưa; thêm khi dựng UI admin. |
+| Q06-03 | Chuẩn hóa tiếng Việt khi search (bỏ dấu) — hiện dùng `contains insensitive` của Postgres | Đủ cho MVP; cân nhắc `unaccent` nếu cần. |

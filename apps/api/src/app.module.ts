@@ -3,6 +3,7 @@ import { ConfigModule } from "@nestjs/config";
 import { AppConfigModule } from "./common/config/app-config.module";
 import { RequestIdMiddleware } from "./common/middleware/request-id.middleware";
 import { AuthModule } from "./modules/auth/auth.module";
+import { CatalogModule } from "./modules/catalog/catalog.module";
 import { HealthModule } from "./modules/health/health.module";
 import { MeModule } from "./modules/me/me.module";
 import { PrismaModule } from "./prisma/prisma.module";
@@ -18,6 +19,7 @@ import { PrismaModule } from "./prisma/prisma.module";
     AuthModule,
     HealthModule,
     MeModule,
+    CatalogModule,
   ],
 })
 export class AppModule implements NestModule {

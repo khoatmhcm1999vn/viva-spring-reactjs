@@ -9,7 +9,7 @@ Bộ hướng dẫn đã được tạo. Ứng dụng, migrations, tests và dep
 | 03 Khởi tạo monorepo | **DONE (đã chạy)** | pnpm workspaces 4 project. `install --frozen-lockfile`, `lint`, `typecheck`, `build`, `test` đều exit 0; 7/7 jest pass; 24/24 smoke HTTP pass; web gọi được `/v1/health` thật. Phiên bản chốt ở `docs/decisions.md`. Chi tiết ở mục “Bước 03”. |
 | 04 Schema, migration và seed | **DONE (đã chạy)** | Prisma 7.10 schema theo data-model; 2 migration áp lên PostgreSQL thật; seed idempotent (1 store, 4 cat, 12 món, 19 variant, 3 group, 9 option); 7/7 integration test pass (CHECK/FK/UNIQUE/rollback); `/v1/ready` trả READY qua `SELECT 1`. Chi tiết ở mục “Bước 04”. |
 | 05 Xác thực và quyền | **DONE (đã chạy)** | Verify Supabase token (jose: chữ ký JWKS/HS256 + issuer + audience + expiry); map sub→profiles auto-provision CUSTOMER; AuthGuard+RolesGuard global; StoreAccessService ở service layer; `/v1/me`; FE bearer + 401 refresh một lần. 25/25 unit + 11/11 auth integration + 11/11 HTTP smoke pass. Chi tiết mục “Bước 05”. |
-| 06 Quản lý danh mục và món | TODO | Chưa thực hiện trong repository ứng dụng |
+| 06 Quản lý danh mục và món | **DONE (đã chạy)** | Catalog công khai (categories/products/products/:id, store availability, phân trang, search) + admin CRUD (category/product/variant/modifier) + staff toggle availability theo store (StoreAccessService). 25 unit + 42 integration pass; HTTP smoke đọc seed thật (4 cat, 12 món). Chi tiết mục “Bước 06”. |
 | 07 Giỏ hàng và báo giá | TODO | Chưa thực hiện trong repository ứng dụng |
 | 08 Tạo đơn an toàn | TODO | Chưa thực hiện trong repository ứng dụng |
 | 09 Xử lý đơn và tracking | TODO | Chưa thực hiện trong repository ứng dụng |
@@ -393,3 +393,62 @@ pnpm --filter @coffee-order/api run test:int    # 18/18 pass (7 schema + 11 auth
 
 ### Bước tiếp theo
 Bước 06 — Quản lý danh mục và món (`.kiro/steering/06-catalog.md`): endpoint catalog công khai (`@Public`) + admin CRUD (`@Roles("ADMIN")`) + staff toggle availability theo store (dùng `StoreAccessService`), kèm DTO class-validator và test. Không đánh dấu bước nào khác hoàn thành.
+
+---
+
+## Bước 06 — Quản lý danh mục và món (2026-10-09) — **DONE**
+
+### Dependency bước trước
+Bước 04 (schema catalog + seed) và bước 05 (AuthGuard/RolesGuard/StoreAccessService) đã xong. Bước 06 dùng lại toàn bộ: `@Public/@Roles/@CurrentUser`, `StoreAccessService`, `PrismaService`, filter lỗi, DB dev (5434) + test (5435).
+
+### Đã kiểm repo trước khi sửa
+Chưa có module catalog. Không ghi đè file bước trước; chỉ **thêm** module `catalog` và nối vào `app.module.ts` + thêm contract types.
+
+### File đổi
+| File | Thay đổi |
+|---|---|
+| `packages/contracts/src/index.ts` | **Sửa**: thêm `CategoryDto`, `VariantDto`, `ModifierOptionDto`, `ModifierGroupDto`, `ProductListItemDto`, `ProductDetailDto`, hằng `PAGINATION`. |
+| `apps/api/src/modules/catalog/dto/query.dto.ts` | **Mới**: `ProductQueryDto` (storeId/categoryId/q/page/limit), `ProductDetailQueryDto`, `CategoryQueryDto`. |
+| `apps/api/src/modules/catalog/dto/admin.dto.ts` | **Mới**: DTO create/update cho category/product/variant/modifier-group/option, `SetProductModifierGroupsDto`, `SetVariantAvailabilityDto`. |
+| `apps/api/src/modules/catalog/catalog.service.ts` | **Mới**: đọc công khai (availability theo store, fromPrice, phân trang, search) + admin CRUD + staff toggle. |
+| `apps/api/src/modules/catalog/catalog.controller.ts` | **Mới**: 3 route công khai `@Public`. |
+| `apps/api/src/modules/catalog/catalog-admin.controller.ts` | **Mới**: CRUD `@Roles("ADMIN")`. |
+| `apps/api/src/modules/catalog/catalog-staff.controller.ts` | **Mới**: toggle `@Roles("STAFF","ADMIN")`. |
+| `apps/api/src/modules/catalog/catalog.module.ts` | **Mới**. |
+| `apps/api/src/app.module.ts` | **Sửa**: import `CatalogModule`. |
+| `apps/api/test/catalog.int-spec.ts` | **Mới**: 24 integration test. |
+| `apps/api/README.md`, `docs/api-contract.md`, `docs/decisions.md` | **Sửa**: ghi endpoint + quyết định D06-01..11 + Q06. |
+
+### Quyết định đáng chú ý
+- slug/SKU trùng, size trùng, `maxSelect<minSelect`, giá âm → **400 VALIDATION_ERROR** (bắt `P2002` Prisma); 409 chỉ dành cho xung đột trạng thái. Cửa hàng tạm đóng → **409 ITEM_UNAVAILABLE** (D06-05, D06-06).
+- `available` = `null` khi không có `storeId`, `true/false` khi có; chưa có `store_variants` → coi là không bán tại store (D06-02, D06-03).
+- Không có xóa vật lý — ẩn bằng `isActive`, giữ snapshot đơn cũ + FK RESTRICT (D06-08).
+- Staff toggle kiểm quyền store ở **service** (D06-09).
+
+### Commands đã chạy và kết quả thật
+```powershell
+pnpm run lint / typecheck / build / test        # tat ca EXIT 0; unit 25/25
+pnpm --filter @coffee-order/api run test:int     # 42/42 pass (24 catalog + 11 auth + 7 schema)
+# HTTP smoke (API 3001 + DB dev da seed buoc 04):
+#   GET /categories -> 4 (ca-phe,tra,da-xay,banh)
+#   GET /products   -> total 12, available=null khi khong store
+#   GET /products?storeId=<seed> -> 12 mon available=true, fromPriceVnd dung
+#   GET /products?categoryId=banh -> 3 mon; ?q=tra -> 3 mon (Tra dao cam sa, Tra sen vang, Tra vai)
+#   GET /products/:id -> modifierGroups = 3
+#   POST /admin/categories khong token -> 401 UNAUTHENTICATED
+```
+
+**Integration catalog (24)** phủ: admin tạo category/product/variant/modifier + gán nhóm; slug trùng→400; SKU trùng→400; size trùng→400; giá âm→400 (DTO); `maxSelect<minSelect`→400; option trùng tên trong nhóm→400; gán group không tồn tại→404; CUSTOMER gọi admin→403; **STAFF store A toggle store B→403 (cross-store)**; CUSTOMER toggle→403; đọc công khai categories/products không token; `available=null` khi không store; `available=true/false` theo store; `fromPriceVnd` đúng; chi tiết trả modifier rules; tắt availability→`false`; **ẩn product→biến mất khỏi catalog + /products/:id trả 404**; ẩn category→product ẩn theo; limit>max→400; storeId sai UUID→400; product id lạ→404.
+
+### Pass / Fail / Skip
+- **PASS**: lint, typecheck, build (api+web), unit 25/25, integration 42/42, HTTP smoke đọc seed thật.
+- **FAIL**: không còn. Lỗi thật đã sửa: ban đầu trả 409 cho slug/SKU trùng và max<min, test mong 400 → chốt 400 VALIDATION_ERROR (sửa `conflict()`→`invalid()` dùng `BadRequestException`); kiểu Prisma payload cho `storeVariants` include có điều kiện → tách interface `ProductRow`; dọn import thừa.
+- **SKIP / chưa làm**: **upload ảnh signed URL qua Supabase Storage** (Q06-01) — chưa có project, hiện `imagePath` nhận string; màn admin liệt kê cả inactive (Q06-02); chuẩn hóa dấu khi search (Q06-03). Phối hợp khóa catalog↔checkout thuộc bước 07–08.
+
+### Hạn chế
+- Chưa có upload ảnh thật; `imagePath` là path do admin cung cấp, chưa validate tồn tại trên Storage.
+- Catalog đọc **không cache ở server** — mỗi request query DB; đủ cho MVP, chống "checkout tin giá cũ" từ phía API (giá checkout lấy ở bước 07–08). Invalidate query phía web là phần của bước sau.
+- Chưa có UI web cho catalog/admin (bước này chỉ API). Trang web vẫn là `/` + `/smoke` của bước 03.
+
+### Bước tiếp theo
+Bước 07 — Giỏ hàng và báo giá (`.kiro/steering/07-cart-quote.md`): giỏ client (Zustand), `POST /v1/checkout/quote` tính giá server-side từ catalog + lưu quote có hạn, luật modifier min/max/membership, chống giá đổi giữa kiểm và lưu. Không đánh dấu bước nào khác hoàn thành.

@@ -4,7 +4,7 @@ Base /v1; JSON camelCase, enum UPPER_SNAKE_CASE, UUID IDs, integer VND, timestam
 | Method/path | Quyền / hành vi |
 |---|---|
 | GET /health, /ready | public minimal liveness/readiness |
-| GET /stores, /categories, /products, /products/:id | public catalog; store availability |
+| GET /categories, /products, /products/:id | public catalog; store availability — **đã hiện thực bước 06** |
 | GET /me | authenticated profile |
 | POST /checkout/quote | CUSTOMER, canonical cart→persisted quote |
 | POST /orders | CUSTOMER, quoteId + cart, Idempotency-Key |

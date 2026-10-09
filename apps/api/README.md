@@ -76,5 +76,19 @@ Decorators: `@Public()`, `@Roles(...)`, `@CurrentUser()` ở `src/modules/auth/a
 - Trong Supabase: **tắt Data API cho các bảng nghiệp vụ** (orders, payments, order_status_history, ...) hoặc đặt chúng ngoài schema expose — browser không được ghi trực tiếp qua Data API. Mọi thay đổi đơn chỉ qua API NestJS. Prisma dùng role riêng ở backend, không dựa vào RLS để bảo vệ.
 - Nâng role (STAFF/ADMIN) chỉ qua flow admin trong DB, không qua `user_metadata` của signup.
 
+## Catalog (bước 06)
+Công khai (`@Public`):
+| Route | Mô tả |
+|---|---|
+| `GET /v1/categories` | Danh mục đang hoạt động (`?includeInactive` chưa dùng ở UI khách). |
+| `GET /v1/products?storeId=&categoryId=&q=&page=&limit=` | Danh sách món, phân trang (limit ≤ 100). Có `storeId` thì mỗi variant có `available` theo `store_variants`, và `fromPriceVnd` chỉ tính variant còn bán. |
+| `GET /v1/products/:id?storeId=` | Chi tiết món kèm variants + `modifierGroups` (luật min/max). |
+
+Admin (`@Roles("ADMIN")`): `POST/PATCH /v1/admin/categories`, `/v1/admin/products`, `/v1/admin/products/:productId/variants`, `/v1/admin/modifier-groups`, `/v1/admin/modifier-groups/:groupId/options`, và `PUT /v1/admin/products/:productId/modifier-groups` (thay cả tập nhóm). Không có xóa vật lý — dùng `isActive` để ẩn.
+
+Staff/admin (`@Roles("STAFF","ADMIN")`): `PATCH /v1/staff/stores/:storeId/variants/:variantId` bật/tắt bán tại cửa hàng. Quyền store kiểm ở `StoreAccessService` (service layer).
+
+Lỗi: slug/SKU trùng, size trùng, `maxSelect < minSelect`, giá âm → **400 VALIDATION_ERROR**. Món/danh mục ẩn hoặc không tồn tại → **404**. Cửa hàng tạm đóng → **409 ITEM_UNAVAILABLE**.
+
 ## Chưa có
-Module nghiệp vụ catalog/checkout/orders/payments (bước 06–09). Profile staff/admin **không** được seed — phải tạo qua Supabase Auth thật rồi nâng role trong DB. FK `profiles.id → auth.users.id` của Supabase (Q04-01) chưa hiện thực; profile được auto-provision theo `sub` khi gọi API lần đầu.
+Giỏ hàng + quote (bước 07), đặt đơn (bước 08), xử lý đơn + thanh toán (bước 09). **Upload ảnh món**: hiện `imagePath` nhận string path do admin gửi; endpoint signed upload qua Supabase Storage chưa làm (chưa có project) — xem Q06. Profile staff/admin **không** được seed. FK `profiles.id → auth.users.id` (Q04-01) chưa hiện thực.
