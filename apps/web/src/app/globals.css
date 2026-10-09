@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+/*
+ * Token mau tam thoi cho buoc 03. Bo token that cua shadcn/ui duoc them o buoc 06
+ * khi bat dau dung component. Gia tri duoi day chi du de trang smoke doc duoc.
+ */
+:root {
+  --background: #f4f1ec;
+  --foreground: #23201d;
+  --muted: #6f6760;
+  --brand: #5b3a29;
+  --line: #e2dcd3;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-brand: var(--brand);
+  --color-line: var(--line);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family:
+    ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}

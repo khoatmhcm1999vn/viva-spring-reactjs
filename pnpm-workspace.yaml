@@ -1,0 +1,15 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+
+# pnpm 12 chan install script cua dependency theo mac dinh. Moi goi duoi day la
+# mot quyet dinh co y, khong phai de pnpm tu hoi lai moi lan install.
+allowBuilds:
+  # sharp co prebuilt binary cho win32-x64; khong can build tu nguon.
+  sharp: false
+  # resolver cua eslint, dung prebuilt.
+  unrs-resolver: false
+  # watcher cua @nestjs/cli o che do --watch; dung prebuilt, khong can compile native.
+  "@parcel/watcher": false
+  # script telemetry cua nha phat hanh. Khong cho chay.
+  "@scarf/scarf": false

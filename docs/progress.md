@@ -6,7 +6,7 @@ Bộ hướng dẫn đã được tạo. Ứng dụng, migrations, tests và dep
 |---|---|---|
 | 01 Chốt nghiệp vụ | DONE (tài liệu) | `docs/requirements.md` (50 REQ), `docs/decisions.md` (D01-01..D01-15, Q01-01..Q01-07), `docs/test-plan.md` map REQ. Chi tiết ở mục “Bước 01” bên dưới. Chưa có code/app. |
 | 02 Phác thảo giao diện | DONE (tài liệu) | `docs/wireframes.md` (11 màn, map route→feature→REQ, walkthrough), `docs/mockups/index.html` (11 panel tĩnh), `docs/decisions.md` D02-01..D02-15 / Q02-01..Q02-07. Chi tiết ở mục “Bước 02”. Chưa có component React nào. |
-| 03 Khởi tạo monorepo | TODO | Chưa thực hiện trong repository ứng dụng |
+| 03 Khởi tạo monorepo | **DONE (đã chạy)** | pnpm workspaces 4 project. `install --frozen-lockfile`, `lint`, `typecheck`, `build`, `test` đều exit 0; 7/7 jest pass; 24/24 smoke HTTP pass; web gọi được `/v1/health` thật. Phiên bản chốt ở `docs/decisions.md`. Chi tiết ở mục “Bước 03”. |
 | 04 Schema, migration và seed | TODO | Chưa thực hiện trong repository ứng dụng |
 | 05 Xác thực và quyền | TODO | Chưa thực hiện trong repository ứng dụng |
 | 06 Quản lý danh mục và món | TODO | Chưa thực hiện trong repository ứng dụng |
@@ -136,3 +136,124 @@ Không sửa `docs/requirements.md`, `docs/api-contract.md`, `docs/data-model.md
 
 ### Bước tiếp theo
 Bước 03 — Khởi tạo monorepo (`.kiro/steering/03-bootstrap.md`): pnpm workspaces, `apps/web` (Next.js + Tailwind + shadcn/ui), `apps/api` (NestJS + Swagger), `packages/contracts`, và dựng gate thật (lint, typecheck, build). Khi đó mới chốt và ghi lại versions vào `docs/decisions.md`. Chưa đánh dấu bước nào khác hoàn thành.
+
+---
+
+## Bước 03 — Khởi tạo monorepo (2026-10-09) — **DONE**
+
+### Dependency bước trước
+Bước 01 và 02 đã xong ở mức tài liệu. Bước 03 là bước đầu tiên tạo code chạy được.
+
+Lần thực hiện đầu bị **BLOCKED**: Node trên máy là 16.20.1 (EOL), không đáp ứng `engines` của pnpm (`>=18`), Next (`>=20.9`), `@nestjs/cli` (`>=20.11`) hay Prisma (`^20.19 || ^22.12 || >=24`). Tôi chủ ý **không scaffold** khi chưa cài được gì, vì config chưa từng chạy `tsc`/`build` không phải bằng chứng. Người dùng sau đó cài **Node 24.20.0 / npm 11.19.0**, và bước này được thực hiện trọn vẹn.
+
+### Đã kiểm repo trước khi sửa
+`apps/web`, `apps/api`, `packages/contracts`, `infra/` chỉ có `README.md` và `.env.example`. Không có `package.json`, `pnpm-workspace.yaml`, lockfile hay `tsconfig`. `README.md` của cả 4 thư mục được **cập nhật nội dung**, không bị xoá; `.env.example` của web/api được mở rộng chú thích, giữ nguyên tên biến đã có và không thêm giá trị nào.
+
+### File đổi
+
+**Gốc repo**
+| File | Thay đổi |
+|---|---|
+| `package.json` | **Mới**. Root private, `packageManager: pnpm@12.10.1`, `engines.node >=22.12`, scripts `dev:web` `dev:api` `lint` `typecheck` `build` `test` — tất cả gọi qua `pnpm --filter`/`pnpm -r`, không có script giả. |
+| `pnpm-workspace.yaml` | **Mới**. `apps/*` + `packages/*`, và `allowBuilds` khai báo tường minh 4 gói (pnpm 12 chặn install script theo mặc định). |
+| `tsconfig.base.json` | **Mới**. Strict + `noUncheckedIndexedAccess`, `noImplicitOverride`, `noUnusedLocals/Parameters`, `noFallthroughCasesInSwitch`. |
+| `pnpm-lock.yaml` | **Mới**, 301 KB, được commit. |
+| `.gitignore` | **Sửa**: thêm `out/`, `.turbo/`, `*.tsbuildinfo`, `next-env.d.ts`, `.vercel`, `.pnpm-store/`. Giữ nguyên toàn bộ phần bảo vệ secret. |
+
+**packages/contracts** (mới)
+`package.json` (exports map, build CJS + `.d.ts`), `tsconfig.json`, `src/index.ts`: enum nghiệp vụ (`UserRole`, `FulfillmentType`, `PaymentMethod`, `OrderStatus`, `PaymentStatus`), `TERMINAL_ORDER_STATUSES` + `isTerminalOrderStatus`, envelope lỗi (`ApiErrorCode`, `ApiErrorBody`), `Paginated<T>`, `HealthResponse`/`ReadyResponse`, hằng số `CART_LIMITS`/`QUOTE_TTL_SECONDS`/`MAX_SIGNED_INT32`. Dùng `const object` + union type thay `enum`.
+
+**apps/api** (mới)
+`package.json`, `tsconfig.json`, `nest-cli.json`, `eslint.config.mjs`, `jest.config.js`, và:
+| File | Nội dung |
+|---|---|
+| `src/main.ts` | prefix `/v1`, `ValidationPipe` whitelist + forbidNonWhitelisted, filter lỗi toàn cục, CORS allowlist từ env, Swagger `/docs` + bearer scheme, log chỉ ghi **tên** biến và trạng thái cấu hình. |
+| `src/app.module.ts` | `ConfigModule` global, `AppConfigModule`, `HealthModule`, middleware request-id cho mọi route. |
+| `src/common/config/app-config.ts` | Đọc + kiểm env một lần, fail fast. Chỉ lưu `databaseConfigured: boolean`, **không** lưu giá trị `DATABASE_URL`. Từ chối `CORS_ORIGINS=*`. |
+| `src/common/config/app-config.module.ts` | Provider `@Global`. |
+| `src/common/middleware/request-id.middleware.ts` | Sinh `requestId`, trả qua header `x-request-id`; chỉ nhận header của client khi đúng định dạng UUID (chống log injection). |
+| `src/common/filters/all-exceptions.filter.ts` | Body lỗi `{code,message,details,requestId}`. 5xx trả message chung, chi tiết chỉ nằm trong log server. |
+| `src/modules/health/` | `health.controller.ts` (`/v1/health`, `/v1/ready`), `health.service.ts`, `health.module.ts`, `health.spec.ts`. |
+| `.env.example` | **Sửa**: giữ nguyên tên biến cũ, thêm chú thích về `CORS_ORIGINS` không được là `*` và việc `DATABASE_URL` rỗng làm `/v1/ready` trả 503. |
+| `README.md` | **Sửa**: ghi endpoint thật, cấu trúc thư mục, cách chạy, và những gì chưa có. |
+
+**apps/web** (mới)
+Scaffold bằng `create-next-app@16.4.0` (`--ts --tailwind --eslint --app --src-dir`) vào thư mục tạm rồi **merge có chọn lọc** để không ghi đè `README.md` và `.env.example` đang có. Thư mục tạm đã xoá.
+| File | Nội dung |
+|---|---|
+| `package.json` | Tên `@coffee-order/web`, scripts `dev`/`build`/`start`/`lint`/`typecheck`, cổng 3000. |
+| `next.config.ts` | Tailwind 4 qua turbopack loader; tắt `cacheComponents` + `partialPrefetching`; `typescript.ignoreBuildErrors: false`. |
+| `tsconfig.json` | Giữ cấu hình đã được verify của template, thêm `noUnusedLocals/Parameters`, `noFallthroughCasesInSwitch`, `noImplicitOverride`. |
+| `src/app/layout.tsx` | `lang="vi"`, bọc `Providers`. Props khai báo tường minh thay vì global `LayoutProps`. |
+| `src/app/providers.tsx` | `QueryClientProvider`, QueryClient tạo trong `useState` để mỗi request SSR có instance riêng. |
+| `src/app/page.tsx` | Trang chủ tạm + link sang `/smoke`. |
+| `src/app/smoke/page.tsx` | **Trang smoke**: gọi `GET /health` và `GET /ready` qua TanStack Query, xử lý đúng trường hợp `/ready` trả 503. |
+| `src/app/globals.css` | Tailwind 4 + token màu tạm. |
+| `src/lib/env.ts` | Chỉ đọc `NEXT_PUBLIC_*`, kèm cảnh báo không đặt secret vào tiền tố này. |
+| `src/lib/api.ts` | Client fetch, giữ nguyên body lỗi, hỗ trợ `Idempotency-Key`. |
+| `src/lib/utils.ts` | `cn()`, `formatVnd()` (integer VND), `formatDateTimeHcm()` (Asia/Ho_Chi_Minh). |
+| `components.json` | Cấu hình shadcn/ui sẵn cho bước 06. |
+| `.env.example`, `README.md` | **Sửa**, giữ tên biến cũ. |
+
+**docs**
+`docs/decisions.md` bổ sung mục “Bước 03 — Phiên bản đã chốt” (toolchain, bảng version của từng app, 3 phát hiện F03-01..F03-03, 11 quyết định D03-01..D03-11, 5 câu hỏi mở Q03-01..Q03-05) và đánh dấu mục tra registry trước đó là đã bị thay thế. `packages/contracts/README.md` được viết lại.
+
+### Ba phát hiện làm đổi lựa chọn ban đầu
+
+1. **NestJS 12 là ESM-only.** `@nestjs/common@12.1.2` có `"type": "module"`, `exports` không có điều kiện `require`; `@nestjs/cli@12.0.8` phụ thuộc `typescript ~6.0.2`. Thử Nest 12 + CommonJS cho `error TS1479` ở mọi import. → Chốt **NestJS 11.2.7 + CommonJS + TypeScript 5.9.3**.
+2. **Toàn bộ ESLint 9.x đã deprecated** (0/58 bản còn hỗ trợ), nhưng template `create-next-app@16.4.0` vẫn ghim `^9`. → Nâng **ESLint 10.12.0**; peer của `eslint-config-next` là `>=9.0.0` nên hợp lệ, và lint chạy exit 0.
+3. **`prisma@latest` là `8.0.0-rc.22` (pre-release)** và **`typescript@latest` là `7.0.2`** (dòng compiler mới). → Bước 04 ghim Prisma **7.10.0**; TypeScript giữ 5.9.3. Không dùng `latest` ở đâu.
+
+### Commands đã chạy và kết quả thật
+
+```powershell
+node -v                        # v24.20.0
+npm -v                         # 11.19.0
+corepack enable pnpm           # EPERM tren C:\Program Files\nodejs (khong co quyen admin)
+npm i -g pnpm@12.10.1          # thay the; pnpm -v => 12.10.1
+pnpm install                   # 4 workspace project
+pnpm install --frozen-lockfile # "Lockfile is up to date" -> EXIT 0
+pnpm run lint                  # EXIT 0
+pnpm run typecheck             # EXIT 0  (3/3 project)
+pnpm run build                 # EXIT 0  (contracts tsc -> api nest build -> web next build)
+pnpm run test                  # EXIT 0
+```
+
+- `pnpm run build` của web in ra 3 route: `/`, `/_not-found`, `/smoke` (tất cả static).
+- `pnpm run test`: **7/7 pass**, 1 suite. Gồm: default `PORT=3001` + CORS `localhost:3000`; từ chối `CORS_ORIGINS=*`; từ chối `PORT` không hợp lệ; **config không lưu giá trị `DATABASE_URL`**; `GET /v1/health` trả 200 và không chứa secret; `GET /v1/ready` trả **503 / NOT_READY / NOT_CONFIGURED**; route lạ trả body `{code,message,requestId}` không có stack.
+- `pnpm install` lần đầu fail `ERR_PNPM_IGNORED_BUILDS` với `@parcel/watcher` và `@scarf/scarf`; đã xử lý bằng cách khai báo tường minh trong `allowBuilds` thay vì bỏ qua cảnh báo.
+
+### Smoke HTTP thật (API 3001 + web 3000 cùng chạy)
+
+Chạy bằng một script Node tạm (đã xoá sau khi chạy), gọi HTTP thật. **24/24 PASS**:
+
+| Nhóm | Kết quả |
+|---|---|
+| `GET /v1/health` | 200; body `{"status":"ok","service":"coffee-order-api","version":"0.1.0","timestamp":"..."}`; có header `x-request-id`; không chứa `DATABASE_URL`/`SUPABASE`/`SECRET`/`password`/`CORS_ORIGINS` |
+| `GET /v1/ready` | **503**; `{"status":"NOT_READY","checks":{"database":"NOT_CONFIGURED"}}` |
+| `GET /docs` | 200, trả Swagger UI |
+| `GET /docs-json` | liệt kê `/v1/health`, `/v1/ready`; có scheme `supabase-access-token`; `servers=[]` |
+| Route lạ | 404 với `{"code":"NOT_FOUND","message":"...","requestId":"..."}`, không có stack trace |
+| CORS | origin trong allowlist nhận `access-control-allow-origin: http://localhost:3000`; `http://evil.example` **không** nhận header nào |
+| Web `/` | 200, render `Coffee Order`, `lang="vi"` |
+| Web `/smoke` | 200, nhúng base URL `localhost:3001/v1`; HTML client **không** chứa `DATABASE_URL`, `SUPABASE_SECRET_KEY` hay `postgresql://` |
+
+Smoke phát hiện **một lỗi thật đã sửa**: Swagger vừa có `setGlobalPrefix("v1")` vừa có `.addServer("/v1")`, nên "Try it out" sẽ gọi `/v1/v1/health`. Đã bỏ `addServer` và kiểm lại `servers=[]`.
+
+### Pass / Fail / Skip
+- **PASS**: `install --frozen-lockfile`, `lint`, `typecheck`, `build`, `test` (7/7), smoke HTTP (24/24), web→API health thật.
+- **FAIL**: không còn. Trong quá trình làm có 5 lỗi thật đã sửa: `@types/react-dom@19.3.1` không tồn tại; TS 6 báo deprecated `moduleResolution=node10` + `baseUrl`; Nest 12 ESM không import được từ CJS; `next.config.ts` không còn khoá `eslint`; global `LayoutProps` chưa tồn tại lúc typecheck. Thêm lỗi Swagger `addServer` ở trên.
+- **SKIP**: kiểm tra DB trong `/v1/ready` (bước 04 — hiện trả 503 đúng như yêu cầu của steering khi chưa có credential); xác thực Supabase (bước 05); test tích hợp PostgreSQL và Playwright (bước 10); CI tự động (bước 11); xem `/docs` và `/smoke` bằng mắt trên browser (tôi chỉ kiểm được bằng HTTP + so khớp nội dung HTML).
+
+### Hạn chế
+- **Chưa có tính năng nghiệp vụ nào.** Không có schema, không có auth, không có menu/giỏ/đơn. Trang `/` chỉ là chỗ đặt.
+- `/v1/ready` hiện **chỉ kiểm biến môi trường**, chưa truy vấn DB. Không được coi đây là readiness hoàn chỉnh.
+- Không có integration với Supabase. Chưa tạo tài nguyên cloud nào.
+- `pnpm peers check` vẫn báo `eslint-plugin-import`/`jsx-a11y`/`react` muốn ESLint `^9` trong khi đang dùng 10. Lint chạy exit 0 nên giữ nguyên; nếu vỡ thì lùi `apps/web` về ESLint 9 (Q03-04).
+- `pnpm` được cài global qua npm vì `corepack enable` thiếu quyền admin. Cần chuẩn hoá lại trong Docker/CI ở bước 11 (Q03-03).
+- Chưa có CI chạy các gate này tự động; hiện phải chạy tay (Q03-05).
+- `packages/contracts` đang viết tay, chưa sinh từ OpenAPI và chưa có check drift (Q03-01).
+- Script smoke là script dùng một lần, đã xoá. Phần đã được phủ bởi jest thì giữ lại trong `health.spec.ts`; phần CORS và web→API hiện **chưa có test tự động** — cần đưa vào bước 10.
+
+### Bước tiếp theo
+Bước 04 — Schema, migration và seed (`.kiro/steering/04-database.md`): Prisma **7.10.0** (không dùng tag `latest` vì đang là RC 8), schema theo `docs/data-model.md`, migration đầu tiên, seed một store demo, và đổi `/v1/ready` sang truy vấn DB thật. Không đánh dấu bước nào khác hoàn thành.

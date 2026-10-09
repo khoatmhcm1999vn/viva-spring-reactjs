@@ -94,3 +94,134 @@ Chi tiết wireframe ở `docs/wireframes.md`. Đây là quyết định thiết
 | Q02-05 | Ngưỡng badge "⚠ chờ lâu" trên card đơn (hiện đặt tạm 10 phút ở `READY`) | Chưa chốt; chỉ là gợi ý thị giác, không phải trạng thái mới. Liên quan Q01-01 |
 | Q02-06 | Upload ảnh món: dialog trong trang hay trang riêng, và dùng public read hay signed URL | Chưa chốt; phụ thuộc Q01-07, chốt ở bước 06 |
 | Q02-07 | Bộ icon và font: dùng lucide + font hệ thống, hay thêm font Việt riêng? | Chưa chốt; chốt ở bước 03 khi cài Tailwind/shadcn |
+
+---
+
+## Bước 03 — Tra phiên bản từ registry (2026-10-09)
+
+Số liệu dưới đây **đọc trực tiếp từ npm registry** bằng `npm view <pkg> version` và `npm view <pkg> engines`, không lấy từ trí nhớ. Chưa cài được gói nào nên đây là **ứng viên đã xác minh ở mức metadata**, chưa xác minh bằng install/build.
+
+### Yêu cầu Node của từng dòng gói
+
+| Gói | Bản stable mới nhất | `engines.node` |
+|---|---|---|
+| `next` | 16.4.0 | `>=20.9.0` |
+| `next` (dòng trước) | 15.5.27 | `^18.18.0 \|\| ^19.8.0 \|\| >= 20.0.0` |
+| `react` | 19.3.0 | `>=0.10.0` |
+| `@nestjs/core` | 12.1.2 | `>= 20` |
+| `@nestjs/cli` | 12.0.8 | `>= 20.11` |
+| `@nestjs/cli` (dòng trước) | 11.0.24 | `>= 20.11` |
+| `prisma` | **8.0.0-rc.22 là pre-release** | — |
+| `prisma` (stable, dist-tag `prev`) | 7.10.0 | `^20.19 \|\| ^22.12 \|\| >=24.0` |
+| `typescript` | **7.0.2 (dòng compiler mới)** | `>=16.20.0` |
+| `typescript` (dòng 5.x) | 5.9.3 | — |
+| `tailwindcss` | 4.3.3 | không khai báo |
+| `pnpm` | 12.10.1 | `>=18.*` |
+
+### Môi trường hiện tại
+
+| Thành phần | Phiên bản trên máy |
+|---|---|
+| Node | **16.20.1** (đã EOL từ 2023-09) |
+| npm | 8.19.4 |
+| pnpm | chưa cài |
+| corepack | 0.17.0 |
+| Version manager (nvm/fnm/volta/nvs) | không có |
+
+### Kết luận
+
+Node 16.20.1 **không đáp ứng** bất kỳ lựa chọn nào của stack đã chốt ở `tech.md`:
+- `pnpm` cần `>=18` → không chạy được package manager của monorepo.
+- `next` 15 cần `>=18.18`, `next` 16 cần `>=20.9` → không cài được frontend.
+- `@nestjs/cli` cả dòng 11 và 12 đều cần `>=20.11` → không scaffold được backend.
+- `prisma` 7.10.0 cần `^20.19 || ^22.12 || >=24` → bước 04 cũng sẽ bị chặn.
+
+Hạ xuống Next 13 / Nest 9 để chạy trên Node 16 **không** được chọn: các dòng đó đã hết hỗ trợ bảo mật, không tương thích Tailwind 4 / shadcn hiện tại, và đi ngược quy tắc "chọn phiên bản stable tương thích" trong `tech.md`.
+
+### Phiên bản đề xuất (chốt sau khi install thành công)
+
+| Thành phần | Phiên bản đề xuất | Lý do |
+|---|---|---|
+| Node | **22 LTS** | Thoả đồng thời `next` ≥20.9, `@nestjs/cli` ≥20.11 và `prisma` `^22.12`. Node 20.19+ cũng đủ nhưng 22 LTS có thời gian hỗ trợ dài hơn |
+| pnpm | 12.10.1 qua corepack | Theo `tech.md`; bật bằng corepack đi kèm Node để không cài global thủ công |
+| TypeScript | **5.9.3**, không dùng 7.0.2 | NestJS phụ thuộc decorator + `emitDecoratorMetadata`; dòng compiler 7 là thay đổi lớn, chưa xác minh với Nest 12 |
+| Prisma | **7.10.0**, không dùng tag `latest` | `latest` đang trỏ `8.0.0-rc.22` là pre-release; không đưa RC vào bài cuối khóa |
+| Next.js | 16.4.0 (dự phòng 15.5.27) | Lấy stable mới nhất; nếu gặp xung đột với Tailwind 4 / shadcn thì lùi về dòng 15 và ghi lại lý do |
+| NestJS | 12.1.2 | Stable mới nhất, khớp Node 22 |
+| Tailwind | 4.3.3 | Stable mới nhất |
+
+Các số này sẽ được **ghim chính xác** trong `package.json` và cố định bằng lockfile commit vào repo, đúng yêu cầu `tech.md` (không dùng `@latest` trong Dockerfile production, không tự nâng major khi làm feature).
+
+> **Cập nhật — mục này đã bị thay thế.** Người dùng đã cài **Node 24.20.0**, chặn được mở. Khi cài thật, hai đề xuất trong bảng trên tỏ ra sai và đã bị sửa: dòng **NestJS 12 là ESM-only** nên chốt NestJS 11 + CommonJS, và **toàn bộ ESLint 9.x đã deprecated** nên nâng lên ESLint 10. Bảng phiên bản có hiệu lực nằm ở mục **“Bước 03 — Phiên bản đã chốt”** bên dưới. Giữ lại mục này làm hồ sơ vì nó ghi `engines.node` thật của từng dòng gói và lý do không hạ cấp xuống Next 13 / Nest 9.
+
+---
+
+## Bước 03 — Phiên bản đã chốt (2026-10-09)
+
+Toàn bộ số dưới đây **đã cài và chạy được**: `pnpm install --frozen-lockfile`, `lint`, `typecheck`, `build`, `test` đều exit 0, và web gọi được `/v1/health` thật. `pnpm-lock.yaml` được commit.
+
+### Toolchain
+
+| Thành phần | Phiên bản | Ghi chú |
+|---|---|---|
+| Node | **24.20.0** | Thoả engines của mọi gói dưới đây. `corepack enable pnpm` thất bại vì `EPERM` trên `C:\Program Files\nodejs` (phiên không có quyền admin), nên pnpm được cài bằng `npm i -g pnpm@12.10.1` vào prefix của user. |
+| pnpm | **12.10.1** | Ghi trong `packageManager` của root `package.json`. |
+| TypeScript | **5.9.3** | Dùng chung cho cả 3 workspace. |
+
+### apps/api
+
+| Gói | Phiên bản |
+|---|---|
+| `@nestjs/common`, `@nestjs/core`, `@nestjs/platform-express`, `@nestjs/testing` | 11.2.7 |
+| `@nestjs/config` | 4.0.4 |
+| `@nestjs/swagger` | 11.4.7 |
+| `@nestjs/cli` | 11.0.24 |
+| `@nestjs/schematics` | 11.1.0 |
+| `class-validator` / `class-transformer` | 0.15.1 / 0.5.1 |
+| `reflect-metadata` / `rxjs` | 0.2.2 / 7.8.2 |
+| `jest` / `ts-jest` / `supertest` | 30.5.2 / 29.4.14 / 7.3.1 |
+| `eslint` / `typescript-eslint` | 10.12.0 / 8.71.1 |
+
+### apps/web
+
+| Gói | Phiên bản |
+|---|---|
+| `next` / `react` / `react-dom` | 16.4.0 / 19.3.0 / 19.3.0 |
+| `tailwindcss` / `@tailwindcss/turbopack` | 4.3.3 / 4.3.3 |
+| `@tanstack/react-query` | 5.104.1 |
+| `clsx` / `tailwind-merge` | 2.1.1 / 3.7.0 |
+| `eslint` / `eslint-config-next` | 10.12.0 / 16.4.0 |
+
+### Ba phát hiện làm đổi lựa chọn ban đầu
+
+| # | Phát hiện (có bằng chứng) | Hệ quả |
+|---|---|---|
+| F03-01 | **Dòng NestJS 12 là ESM-only.** `@nestjs/common@12.1.2` có `"type": "module"` và `exports` không có điều kiện `require`; `@nestjs/cli@12.0.8` phụ thuộc `typescript ~6.0.2` và `@nestjs/schematics ^12`. Thử Nest 12 + CommonJS cho `error TS1479` ở mọi import. Dòng 11 (`@nestjs/common@11.2.7`) là `commonjs`. | **Chốt NestJS 11.2.7 + CommonJS + TypeScript 5.9.3.** Đi ESM sẽ kéo theo rewrite import có đuôi `.js`, cấu hình jest ESM (`--experimental-vm-modules`) và rủi ro với Prisma ở bước 04 — không đáng đổi trong lúc bootstrap. Nâng lên Nest 12 + ESM là một thay đổi riêng, phải có test kèm. |
+| F03-02 | **Toàn bộ ESLint 9.x đã deprecated** (0/58 bản còn được hỗ trợ; registry trả thông báo "no longer supported"). Template của `create-next-app@16.4.0` vẫn ghim `eslint: ^9`. | **Nâng lên ESLint 10.12.0** ở cả hai app. Peer của `eslint-config-next@16.4.0` là `eslint >=9.0.0` và của `typescript-eslint@8.71.1` là `^8.57 \|\| ^9 \|\| ^10`, nên hợp lệ. `pnpm peers check` vẫn báo `eslint-plugin-import/jsx-a11y/react` muốn `^9` — **lint thực tế chạy exit 0**, nên giữ 10 và theo dõi khi Next cập nhật chuỗi plugin. |
+| F03-03 | **`prisma@latest` đang trỏ `8.0.0-rc.22`** (pre-release) và **`typescript@latest` là `7.0.2`** (dòng compiler mới). | Bước 04 ghim `prisma`/`@prisma/client` **7.10.0** (dist-tag `prev`). TypeScript giữ 5.9.3. Không dùng `latest` ở đâu. |
+
+### Quyết định cấu hình
+
+| # | Quyết định | Lý do |
+|---|---|---|
+| D03-01 | `apps/api` dùng `module`/`moduleResolution` = **`node16`** thay vì `node10` | TS 6+ deprecate `node10` và `baseUrl`; `node16` vẫn emit CommonJS vì `package.json` không có `"type": "module"`. Đồng thời bỏ `baseUrl`, dùng `paths` tương đối. |
+| D03-02 | `packages/contracts` build ra **CommonJS + `.d.ts`**, khai báo qua `exports` map | Một output đọc được từ cả NestJS (CJS) và bundler của Next, không cần dual build. Đã kiểm `dist/index.js` không chứa `require(` nào → browser-safe. |
+| D03-03 | Dùng `const object` + union type thay vì `enum` trong contracts | Tương thích `isolatedModules`, tree-shake được ở web. |
+| D03-04 | Tắt `cacheComponents` và `partialPrefetching` mà `create-next-app@16` bật sẵn | Hai cờ này đổi cách fetch dữ liệu phía server, trong khi dự án dùng TanStack Query ở client gọi API NestJS. Bật lại là quyết định riêng, cần test kèm. |
+| D03-05 | `layout.tsx` khai báo props tường minh thay vì dùng global `LayoutProps` của Next | Global đó chỉ tồn tại sau khi Next sinh `.next/types`, nên `pnpm typecheck` chạy độc lập sẽ lỗi. Gate phải chạy được mà không cần build trước. |
+| D03-06 | `/v1/ready` trả **503** khi `DATABASE_URL` chưa đặt | Readiness phải phản ánh đúng trạng thái. Bước 03 chưa có DB nên NOT_READY là kết quả đúng, không phải lỗi. Bước 04 đổi sang truy vấn thật. |
+| D03-07 | **Không** gọi `.addServer("/v1")` trong Swagger | `setGlobalPrefix("v1")` đã đưa `/v1` vào từng path; thêm server `/v1` làm "Try it out" gọi `/v1/v1/...`. Đây là lỗi thật đã phát hiện qua smoke và đã sửa. |
+| D03-08 | `CORS_ORIGINS=*` bị **từ chối khi khởi động** | API nhận `Authorization` header nên cần allowlist cụ thể. |
+| D03-09 | `AppConfig` chỉ lưu `databaseConfigured: boolean`, **không** lưu giá trị `DATABASE_URL` | Giảm nguy cơ lộ connection string qua log hay response. Có test khẳng định điều này. |
+| D03-10 | `allowBuilds` trong `pnpm-workspace.yaml` khai báo tường minh 4 gói | pnpm 12 chặn install script theo mặc định. `@scarf/scarf` là telemetry → chặn hẳn. `sharp`, `unrs-resolver`, `@parcel/watcher` dùng prebuilt nên không cần build từ nguồn. |
+| D03-11 | Giữ `next-env.d.ts` trong `.gitignore` | Next sinh lại file này mỗi lần build; đây cũng là mặc định của Next. |
+
+### Câu hỏi còn mở sau bước 03
+
+| # | Câu hỏi | Trạng thái |
+|---|---|---|
+| Q03-01 | `packages/contracts` tiếp tục viết tay, hay sinh client types từ OpenAPI của Swagger kèm check drift? | Chưa chốt. Hiện viết tay. Cân nhắc lại ở bước 06 khi hợp đồng catalog ổn định. |
+| Q03-02 | Khi nào nâng NestJS 11 → 12 (ESM)? | Chưa chốt. Chỉ làm sau khi có test tích hợp ở bước 10, như một thay đổi riêng. |
+| Q03-03 | `pnpm` đang cài global qua npm vì `corepack enable` thiếu quyền admin. Có chuẩn hoá lại bằng corepack trong CI/Docker không? | Chốt ở bước 11 cùng Dockerfile. |
+| Q03-04 | `eslint-plugin-*` của `eslint-config-next` chưa khai báo hỗ trợ ESLint 10. | Theo dõi; lint hiện chạy exit 0. Nếu vỡ thì lùi `apps/web` về ESLint 9 và ghi lại. |
+| Q03-05 | Chưa có CI chạy các gate này tự động. | Chốt ở bước 11. |

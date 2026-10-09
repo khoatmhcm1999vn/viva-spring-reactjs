@@ -1,0 +1,19 @@
+{
+  "name": "coffee-order",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Coffee Order - web dat ca phe (bai cuoi khoa). Monorepo pnpm workspaces.",
+  "license": "MIT",
+  "packageManager": "pnpm@12.10.1",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "dev:web": "pnpm --filter @coffee-order/web dev",
+    "dev:api": "pnpm --filter @coffee-order/api start:dev",
+    "lint": "pnpm -r --workspace-concurrency=1 run lint",
+    "typecheck": "pnpm -r --workspace-concurrency=1 run typecheck",
+    "build": "pnpm --filter @coffee-order/contracts run build && pnpm --filter @coffee-order/api run build && pnpm --filter @coffee-order/web run build",
+    "test": "pnpm -r --workspace-concurrency=1 run test"
+  }
+}

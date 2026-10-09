@@ -1,0 +1,28 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "target": "ES2023",
+    "lib": ["ES2023"],
+    // node16 emit CommonJS vi apps/api/package.json khong co "type": "module".
+    // Dong NestJS 11 la CommonJS nen day la to hop dung; tranh node10 da deprecated.
+    "module": "node16",
+    "moduleResolution": "node16",
+    "outDir": "./dist",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "types": ["node", "jest"],
+    // ts-jest yeu cau isolatedModules khi module la node16/nodenext.
+    "isolatedModules": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "declaration": false,
+    "declarationMap": false,
+    "incremental": true,
+    "tsBuildInfoFile": "./dist/.tsbuildinfo",
+    // Nest khoi tao thuoc tinh qua DI nen khong can initializer tai cho.
+    "strictPropertyInitialization": false
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}

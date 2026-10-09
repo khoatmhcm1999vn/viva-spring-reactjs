@@ -1,2 +1,35 @@
-# Frontend
-Tạo Next.js App Router ở bước 3, giữ README/env examples này hoặc merge. src/app, src/features, src/lib. Customer và staff/admin dùng cùng app; không đưa business rules vào Server Actions thay cho API NestJS.
+# Frontend — @coffee-order/web
+
+Next.js 16 App Router, React 19, TypeScript strict, Tailwind 4. TanStack Query cho server state. Khởi tạo ở bước 03.
+
+## Chạy
+```powershell
+pnpm --filter @coffee-order/web run dev     # cổng 3000
+pnpm --filter @coffee-order/web run build
+pnpm --filter @coffee-order/web run start
+```
+Từ root: `pnpm dev:web`.
+
+Copy `.env.example` thành `.env.local`. API phải chạy ở cổng 3001 để trang `/smoke` gọi được.
+
+## Route hiện có
+| Route | Mô tả |
+|---|---|
+| `/` | Trang chủ tạm, chỗ đặt cho menu (bước 06) |
+| `/smoke` | Gọi `GET /v1/health` và `GET /v1/ready` qua TanStack Query. `/ready` trả 503 là **đúng** ở bước 03 vì chưa có DB. |
+
+## Cấu trúc
+```
+src/
+  app/          routes (App Router)
+  features/     catalog, cart, checkout, orders — thêm từ bước 06
+  lib/env.ts    chỉ đọc biến NEXT_PUBLIC_*
+  lib/api.ts    client gọi API, giữ nguyên body lỗi {code,message,details,requestId}
+  lib/utils.ts  cn(), formatVnd(), formatDateTimeHcm()
+```
+
+## Ranh giới bắt buộc
+Mọi biến `NEXT_PUBLIC_*` đều **đi ra bundle client** và người dùng đọc được. Không đặt `DATABASE_URL`, service-role key hay bất kỳ secret nào vào `NEXT_PUBLIC_`. Không import Prisma client/model hay dependency chỉ chạy được trên Node vào đây.
+
+## Chưa có
+Component shadcn/ui (`components.json` đã cấu hình sẵn, component được thêm từ bước 06). Zustand cho giỏ, React Hook Form + Zod cho form — thêm khi dùng ở bước 07–08. Supabase Auth client (bước 05).

@@ -21,12 +21,22 @@ dist/
 logs/
 coverage/
 .next/
+out/
+.turbo/
+*.tsbuildinfo
 
 ### Node ###
 node_modules/
 npm-debug.log*
 yarn-error.log*
+.pnpm-debug.log*
+.pnpm-store/
 *.log
+
+### Next.js ###
+# next-env.d.ts duoc Next sinh lai moi lan build.
+next-env.d.ts
+.vercel
 
 ### IDE ###
 .idea
