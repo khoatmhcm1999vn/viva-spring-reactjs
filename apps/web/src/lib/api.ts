@@ -27,7 +27,9 @@ async function doFetch(
   options: ApiFetchOptions,
   accessToken: string | null,
 ): Promise<Response> {
-  const { json, idempotencyKey, headers, auth: _auth, ...rest } = options;
+  // `auth` chi dung o apiFetch (quyet dinh co gan token), khong gui xuong fetch.
+  const { json, idempotencyKey, headers, ...rest } = options;
+  delete (rest as { auth?: boolean }).auth;
   return fetch(`${API_BASE_URL}${path}`, {
     ...rest,
     headers: {

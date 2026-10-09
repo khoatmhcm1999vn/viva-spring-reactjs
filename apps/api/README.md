@@ -90,5 +90,17 @@ Staff/admin (`@Roles("STAFF","ADMIN")`): `PATCH /v1/staff/stores/:storeId/varian
 
 Lỗi: slug/SKU trùng, size trùng, `maxSelect < minSelect`, giá âm → **400 VALIDATION_ERROR**. Món/danh mục ẩn hoặc không tồn tại → **404**. Cửa hàng tạm đóng → **409 ITEM_UNAVAILABLE**.
 
+## Checkout — báo giá (bước 07)
+`POST /v1/checkout/quote` (`@Roles("CUSTOMER")`, trả **200**). Body: `{storeId, fulfillmentType:"PICKUP", paymentMethod:"PAY_AT_COUNTER", recipient:{name,phone}, items:[{variantId,quantity,modifierOptionIds,note}]}`.
+
+- Giá tính **server-side** từ catalog (`QuotePricingService`), client không gửi giá.
+- `unitPrice = variant.priceVnd + Σ modifier.extraPriceVnd`; `lineTotal = unit × quantity`; `total = subtotal` (shipping=discount=0).
+- Validate: store active, variant active + available tại store, modifier thuộc đúng product, số option mỗi nhóm trong `[minSelect,maxSelect]`, option không trùng/không inactive, quantity 1..20, ≤50 dòng, note ≤200.
+- Lưu `checkout_quotes`: `request_hash` (SHA-256 của canonical), `price_snapshot`, `expires_at = now + 5 phút`.
+- Lỗi: nhập sai (option không thuộc món, min/max, quantity) → **400**; món/variant/store không còn bán → **409 ITEM_UNAVAILABLE**.
+- Quote **không giữ tồn kho/availability** tới lúc đặt; bước 08 kiểm lại và so với snapshot.
+
+`QuotePricingService` được export để bước 08 (tạo đơn) gọi lại cùng logic trong transaction. `canonicalizeQuote`/`normalizeNote` ở `packages/contracts` (dùng chung client/server để hash khớp).
+
 ## Chưa có
-Giỏ hàng + quote (bước 07), đặt đơn (bước 08), xử lý đơn + thanh toán (bước 09). **Upload ảnh món**: hiện `imagePath` nhận string path do admin gửi; endpoint signed upload qua Supabase Storage chưa làm (chưa có project) — xem Q06. Profile staff/admin **không** được seed. FK `profiles.id → auth.users.id` (Q04-01) chưa hiện thực.
+Đặt đơn (bước 08), xử lý đơn + thanh toán (bước 09). **Upload ảnh món** (Q06-01, chưa có Supabase project). Profile staff/admin **không** được seed. FK `profiles.id → auth.users.id` (Q04-01) chưa hiện thực.

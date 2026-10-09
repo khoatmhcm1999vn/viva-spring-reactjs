@@ -10,7 +10,7 @@ Bộ hướng dẫn đã được tạo. Ứng dụng, migrations, tests và dep
 | 04 Schema, migration và seed | **DONE (đã chạy)** | Prisma 7.10 schema theo data-model; 2 migration áp lên PostgreSQL thật; seed idempotent (1 store, 4 cat, 12 món, 19 variant, 3 group, 9 option); 7/7 integration test pass (CHECK/FK/UNIQUE/rollback); `/v1/ready` trả READY qua `SELECT 1`. Chi tiết ở mục “Bước 04”. |
 | 05 Xác thực và quyền | **DONE (đã chạy)** | Verify Supabase token (jose: chữ ký JWKS/HS256 + issuer + audience + expiry); map sub→profiles auto-provision CUSTOMER; AuthGuard+RolesGuard global; StoreAccessService ở service layer; `/v1/me`; FE bearer + 401 refresh một lần. 25/25 unit + 11/11 auth integration + 11/11 HTTP smoke pass. Chi tiết mục “Bước 05”. |
 | 06 Quản lý danh mục và món | **DONE (đã chạy)** | Catalog công khai (categories/products/products/:id, store availability, phân trang, search) + admin CRUD (category/product/variant/modifier) + staff toggle availability theo store (StoreAccessService). 25 unit + 42 integration pass; HTTP smoke đọc seed thật (4 cat, 12 món). Chi tiết mục “Bước 06”. |
-| 07 Giỏ hàng và báo giá | TODO | Chưa thực hiện trong repository ứng dụng |
+| 07 Giỏ hàng và báo giá | **DONE (đã chạy)** | `POST /v1/checkout/quote` tính giá server-side từ catalog (base+modifiers×qty), validate store/availability/modifier min-max-membership, lưu checkout_quotes (request_hash SHA-256, price_snapshot, expires_at 5′). Giỏ Zustand persist (lineKey, một store, migrate reset). 33 unit + 61 integration pass; HTTP smoke tính giá seed thật + persist. Chi tiết mục “Bước 07”. |
 | 08 Tạo đơn an toàn | TODO | Chưa thực hiện trong repository ứng dụng |
 | 09 Xử lý đơn và tracking | TODO | Chưa thực hiện trong repository ứng dụng |
 | 10 Kiểm thử theo rủi ro | TODO | Chưa thực hiện trong repository ứng dụng |
@@ -452,3 +452,59 @@ pnpm --filter @coffee-order/api run test:int     # 42/42 pass (24 catalog + 11 a
 
 ### Bước tiếp theo
 Bước 07 — Giỏ hàng và báo giá (`.kiro/steering/07-cart-quote.md`): giỏ client (Zustand), `POST /v1/checkout/quote` tính giá server-side từ catalog + lưu quote có hạn, luật modifier min/max/membership, chống giá đổi giữa kiểm và lưu. Không đánh dấu bước nào khác hoàn thành.
+
+---
+
+## Bước 07 — Giỏ hàng và báo giá (2026-10-09) — **DONE**
+
+### Dependency bước trước
+Bước 06 (catalog: variant, store_variants, modifier groups/options, product_modifier_groups) và bước 05 (auth, `@Roles`, `CurrentUser`). Bước 07 đọc giá/availability/modifier từ catalog để tính quote.
+
+### Đã kiểm repo trước khi sửa
+Chưa có module checkout. Không ghi đè file bước trước; chỉ **thêm** module `checkout`, feature `cart` ở web, và contract types/hàm canonical.
+
+### File đổi
+| File | Thay đổi |
+|---|---|
+| `packages/contracts/src/index.ts` | **Sửa**: thêm `QuoteItemInput/RecipientInput/QuoteRequest/QuoteLine/QuoteLineModifier/QuoteResponse`, `NOTE_MAX_LENGTH`, `normalizeNote`, `canonicalizeQuote` + `CanonicalQuoteInput`. |
+| `apps/api/src/modules/checkout/dto/quote.dto.ts` | **Mới**: `QuoteRequestDto` + `RecipientDto` + `QuoteItemDto` (class-validator: PICKUP/PAY_AT_COUNTER, quantity 1..20, ≤50 dòng, note ≤200, option UUID không trùng). |
+| `apps/api/src/modules/checkout/quote-pricing.service.ts` | **Mới**: `QuotePricingService.priceQuote(tx, req)` — tính giá + validate domain, nhận `Tx` để bước 08 dùng lại. |
+| `apps/api/src/modules/checkout/checkout.service.ts` | **Mới**: `createQuote` — hash canonical SHA-256, lưu `checkout_quotes` + snapshot + expires_at. |
+| `apps/api/src/modules/checkout/checkout.controller.ts` | **Mới**: `POST /v1/checkout/quote` `@Roles("CUSTOMER")`, trả 200. |
+| `apps/api/src/modules/checkout/checkout.module.ts` | **Mới**: export `QuotePricingService`/`CheckoutService` cho bước 08. |
+| `apps/api/src/app.module.ts` | **Sửa**: import `CheckoutModule`. |
+| `apps/api/src/modules/checkout/canonical.spec.ts` | **Mới**: 8 unit test cho `normalizeNote`/`canonicalizeQuote`. |
+| `apps/api/test/checkout-quote.int-spec.ts` | **Mới**: 19 integration test. |
+| `apps/web/src/features/cart/cart-store.ts` | **Mới**: Zustand persist giỏ. |
+| `apps/web/src/features/cart/use-cart-hydrated.ts` | **Mới**: chờ rehydrate. |
+| `apps/web/src/features/cart/quote.ts` | **Mới**: `buildQuoteRequest` + `requestQuote`. |
+| `apps/web/src/lib/api.ts` | **Sửa**: bỏ `auth` khỏi options trước khi fetch (sửa lint). |
+| `apps/web/package.json` | **Sửa**: thêm `zustand@5.0.15`. |
+| `apps/api/README.md`, `apps/web/README.md`, `docs/decisions.md` | **Sửa**: ghi endpoint/giỏ + D07-01..10 + Q07. |
+
+### Commands đã chạy và kết quả thật
+```powershell
+pnpm run lint / typecheck / build / test        # tat ca EXIT 0; unit 33/33 (4 suite)
+pnpm --filter @coffee-order/web typecheck/build  # EXIT 0
+pnpm --filter @coffee-order/api run test:int     # 61/61 pass (19 quote + 24 catalog + 11 auth + 7 schema)
+# HTTP smoke (API 3001 + DB dev seed buoc 04): 10/10 PASS
+```
+
+**Unit canonical (8)**: normalize note (trim/gom khoảng trắng/xuống dòng/rỗng→null); canonical bất biến theo thứ tự option và thứ tự dòng; note khác→hash khác; note chỉ khác khoảng trắng→hash giống; recipient được trim.
+
+**Integration quote (19)**: thiếu token→401; giá server base+modifier×qty + note normalize + total=subtotal; persist `checkout_quotes` (requestHash 64 hex, expires_at>created_at); cùng món khác topping→2 dòng giá khác; option không thuộc món→400; thiếu nhóm bắt buộc→400; vượt max topping→400; 2 option cùng nhóm max1→400; variant inactive→409 ITEM_UNAVAILABLE; variant không available tại store→409; cửa hàng đóng→409; quantity 0/21→400; items rỗng→400; option trùng DTO→400; note>200→400; fulfillmentType=DELIVERY→400; trường giá lạ trong body→400; variant L đúng giá.
+
+**HTTP smoke (10)**: thiếu token→401; quote hợp lệ→unitPrice=base+modifiers, lineTotal=unit×qty, total=subtotal, note normalize, quoteId+expiresAt tương lai, không lộ secret; trường giá lạ→400; option lạ→400. Query DB xác nhận `checkout_quotes` có 1 row; đã xóa row + profile smoke sau đó.
+
+### Pass / Fail / Skip
+- **PASS**: lint, typecheck (api+web), build (api+web), unit 33/33, integration 61/61, HTTP smoke 10/10, persist quote thật.
+- **FAIL**: không còn. Lỗi thật đã sửa: kiểu `Prisma.InputJsonValue` cho snapshot (JSON round-trip); lint Next báo `setState` đồng bộ trong effect của `use-cart-hydrated` (dùng `queueMicrotask`) và `_auth` unused (dùng `delete`).
+- **SKIP / chưa làm**: rate limit cho `/quote` (Q07-01, nối Q01-06, bước 08/11); UI checkout (breakdown/đếm ngược/disable khi hết hạn) — chưa có màn web; so-khớp-snapshot khi đặt đơn (PRICE_CHANGED) thuộc **bước 08**.
+
+### Hạn chế
+- Quote **không giữ availability/tồn kho** tới lúc đặt — đúng thiết kế; bước 08 kiểm lại và so snapshot.
+- Chưa có rate limit; chưa có màn web checkout. Giỏ Zustand đã có store + hook nhưng chưa có UI dùng (menu/dialog chưa dựng).
+- `price_snapshot` và `normalizedPayload` lưu JSON; bước 08 sẽ đọc lại để xác thực khi tạo đơn.
+
+### Bước tiếp theo
+Bước 08 — Tạo đơn an toàn (`.kiro/steering/08-create-order.md`): `POST /v1/orders` với `Idempotency-Key`, dùng lại `QuotePricingService` trong transaction, so khớp snapshot (QUOTE_EXPIRED/PRICE_CHANGED/ITEM_UNAVAILABLE), ghi order+items+modifiers+payment+history+idempotency trong một transaction, chống retry/đua. Không đánh dấu bước nào khác hoàn thành.

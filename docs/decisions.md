@@ -352,3 +352,39 @@ Toàn bộ đã **chạy thật** trên PostgreSQL 16 (Docker): 2 migration áp 
 | Q06-01 | Upload ảnh: signed upload Supabase Storage + public read hay signed URL? | Chưa chốt; cần project. Hiện nhận `imagePath` string. Nối tiếp Q01-07. |
 | Q06-02 | Có cần endpoint admin liệt kê product/category gồm cả inactive (có phân trang riêng)? | Chưa; thêm khi dựng UI admin. |
 | Q06-03 | Chuẩn hóa tiếng Việt khi search (bỏ dấu) — hiện dùng `contains insensitive` của Postgres | Đủ cho MVP; cân nhắc `unaccent` nếu cần. |
+
+---
+
+## Bước 07 — Giỏ hàng và báo giá (2026-10-09)
+
+Đã **chạy thật**: 33 unit (8 canonical) + 61 integration (19 quote) pass; HTTP smoke tính giá từ seed thật và persist quote.
+
+### Phiên bản chốt
+| Gói | Phiên bản | Ghi chú |
+|---|---|---|
+| `zustand` (web) | 5.0.15 | Giỏ hàng persist localStorage. |
+
+### Quyết định
+| # | Quyết định | Lý do |
+|---|---|---|
+| D07-01 | `canonicalizeQuote` + `normalizeNote` đặt trong `packages/contracts` (browser-safe, không crypto) | Client và server dùng **cùng** hàm canonical để `request_hash` khớp. Hash SHA-256 làm ở server (`createHash` của Node); contracts chỉ trả chuỗi canonical. |
+| D07-02 | Canonical: sort `modifierOptionIds`, sort `items` theo khóa (variantId+modifiers+note), trim recipient, normalize note; **không** gom transport/requestId/thời gian | Thứ tự chọn/thứ tự dòng không đổi hash; nội dung đổi thì đổi hash. Khớp docs/api-contract. |
+| D07-03 | `POST /checkout/quote` trả **200** (không 201) | Quote là tài nguyên tạm có hạn, không phải resource bền vững. |
+| D07-04 | Tách `QuotePricingService` (tính giá thuần từ catalog, nhận `Tx`) khỏi `CheckoutService` (persist) | Bước 08 gọi lại `priceQuote` trong transaction tạo đơn với cùng logic + khóa dòng catalog. Nhận `Tx` (Pick delegate) nên chạy được cả với `this.prisma` lẫn transaction client. |
+| D07-05 | Lỗi nhập liệu modifier (không thuộc món, min/max, trùng) → **400 VALIDATION_ERROR**; món/variant/store không còn bán → **409 ITEM_UNAVAILABLE** | Nhất quán với bước 06 (D06-05/06). Phân biệt rõ "nhập sai" với "hết hàng". |
+| D07-06 | Kiểm min/max cho **mọi nhóm gắn product**, kể cả nhóm bắt buộc chưa chọn | Nhóm `minSelect≥1` không chọn gì phải báo thiếu, không chỉ kiểm option đã gửi. |
+| D07-07 | `price_snapshot` lưu đủ dòng + giá qua JSON round-trip (`Prisma.InputJsonValue`) | Bước 08 so khớp snapshot để phát hiện PRICE_CHANGED. Round-trip để khớp kiểu Json của Prisma (loại `undefined`). |
+| D07-08 | Giỏ client Zustand persist, `version:1`, `migrate` reset giỏ rỗng khi đổi format | Steering: migration hoặc reset an toàn. Reset rỗng đơn giản và không có nguy cơ đọc cấu trúc cũ sai. |
+| D07-09 | Một giỏ một store; thêm món store khác → `storeConflict`, UI xác nhận trước khi `switchStore` | Steering + domain (một đơn một store). Không tự xóa giỏ của khách. |
+| D07-10 | `lineKey` = variantId + modifier đã sort + note đã normalize | Khác size/modifier/note là dòng riêng (REQ-204); cùng cấu hình thì cộng dồn quantity. |
+
+### Chưa làm / ghi rõ
+- **Quote không giữ availability**: đúng steering — bước 08 kiểm lại khi tạo đơn và so snapshot (PRICE_CHANGED/ITEM_UNAVAILABLE/QUOTE_EXPIRED). Chưa có logic đó ở bước 07.
+- Rate limit cho `POST /quote` (steering nhắc "giới hạn request"): chưa thêm throttler; chốt cùng rate limit tổng ở bước 08/11 (Q01-06).
+- UI checkout (hiển thị breakdown, đếm ngược, disable khi hết hạn): chưa có màn web; chỉ có store + hook. Dựng khi làm màn ở bước sau.
+
+### Câu hỏi còn mở
+| # | Câu hỏi | Trạng thái |
+|---|---|---|
+| Q07-01 | Rate limit cho endpoint quote (ngưỡng/cửa sổ) | Chưa; nối Q01-06, chốt bước 08/11. |
+| Q07-02 | Có cho phép quote lại tự động khi giá đổi, hay luôn buộc khách xác nhận? | Thiết kế (wireframe D02): buộc xác nhận. Logic ở bước 08. |

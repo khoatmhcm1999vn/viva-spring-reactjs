@@ -245,6 +245,80 @@ export interface ProductDetailDto extends ProductListItemDto {
 }
 
 /* ------------------------------------------------------------------ */
+/* Gio hang va bao gia (bước 07)                                       */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Mot dong gio hang gui len de bao gia / dat don.
+ * Client CHI gui ID + so luong + lua chon; KHONG gui gia (REQ-200).
+ */
+export interface QuoteItemInput {
+  variantId: string;
+  quantity: number;
+  /** ID cac modifier option da chon. MVP moi option quantity = 1, khong trung. */
+  modifierOptionIds: string[];
+  /** Ghi chu cho dong; se duoc normalize (trim + gom khoang trang) truoc khi hash. */
+  note?: string | null;
+}
+
+/** Thong tin nguoi nhan tai quay. */
+export interface RecipientInput {
+  name: string;
+  phone: string;
+}
+
+/**
+ * Request bao gia. MVP chi PICKUP + PAY_AT_COUNTER.
+ * Dung chung cho POST /checkout/quote va (o bước 08) phan cart cua POST /orders.
+ */
+export interface QuoteRequest {
+  storeId: string;
+  fulfillmentType: "PICKUP";
+  paymentMethod: "PAY_AT_COUNTER";
+  recipient: RecipientInput;
+  items: QuoteItemInput[];
+}
+
+/** Mot modifier da chon trong dong bao gia, kem gia tai thoi diem bao gia. */
+export interface QuoteLineModifier {
+  optionId: string;
+  groupName: string;
+  optionName: string;
+  extraPriceVnd: number;
+}
+
+/**
+ * Mot dong trong bao gia, da tinh gia o server.
+ * unitPriceVnd = basePriceVnd + tong extraPriceVnd cua modifiers.
+ * lineTotalVnd = unitPriceVnd * quantity.
+ */
+export interface QuoteLine {
+  variantId: string;
+  productName: string;
+  size: string;
+  basePriceVnd: number;
+  unitPriceVnd: number;
+  quantity: number;
+  lineTotalVnd: number;
+  modifiers: QuoteLineModifier[];
+  note: string | null;
+}
+
+/**
+ * Response bao gia. subtotal = tong lineTotal; MVP shipping = discount = 0 nen
+ * total = subtotal. Gia o day la nguon chuan cho dat don (bước 08).
+ */
+export interface QuoteResponse {
+  quoteId: string;
+  expiresAt: string;
+  items: QuoteLine[];
+  subtotalVnd: number;
+  shippingFeeVnd: 0;
+  discountVnd: 0;
+  totalVnd: number;
+}
+
+/* ------------------------------------------------------------------ */
 /* Hang so dung chung                                                  */
 /* ------------------------------------------------------------------ */
 
@@ -267,3 +341,74 @@ export const QUOTE_TTL_SECONDS = 300;
 
 /** Tien la integer VND. Dung cho validate bien tren o ca hai phia. */
 export const MAX_SIGNED_INT32 = 2147483647;
+
+/** Do dai toi da cua ghi chu moi dong (REQ gioi han note). */
+export const NOTE_MAX_LENGTH = 200;
+
+/* ------------------------------------------------------------------ */
+/* Chuan hoa canonical cho quote / idempotency                         */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Chuan hoa ghi chu: trim hai dau, gom moi chuoi khoang trang (gom xuong dong)
+ * thanh mot dau cach. Rong -> null. Dung chung client va server de hash khop.
+ */
+export function normalizeNote(note: string | null | undefined): string | null {
+  if (note === null || note === undefined) return null;
+  const trimmed = note.replace(/\s+/g, " ").trim();
+  return trimmed.length === 0 ? null : trimmed;
+}
+
+/**
+ * Dang canonical cua request bao gia, dung lam dau vao bam (request_hash) va la
+ * noi dung "cart payload" ma POST /orders phai khop (bước 08).
+ *
+ * Quy tac on dinh:
+ *  - modifierOptionIds sap xep tang dan (thu tu chon khong anh huong).
+ *  - items sap xep theo khoa (variantId, modifiers da sort, note) de thu tu dong
+ *    khong anh huong; dong trung cau hinh y het KHONG tu gom (giu rieng) nhung
+ *    canonical van on dinh.
+ *  - note da normalize.
+ *  - KHONG gom transport/requestId/thoi gian vao canonical.
+ *
+ * Tra ve chuoi JSON on dinh (khong phai hash). Ben goi bam bang thuat toan cua
+ * minh (server: crypto SHA-256) de tranh phu thuoc crypto trong goi browser-safe.
+ */
+export interface CanonicalQuoteInput {
+  storeId: string;
+  fulfillmentType: string;
+  paymentMethod: string;
+  recipient: { name: string; phone: string };
+  items: Array<{
+    variantId: string;
+    quantity: number;
+    modifierOptionIds: string[];
+    note?: string | null;
+  }>;
+}
+
+export function canonicalizeQuote(input: CanonicalQuoteInput): string {
+  const items = input.items
+    .map((it) => ({
+      variantId: it.variantId,
+      quantity: it.quantity,
+      modifierOptionIds: [...it.modifierOptionIds].sort(),
+      note: normalizeNote(it.note),
+    }))
+    .sort((a, b) => {
+      const ka = `${a.variantId}|${a.modifierOptionIds.join(",")}|${a.note ?? ""}`;
+      const kb = `${b.variantId}|${b.modifierOptionIds.join(",")}|${b.note ?? ""}`;
+      return ka < kb ? -1 : ka > kb ? 1 : 0;
+    });
+
+  return JSON.stringify({
+    storeId: input.storeId,
+    fulfillmentType: input.fulfillmentType,
+    paymentMethod: input.paymentMethod,
+    recipient: {
+      name: input.recipient.name.trim(),
+      phone: input.recipient.phone.trim(),
+    },
+    items,
+  });
+}
