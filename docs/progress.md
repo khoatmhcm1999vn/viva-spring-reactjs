@@ -12,7 +12,7 @@ Bộ hướng dẫn đã được tạo. Ứng dụng, migrations, tests và dep
 | 06 Quản lý danh mục và món | **DONE (đã chạy)** | Catalog công khai (categories/products/products/:id, store availability, phân trang, search) + admin CRUD (category/product/variant/modifier) + staff toggle availability theo store (StoreAccessService). 25 unit + 42 integration pass; HTTP smoke đọc seed thật (4 cat, 12 món). Chi tiết mục “Bước 06”. |
 | 07 Giỏ hàng và báo giá | **DONE (đã chạy)** | `POST /v1/checkout/quote` tính giá server-side từ catalog (base+modifiers×qty), validate store/availability/modifier min-max-membership, lưu checkout_quotes (request_hash SHA-256, price_snapshot, expires_at 5′). Giỏ Zustand persist (lineKey, một store, migrate reset). 33 unit + 61 integration pass; HTTP smoke tính giá seed thật + persist. Chi tiết mục “Bước 07”. |
 | 08 Tạo đơn an toàn | **DONE (đã chạy)** | `POST /v1/orders` + `Idempotency-Key`: replay trước expiry, transaction claim key → FOR UPDATE catalog theo thứ tự ID → tính lại giá → so snapshot → insert order+items+modifiers+payment UNPAID+history+mapping. PRICE_CHANGED/QUOTE_EXPIRED/ITEM_UNAVAILABLE/IDEMPOTENCY_CONFLICT/QUOTE_ALREADY_USED. 37 unit + 77 integration pass; smoke 17/17 gồm concurrent thật. Chi tiết mục “Bước 08”. |
-| 09 Xử lý đơn và tracking | TODO | Chưa thực hiện trong repository ứng dụng |
+| 09 Xử lý đơn và tracking | **DONE (đã chạy)** | `/me/orders`, `/orders/:id`, `/orders/:id/history`, `/orders/:id/cancel`, `/staff/orders`, `/staff/orders/:id/transitions`, `/staff/orders/:id/payments`. CAS theo version + history cùng transaction; thu tiền chỉ ở READY có audit; COMPLETED cần PAID; store scope server-side. 47 unit + 104 integration pass; smoke 21/21 trọn vòng đời. Chi tiết mục “Bước 09”. |
 | 10 Kiểm thử theo rủi ro | TODO | Chưa thực hiện trong repository ứng dụng |
 | 11 Triển khai | TODO | Chưa thực hiện trong repository ứng dụng |
 | 12 Bàn giao và trình bày | TODO | Chưa thực hiện trong repository ứng dụng |
@@ -563,3 +563,58 @@ pnpm --filter @coffee-order/api run test:int     # 77/77 pass (16 orders + 19 qu
 
 ### Bước tiếp theo
 Bước 09 — Xử lý đơn và tracking (`.kiro/steering/09-tracking.md`): chuyển trạng thái với CAS theo `version`, staff đúng store, thu tiền PAY_AT_COUNTER có audit, `COMPLETED` chỉ khi READY và PAID, hủy/từ chối có lý do, `GET /me/orders` + `GET /orders/:id/history`, polling phía web. Không đánh dấu bước nào khác hoàn thành.
+
+---
+
+## Bước 09 — Xử lý đơn và tracking (2026-10-09) — **DONE**
+
+### Dependency bước trước
+Bước 08 (`OrdersService.loadOrder`, orders/payments/history đã có), bước 05 (`StoreAccessService`, `@Roles`), bước 04 (`version` trên orders/payments + CHECK `version >= 0`).
+
+### Xung đột tài liệu đã xử lý
+Steering bước 09 yêu cầu endpoint thu tiền "kiểm tra **READY**", trong khi **D01-04** (bước 01) cho thu tiền ở `CONFIRMED`/`PREPARING`/`READY`. Tôi **theo steering bước 09 (chỉ `READY`)** vì nó là chỉ thị cho bước này, **chặt hơn** nên vẫn giữ bất biến "không có đường hoàn tiền", và khớp nghiệp vụ trả-tại-quầy-khi-nhận-món. **Tác động đã cập nhật**: D01-04, D02-07 (nút `[Thu tiền]` chỉ hiện ở `READY`), `docs/diagrams/order-lifecycle.mmd`, `docs/api-contract.md`. Ghi thành **D09-02**.
+
+### File đổi
+| File | Thay đổi |
+|---|---|
+| `packages/contracts/src/index.ts` | **Sửa**: `ORDER_TRANSITIONS`, `canTransition`, `PAYMENT_COLLECTABLE_STATUSES`, `canCollectPayment`, `REASON_MAX_LENGTH`, `TRACKING_POLL_INTERVAL_MS`, `OrderListItemDto`, `OrderHistoryEntryDto`, `TransitionRequest`, `CancelOrderRequest`, `CollectPaymentRequest`. |
+| `apps/api/src/modules/orders/order-tracking.service.ts` | **Mới**: quyền xem (owner/staff-store/admin → khác 404), `listOwnOrders`, `listStaffOrders` (scope server-side), `getOrder`, `getHistory`, `transition`, `cancel`, `casTransition`, `collectPayment`. |
+| `apps/api/src/modules/orders/dto/tracking.dto.ts` | **Mới**: `OrderListQueryDto`, `StaffOrderListQueryDto`, `TransitionDto`, `CancelOrderDto`, `CollectPaymentDto`. |
+| `apps/api/src/modules/orders/orders.controller.ts` | **Sửa**: thêm `GET /me/orders`, `GET /orders/:id` (mở cho staff/admin), `GET /orders/:id/history`, `POST /orders/:id/cancel`; header `no-store, private`. |
+| `apps/api/src/modules/orders/orders-staff.controller.ts` | **Mới**: `GET /staff/orders`, `POST /staff/orders/:id/transitions`, `POST /staff/orders/:id/payments`. |
+| `apps/api/src/modules/orders/orders.module.ts` | **Sửa**: thêm controller staff + `OrderTrackingService`. |
+| `apps/api/src/modules/orders/state-machine.spec.ts` | **Mới**: 10 unit test đồ thị trạng thái + điều kiện thu tiền. |
+| `apps/api/test/tracking.int-spec.ts` | **Mới**: 27 integration test. |
+| `apps/api/test/orders.int-spec.ts` | **Sửa**: assertion `Cache-Control` cũ (`"no-store"`) không còn khớp sau khi thêm `private`. |
+| `apps/web/src/features/orders/use-order-tracking.ts` | **Mới**: polling 7s chỉ khi tab hiện, dừng ở terminal, refetch focus, `useInvalidateOrder`. |
+| `apps/web/src/features/orders/orders-api.ts` | **Mới**: client cho 5 endpoint tracking. |
+| `docs/diagrams/order-lifecycle.mmd` | **Sửa**: ghi rõ thu tiền chỉ ở READY + ghi chú bất biến không-hoàn-tiền. |
+| `docs/api-contract.md`, `docs/decisions.md`, 2 README | **Sửa**: đánh dấu đã hiện thực + D09-01..12 + Q09. |
+
+### Commands đã chạy và kết quả thật
+```powershell
+pnpm run lint / typecheck / build / test        # tat ca EXIT 0; unit 47/47 (6 suite)
+pnpm --filter @coffee-order/web typecheck/build  # EXIT 0
+pnpm --filter @coffee-order/api run test:int     # 104/104 pass (27 tracking + 16 orders + 19 quote + 24 catalog + 11 auth + 7 schema)
+# HTTP smoke tron vong doi (API 3001 + DB dev seed): 21/21 PASS
+```
+
+**Integration tracking (27)** phủ đúng checklist steering: vòng đời đầy đủ PLACED→CONFIRMED→PREPARING→READY→thu tiền→COMPLETED với `version` tăng đúng từng bước; **bỏ bước** (PLACED→READY) → 409 INVALID_TRANSITION; **lùi bước** (PREPARING→CONFIRMED) → 409; `expectedVersion` sai → 409 VERSION_CONFLICT; **hai staff đua cùng transition** → một 200 một 409 và **chỉ một dòng history**, version = 1; từ chối không lý do → 400, có lý do → 200 + lưu `reason`/`actorId`; từ chối khi đã CONFIRMED → 409; **STAFF store B không chuyển trạng thái/thu tiền đơn store A** → 403; bảng đơn staff **chỉ** chứa store được gán; **`storeId` client không mở rộng scope** (staff A lọc store B → rỗng); ADMIN thấy mọi store; CUSTOMER gọi board → 403; lọc theo status; **thu tiền khi chưa READY** (PLACED và CONFIRMED) → 409; **thu tiền lặp** → 409 + payment chỉ `version=1` + một `collected_by`; **hai staff đua thu tiền** → đúng một 200; **unpaid completion** → 409; chủ đơn hủy ở PLACED → CANCELLED + history actor là khách; hủy sau CONFIRMED → 409; người khác hủy → 404 không lộ PII; STAFF gọi cancel của khách → 403; `/me/orders` chỉ đơn của mình + phân trang + `no-store`; **history đúng thứ tự thời gian, `from_status` đầu = null**; khách **không** thấy `actorName`, staff thấy; staff đúng store đọc được chi tiết, staff store khác → 404; **không có endpoint PATCH tùy ý** (cả hai route trả 404).
+
+**HTTP smoke (21)** trên seed thật: trọn vòng đời với `version` 0→4; COMPLETED khi chưa PAID → 409; thu tiền ở READY → PAID có `paidAt`; thu tiền lặp → 409; terminal không chuyển tiếp → 409; history `PLACED → CONFIRMED → PREPARING → READY → COMPLETED` đúng thứ tự, `from_status` đầu null; khách không thấy `actorName`, staff thấy; hủy ở PLACED được, sau CONFIRMED → 409; từ chối không lý do → 400, có lý do → REJECTED; `/me/orders` phân trang + `no-store`; staff board đúng scope; CUSTOMER → 403.
+
+**Bằng chứng bất biến không-hoàn-tiền** (query DB sau smoke): đơn `COMPLETED` có payment `PAID` version 1 với cả `collected_by` và `paid_at`; đơn `CANCELLED` và `REJECTED` đều có payment **`UNPAID`** — không tồn tại đơn đã thu tiền bị hủy.
+
+### Pass / Fail / Skip
+- **PASS**: lint, typecheck (api+web), build (api+web), unit 47/47, integration 104/104, HTTP smoke 21/21, audit `collected_by`/`paid_at`, bất biến không-hoàn-tiền.
+- **FAIL**: không còn. Một lỗi thật đã sửa: assertion `Cache-Control` trong test bước 08 mong đúng `"no-store"` nhưng bước 09 đổi thành `"no-store, private"` → đổi sang `toContain`.
+- **SKIP / chưa làm**: **UI** tracking + staff board (đã có hook polling + API client, chưa dựng màn); rate limit (Q07-01, bước 11); trạng thái abandoned cho đơn READY bị bỏ (Q09-01/Q01-01); chặn staff tự xử lý đơn của mình (Q09-02/Q01-05); **delivery và WebSocket chưa bật** (ngoài MVP).
+
+### Hạn chế
+- Chưa có màn web nào cho tracking/staff board — toàn bộ luồng chứng minh qua API (integration + smoke). Hook polling đã viết nhưng chưa có component dùng.
+- `transition` kiểm điều kiện (graph, payment PAID) **trước** CAS rồi mới CAS; giữa hai bước có cửa sổ nhỏ, nhưng CAS theo `(id, status, version)` đảm bảo không ghi sai trạng thái — bên thua nhận 409.
+- Chưa chặn self-transition (staff tự xử lý đơn của chính mình) — Q09-02.
+- Đơn `READY` khách không đến lấy vẫn nằm ở `READY`, chưa có cơ chế xử lý — Q09-01.
+
+### Bước tiếp theo
+Bước 10 — Kiểm thử theo rủi ro (`.kiro/steering/10-testing.md`): rà lại ma trận T01–T13 trong `docs/test-plan.md` so với test đã có, bổ sung các khoảng trống đã ghi (REQ-005/006/100/101/205/301/308/400/408/500/601/603/700/704), dựng CI gate và báo cáo passed/failed/skipped riêng. Không đánh dấu bước nào khác hoàn thành.

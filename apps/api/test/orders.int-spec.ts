@@ -251,7 +251,9 @@ describeIfDb("orders integration", () => {
     expect(res.body.payment.method).toBe("PAY_AT_COUNTER");
     expect(res.body.payment.amountVnd).toBe(total);
     expect(res.body.storeName).toBe("Store A");
-    expect(res.headers["cache-control"]).toBe("no-store");
+    // Buoc 09 bo sung `private` (chi tiet don chua PII nguoi nhan).
+    expect(res.headers["cache-control"]).toContain("no-store");
+    expect(res.headers["cache-control"]).toContain("private");
 
     const orderId = res.body.id;
     // Kiem atomic trong DB.

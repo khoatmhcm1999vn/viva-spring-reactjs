@@ -48,5 +48,12 @@ Mọi biến `NEXT_PUBLIC_*` đều **đi ra bundle client** và người dùng 
 - `placeOrder(session)` gọi `POST /v1/orders`. Gọi lại với cùng session là an toàn — server trả lại đúng đơn cũ (200), không tạo đơn thứ hai.
 - **Không xóa giỏ trước khi nhận response thành công.**
 
+## Tracking đơn (bước 09)
+`src/features/orders/`:
+- `use-order-tracking.ts` — `useOrderTracking(orderId)` polling **7 giây** (`TRACKING_POLL_INTERVAL_MS`), `refetchIntervalInBackground: false` nên **chỉ poll khi tab hiện**, **dừng khi đơn vào terminal**, refetch khi focus. `useOrderHistory` cho timeline. `useInvalidateOrder()` invalidate đúng query sau mutation (detail + history + list khách + board staff).
+- `orders-api.ts` — `fetchMyOrders`, `fetchStaffOrders`, `transitionOrder`, `collectPayment`, `cancelOrder`.
+
+UI phải dùng **timestamp của server** (`createdAt` trong history) để hiển thị "cập nhật lúc"; không tự giả lập tiến trình. `expectedVersion` lấy từ đơn vừa đọc — lệch thì API trả `409 VERSION_CONFLICT` và UI refetch rồi hiện lại đúng bộ nút.
+
 ## Chưa có
-Trang đăng nhập/đăng ký và UI menu/giỏ/checkout/tracking (dựng màn ở các bước sau). Component shadcn/ui (`components.json` đã cấu hình sẵn). React Hook Form + Zod cho form.
+Trang đăng nhập/đăng ký và UI menu/giỏ/checkout/tracking/staff board (hook + API client đã có, chưa dựng màn). Component shadcn/ui (`components.json` đã cấu hình sẵn). React Hook Form + Zod cho form.

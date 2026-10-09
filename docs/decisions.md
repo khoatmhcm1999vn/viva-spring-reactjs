@@ -22,7 +22,7 @@ Các quyết định dưới đây là lựa chọn của dự án học tập n
 | D01-01 | MVP chỉ `PICKUP` + `PAY_AT_COUNTER` | Đủ để chứng minh trọn luồng đặt → pha → bàn giao mà không cần tích hợp bên thứ ba | Không có API/UI delivery hay cổng thanh toán ở bản đầu |
 | D01-02 | Một store được seed, nhưng mọi bảng/endpoint/quyền đều mang `store_id` | Tránh refactor khi mở nhiều store; cho phép test scope staff theo store ngay từ đầu | REQ-700; staff scope kiểm qua `store_staff` chứ không qua cờ global |
 | D01-03 | Hạn quote 5 phút | Đủ cho khách hoàn tất checkout, đủ ngắn để giá không lệch lâu | REQ-205, REQ-206 |
-| D01-04 | **Thu tiền chỉ cho phép ở `CONFIRMED`, `PREPARING`, `READY`** | `PLACED` chưa được thu tiền theo domain-rules nên hủy/từ chối không sinh hoàn tiền; terminal thì đã chốt sổ | REQ-405; loại bỏ hoàn toàn nhu cầu refund trong MVP |
+| D01-04 | ~~Thu tiền cho phép ở `CONFIRMED`, `PREPARING`, `READY`~~ → **SỬA ở bước 09: chỉ `READY`** | `PLACED` chưa được thu tiền theo domain-rules nên hủy/từ chối không sinh hoàn tiền; terminal thì đã chốt sổ | REQ-405; loại bỏ hoàn toàn nhu cầu refund trong MVP. **Xem D09-02** — steering bước 09 yêu cầu endpoint thu tiền "kiểm tra READY", chặt hơn và vẫn giữ bất biến không-hoàn-tiền |
 | D01-05 | Khách chỉ hủy được khi đơn còn `PLACED` | Sau `CONFIRMED` nguyên liệu đã dùng; tránh tranh chấp mà MVP chưa có policy bồi thường | REQ-504 |
 | D01-06 | Từ chối đơn bắt buộc có `reason`, lưu trong history | Khách cần biết lý do; audit được actor | REQ-404 |
 | D01-07 | `COMPLETED` yêu cầu đồng thời `READY` và payment `PAID` | Không bàn giao hàng khi chưa thu tiền | REQ-407 |
@@ -73,7 +73,7 @@ Chi tiết wireframe ở `docs/wireframes.md`. Đây là quyết định thiết
 | D02-04 | Khối chọn Size **chỉ render khi product có ≥2 variant** | Không ép bánh/nước đóng chai phải có S/M/L; UI suy ra từ dữ liệu | Món một size hiện giá chính xác, menu không có chữ "từ" |
 | D02-05 | Giỏ ghi nhãn **"Tạm tính"**; con số ràng buộc chỉ đến từ quote của API | Client không được là nguồn giá | REQ-200, REQ-705 |
 | D02-06 | Staff board là **4 cột theo trạng thái** (`PLACED`/`CONFIRMED`/`PREPARING`/`READY`); đơn terminal rời bảng | Khớp đúng vòng đời, nhìn ra việc cần làm ngay | Mobile xếp thành 4 section dọc |
-| D02-07 | Nút `[Thu tiền]` hiện từ `CONFIRMED` trở đi, **không** hiện ở `PLACED` | Theo D01-04; giữ đơn `PLACED` luôn chưa thu tiền | REQ-405 |
+| D02-07 | ~~Nút `[Thu tiền]` hiện từ `CONFIRMED` trở đi~~ → **SỬA ở bước 09: chỉ hiện ở `READY`** | Theo D01-04 (đã sửa thành chỉ `READY` — xem D09-02); giữ đơn `PLACED` luôn chưa thu tiền | REQ-405 |
 | D02-08 | `401` xảy ra **giữa một mutation** thì hiện dialog, **không** tự chuyển trang | Tránh mất form checkout và tránh khách tưởng đơn đã gửi | Giỏ và form được giữ nguyên |
 | D02-09 | `requestId` chỉ hiện ở màn lỗi 5xx, dưới nhãn "Mã tham chiếu" | Khách cần đọc cho nhân viên khi báo lỗi, nhưng không nên thấy mã lỗi kỹ thuật | REQ-703 |
 | D02-10 | Admin **không có nút Xoá**, chỉ có toggle "Hiển thị" | Khớp REQ-603/REQ-307: ẩn thay vì xoá để giữ đơn cũ | Có tooltip giải thích tại chỗ |
@@ -428,3 +428,41 @@ Toàn bộ đã **chạy thật** trên PostgreSQL 16 (Docker): 2 migration áp 
 |---|---|---|
 | Q08-01 | Có cần dọn `checkout_quotes` hết hạn định kỳ? | Chưa; cân nhắc job ở bước 11. |
 | Q08-02 | Có cần TTL/dọn `idempotency_keys` cũ? | Chưa; bảng nhỏ ở quy mô MVP. |
+
+---
+
+## Bước 09 — Xử lý đơn và tracking (2026-10-09)
+
+Đã **chạy thật**: 47 unit + 104 integration (27 tracking) pass; HTTP smoke 21/21 chạy trọn vòng đời đơn trên seed thật.
+
+### Xung đột tài liệu đã xử lý
+| # | Xung đột | Quyết định |
+|---|---|---|
+| **D09-02** | Steering bước 09 nói endpoint thu tiền "kiểm tra **READY**", nhưng **D01-04** (bước 01) cho thu tiền ở `CONFIRMED`/`PREPARING`/`READY`. | **Theo steering bước 09: chỉ `READY`.** Lý do: (a) là chỉ thị cho bước này; (b) **chặt hơn** nên vẫn giữ nguyên bất biến "không có đường hoàn tiền" (hủy/từ chối chỉ ở `PLACED`, mà `PLACED` không thu được tiền); (c) khớp nghiệp vụ "trả tại quầy khi nhận món". **Tác động**: đã sửa D01-04 và D02-07 (nút `[Thu tiền]` chỉ hiện ở `READY`), cập nhật `order-lifecycle.mmd`. Bằng chứng bất biến: smoke cho thấy đơn `CANCELLED` và `REJECTED` đều có payment `UNPAID`. |
+
+### Quyết định
+| # | Quyết định | Lý do |
+|---|---|---|
+| D09-01 | Đồ thị `ORDER_TRANSITIONS` + `canTransition`/`canCollectPayment` đặt trong `packages/contracts` | Server kiểm bắt buộc; web dùng **cùng** đồ thị để chỉ hiện nút transition hợp lệ (REQ-402) — một nguồn sự thật. |
+| D09-03 | CAS bằng **một** `updateMany` với `where {id, status, version}` rồi kiểm `count` | Hai staff đua nhau thì chỉ một bên có `count=1`; không cần SELECT-then-UPDATE (có cửa sổ race). History ghi trong **cùng** transaction. |
+| D09-04 | Dùng `version: { increment: 1 }` thay vì `expectedVersion + 1` | Tránh lệch nếu DB có giá trị khác; vẫn an toàn vì `where` đã chốt version. |
+| D09-05 | Thu tiền CAS theo **payment version** + `status: "UNPAID"` trong `where` | Hai request đồng thời chỉ một bên ghi `PAID`; bên kia `count=0` → 409. Chống thu tiền hai lần ở tầng DB chứ không chỉ kiểm trước. |
+| D09-06 | Quyền xem đơn: chủ đơn \| admin \| staff được gán store; người khác → **404** (không 403) | REQ-502: không tiết lộ tồn tại tài nguyên và không trả PII. Mã đơn không phải secret cấp quyền. |
+| D09-07 | `actorName` trong history **chỉ** trả cho staff/admin; khách nhận `null` | Wireframe staff cần biết ai làm; khách không cần biết tên nhân viên (giảm PII lộ ra). `actorRole` trả cho cả hai. |
+| D09-08 | `GET /staff/orders`: scope tính từ `store_staff` ở **server**; `storeId` client chỉ lọc trong scope. Store không được gán → **danh sách rỗng**, không phải 403 | Steering: "không tin storeId từ client". Trả rỗng thay vì 403 để không tiết lộ store nào tồn tại. |
+| D09-09 | Không có `PATCH /orders/:id` hay `PATCH /staff/orders/:id` | Steering: "Không dùng PATCH arbitrary order fields". Mọi thay đổi đi qua `/transitions` hoặc `/payments`. Có test khẳng định hai route này trả 404. |
+| D09-10 | `Cache-Control: no-store, private` cho chi tiết + list đơn | Chứa PII người nhận. Thêm `private` so với bước 08 (đã cập nhật test cũ). |
+| D09-11 | Web: polling 7s, `refetchIntervalInBackground: false`, dừng ở terminal, refetch on focus | REQ-503 + D02-03. Chỉ poll khi tab hiện để đỡ tải. |
+| D09-12 | `COMPLETED` kiểm payment `PAID` **trước** CAS (ngoài transaction) để trả lỗi rõ ràng, CAS vẫn chốt version | Thông báo "Cần thu tiền trước khi hoàn tất" hữu ích hơn một 409 version chung. |
+
+### Chưa làm / ghi rõ
+- **UI**: đã có hook polling + API client, **chưa dựng màn** tracking/staff board.
+- Delivery và WebSocket **chưa bật** (ngoài MVP, đúng product.md).
+- Rate limit (Q07-01) vẫn chưa có.
+
+### Câu hỏi còn mở
+| # | Câu hỏi | Trạng thái |
+|---|---|---|
+| Q09-01 | Đơn `READY` mà khách không đến lấy (Q01-01) — vẫn chưa có trạng thái abandoned. | Vẫn mở. Hiện đơn nằm ở `READY`. Thêm transition mới cần test kèm. |
+| Q09-02 | Staff vừa là khách có được tự xử lý đơn của mình (Q01-05)? | Vẫn mở; hiện **không** chặn self-transition. |
+| Q09-03 | Có cần endpoint admin xem mọi đơn kèm filter nâng cao (khoảng ngày, mã đơn)? | Chưa; `GET /staff/orders` với ADMIN đã thấy mọi store. |

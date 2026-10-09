@@ -117,5 +117,27 @@ Trình tự an toàn:
 
 Không gọi network trong transaction. Mã đơn `CF-YYMMDD-XXXX` (ngày theo `Asia/Ho_Chi_Minh`, 4 ký tự Crockford-base32 bỏ I/L/O/U, sinh bằng `crypto.randomInt`) — dễ đọc nhưng **không phải secret cấp quyền**; ID nội bộ vẫn là UUID.
 
+## Xử lý đơn và tracking (bước 09)
+Khách:
+| Route | Mô tả |
+|---|---|
+| `GET /v1/me/orders?page=&limit=&status=` | Lịch sử đơn của chính mình, phân trang. |
+| `GET /v1/orders/:id` | Chi tiết — chủ đơn, staff được gán store, hoặc admin. Người khác → **404**. |
+| `GET /v1/orders/:id/history` | Timeline. `actorName` **chỉ** trả cho staff/admin; khách nhận `null`. |
+| `POST /v1/orders/:id/cancel` | Chủ đơn hủy, **chỉ khi còn `PLACED`**, kèm `expectedVersion`. |
+
+Quầy (`@Roles("STAFF","ADMIN")`):
+| Route | Mô tả |
+|---|---|
+| `GET /v1/staff/orders?status=&storeId=` | Scope do **server** quyết định từ `store_staff` (admin: mọi store). `storeId` từ client chỉ lọc **trong** scope đó, không mở rộng quyền. |
+| `POST /v1/staff/orders/:id/transitions` | `{toStatus, expectedVersion, reason?}`. CAS theo `(id, status, version)`; history ghi trong cùng transaction. `REJECTED` **bắt buộc** `reason`. `COMPLETED` yêu cầu đã `PAID`. |
+| `POST /v1/staff/orders/:id/payments` | `{expectedPaymentVersion}`. Chỉ khi order ở **`READY`** + `PAY_AT_COUNTER` + `UNPAID`. Ghi `collected_by` + `paid_at`. |
+
+**Không có endpoint `PATCH` tùy ý field của đơn** — mọi thay đổi trạng thái qua `/transitions`, mọi thay đổi thanh toán qua `/payments`.
+
+Vòng đời: `PLACED → CONFIRMED → PREPARING → READY → COMPLETED`; `PLACED → CANCELLED` (chủ đơn) | `REJECTED` (staff/admin + lý do). Không lùi/bỏ bước, không ra khỏi terminal. Đồ thị ở `ORDER_TRANSITIONS` trong `packages/contracts` (dùng chung với web).
+
+Chi tiết/list đơn trả `Cache-Control: no-store, private` (chứa PII người nhận).
+
 ## Chưa có
-Xử lý đơn + thanh toán + tracking (bước 09). **Upload ảnh món** (Q06-01, chưa có Supabase project). Profile staff/admin **không** được seed. FK `profiles.id → auth.users.id` (Q04-01) chưa hiện thực. Rate limit (Q07-01).
+**Upload ảnh món** (Q06-01, chưa có Supabase project). Profile staff/admin **không** được seed. FK `profiles.id → auth.users.id` (Q04-01) chưa hiện thực. Rate limit (Q07-01). Delivery và WebSocket **chưa bật** (ngoài MVP).

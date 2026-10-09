@@ -8,12 +8,12 @@ Base /v1; JSON camelCase, enum UPPER_SNAKE_CASE, UUID IDs, integer VND, timestam
 | GET /me | authenticated profile |
 | POST /checkout/quote | CUSTOMER, canonical cart→persisted quote — **đã hiện thực bước 07** |
 | POST /orders | CUSTOMER, quoteId + cart, Idempotency-Key — **đã hiện thực bước 08** |
-| GET /me/orders | owner list |
-| GET /orders/:id, /orders/:id/history | owner / assigned staff / admin |
-| POST /orders/:id/cancel | owner, PLACED, expectedVersion |
-| GET /staff/orders | assigned staff/admin, scoped store |
-| POST /staff/orders/:id/transitions | assigned staff/admin, toStatus+expectedVersion+reason |
-| POST /staff/orders/:id/payments | assigned staff/admin, PAY_AT_COUNTER, expected payment version |
+| GET /me/orders | owner list — **đã hiện thực bước 09** |
+| GET /orders/:id, /orders/:id/history | owner / assigned staff / admin — **đã hiện thực bước 09** |
+| POST /orders/:id/cancel | owner, PLACED, expectedVersion — **đã hiện thực bước 09** |
+| GET /staff/orders | assigned staff/admin, scoped store — **đã hiện thực bước 09** |
+| POST /staff/orders/:id/transitions | assigned staff/admin, toStatus+expectedVersion+reason — **đã hiện thực bước 09** |
+| POST /staff/orders/:id/payments | assigned staff/admin, PAY_AT_COUNTER, expected payment version, **chỉ khi order ở READY** — **đã hiện thực bước 09** |
 | PATCH /staff/stores/:storeId/variants/:variantId | assigned staff/admin, availability only |
 | POST/PATCH /admin/categories, /admin/products | ADMIN; PATCH targets /:id |
 | POST/PATCH /admin/products/:productId/variants | ADMIN; PATCH targets /:variantId |

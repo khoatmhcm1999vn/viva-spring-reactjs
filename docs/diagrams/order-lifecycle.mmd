@@ -1,11 +1,23 @@
 stateDiagram-v2
   [*] --> PLACED
-  PLACED --> CONFIRMED: staff accepts
+  PLACED --> CONFIRMED: staff/admin dung store, CAS version
   CONFIRMED --> PREPARING
   PREPARING --> READY
-  READY --> COMPLETED: payment PAID required
-  PLACED --> CANCELLED: owner cancels
-  PLACED --> REJECTED: staff rejects with reason
+  READY --> COMPLETED: yeu cau payment PAID
+  PLACED --> CANCELLED: chu don huy
+  PLACED --> REJECTED: staff tu choi, BAT BUOC co ly do
   COMPLETED --> [*]
   CANCELLED --> [*]
   REJECTED --> [*]
+
+  note right of READY
+    Thu tien CHI o READY (PAY_AT_COUNTER, UNPAID).
+    CAS theo payment version; ghi collected_by + paid_at.
+    Da hien thuc o buoc 09.
+  end note
+
+  note left of PLACED
+    PLACED khong the thu tien.
+    Huy/tu choi chi xay ra o PLACED
+    -> khong co duong hoan tien o MVP.
+  end note

@@ -65,6 +65,44 @@ export function isTerminalOrderStatus(status: OrderStatus): boolean {
 }
 
 /**
+ * Do thi chuyen trang thai hop le (pickup, MVP).
+ *
+ * Tien dan: PLACED -> CONFIRMED -> PREPARING -> READY -> COMPLETED.
+ * Ket thuc som: PLACED -> CANCELLED (chu don) | REJECTED (staff dung store/admin).
+ * KHONG lui buoc, KHONG bo buoc, khong chuyen tu trang thai terminal.
+ *
+ * Dung chung client/server: UI chi hien nut cho cac transition co trong day.
+ */
+export const ORDER_TRANSITIONS: Readonly<Record<OrderStatus, readonly OrderStatus[]>> = {
+  PLACED: [OrderStatus.CONFIRMED, OrderStatus.CANCELLED, OrderStatus.REJECTED],
+  CONFIRMED: [OrderStatus.PREPARING],
+  PREPARING: [OrderStatus.READY],
+  READY: [OrderStatus.COMPLETED],
+  COMPLETED: [],
+  CANCELLED: [],
+  REJECTED: [],
+} as const;
+
+export function canTransition(from: OrderStatus, to: OrderStatus): boolean {
+  return ORDER_TRANSITIONS[from].includes(to);
+}
+
+/**
+ * Trang thai cho phep STAFF thu tien (PAY_AT_COUNTER).
+ *
+ * Chi READY: khach den quay lay mon thi tra tien. Giu bat bien "khong co duong
+ * hoan tien" vi huy/tu choi chi xay ra o PLACED, ma PLACED khong thu duoc tien.
+ */
+export const PAYMENT_COLLECTABLE_STATUSES = [OrderStatus.READY] as const;
+
+export function canCollectPayment(status: OrderStatus): boolean {
+  return (PAYMENT_COLLECTABLE_STATUSES as readonly OrderStatus[]).includes(status);
+}
+
+/** Do dai toi da cua ly do tu choi / huy. */
+export const REASON_MAX_LENGTH = 300;
+
+/**
  * Trang thai thanh toan, tach roi khoi trang thai don.
  * MVP chi dung UNPAID -> PAID. Cac gia tri con lai danh cho prepay tuong lai
  * va khong co endpoint nao sinh ra chung o ban nay.
@@ -388,8 +426,65 @@ export interface OrderResponse {
 }
 
 /* ------------------------------------------------------------------ */
+/* Xu ly don va tracking (bước 09)                                     */
+/* ------------------------------------------------------------------ */
+
+/** Don trong danh sach (khach hoac staff board). Khong kem chi tiet dong. */
+export interface OrderListItemDto {
+  id: string;
+  code: string;
+  status: OrderStatus;
+  version: number;
+  storeId: string;
+  storeName: string;
+  itemCount: number;
+  totalVnd: number;
+  paymentStatus: PaymentStatus;
+  recipientName: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** Vai tro cua nguoi thuc hien mot buoc trong timeline. */
+export interface OrderHistoryEntryDto {
+  id: string;
+  fromStatus: OrderStatus | null;
+  toStatus: OrderStatus;
+  /** Ly do (bat buoc khi REJECTED). */
+  reason: string | null;
+  /** Vai tro nguoi thuc hien; null khi he thong. */
+  actorRole: UserRole | null;
+  /** Ten nguoi thuc hien - CHI tra cho staff/admin, khach nhan null. */
+  actorName: string | null;
+  createdAt: string;
+}
+
+/** Request chuyen trang thai (staff/admin). */
+export interface TransitionRequest {
+  toStatus: OrderStatus;
+  /** CAS: phai khop orders.version hien tai. */
+  expectedVersion: number;
+  /** Bat buoc khi toStatus = REJECTED. */
+  reason?: string | null;
+}
+
+/** Request huy don (chu don, chi khi PLACED). */
+export interface CancelOrderRequest {
+  expectedVersion: number;
+  reason?: string | null;
+}
+
+/** Request thu tien tai quay. Dung version cua PAYMENT, khong phai cua order. */
+export interface CollectPaymentRequest {
+  expectedPaymentVersion: number;
+}
+
+/* ------------------------------------------------------------------ */
 /* Hang so dung chung                                                  */
 /* ------------------------------------------------------------------ */
+
+/** Chu ky polling tracking (REQ-503, quyet dinh D02-03). */
+export const TRACKING_POLL_INTERVAL_MS = 7000;
 
 /** Gioi han phan trang danh sach. limit toi da 100 (xem docs/api-contract.md). */
 export const PAGINATION = {

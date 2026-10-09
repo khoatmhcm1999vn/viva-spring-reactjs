@@ -8,29 +8,45 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  Query,
   Res,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiHeader, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { ApiErrorCode, type AuthenticatedUser, type OrderResponse } from "@coffee-order/contracts";
+import {
+  ApiErrorCode,
+  type AuthenticatedUser,
+  type OrderHistoryEntryDto,
+  type OrderListItemDto,
+  type OrderResponse,
+  type Paginated,
+} from "@coffee-order/contracts";
 import type { Response } from "express";
 import { CurrentUser, Roles } from "../auth/auth.decorators";
 import { CreateOrderDto } from "./dto/create-order.dto";
+import { CancelOrderDto, OrderListQueryDto } from "./dto/tracking.dto";
+import { OrderTrackingService } from "./order-tracking.service";
 import { OrdersService } from "./orders.service";
+
+/** Chi tiet/list don chua PII nguoi nhan -> khong cache o proxy/browser. */
+function noStore(res: Response): void {
+  res.setHeader("Cache-Control", "no-store, private");
+}
 
 @ApiTags("orders")
 @ApiBearerAuth("supabase-access-token")
-@Roles("CUSTOMER")
 @Controller()
 export class OrdersController {
-  constructor(private readonly orders: OrdersService) {}
+  constructor(
+    private readonly orders: OrdersService,
+    private readonly tracking: OrderTrackingService,
+  ) {}
 
   /**
-   * Tao don. BAT BUOC header Idempolency-Key (REQ-301).
-   *
-   * 201 khi tao moi; **200** khi replay dung key + dung noi dung (tra lai don cu).
-   * Response header `Cache-Control: no-store` vi chua PII nguoi nhan.
+   * Tao don. BAT BUOC header Idempotency-Key (REQ-301).
+   * 201 khi tao moi; 200 khi replay dung key + dung noi dung.
    */
   @Post("orders")
+  @Roles("CUSTOMER")
   @HttpCode(201)
   @ApiHeader({
     name: "Idempotency-Key",
@@ -63,22 +79,65 @@ export class OrdersController {
     }
 
     const { order, replay } = await this.orders.createOrder(user, key, dto);
-    res.setHeader("Cache-Control", "no-store");
-    // Replay tra 200 de client phan biet voi lan tao dau tien (docs/api-contract.md).
+    noStore(res);
     res.status(replay ? 200 : 201);
     return order;
   }
 
-  /** Chi tiet don cua chinh chu don (REQ-501, REQ-502). */
+  /** Lich su don cua chinh minh (REQ-500). */
+  @Get("me/orders")
+  @Roles("CUSTOMER")
+  @ApiOperation({ summary: "Danh sach don cua chinh minh, co phan trang" })
+  async listOwn(
+    @CurrentUser() user: AuthenticatedUser,
+    @Query() query: OrderListQueryDto,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<Paginated<OrderListItemDto>> {
+    noStore(res);
+    return this.tracking.listOwnOrders(user, query);
+  }
+
+  /**
+   * Chi tiet don: chu don, staff duoc gan store, hoac admin (REQ-501, REQ-502).
+   * Nguoi khac -> 404, khong tiet lo ton tai va khong tra PII.
+   */
   @Get("orders/:id")
-  @ApiOperation({ summary: "Chi tiet don cua chinh minh" })
-  @ApiResponse({ status: 404, description: "Khong tim thay (ke ca khi don thuoc nguoi khac)" })
-  async getOwn(
+  @ApiOperation({ summary: "Chi tiet don" })
+  @ApiResponse({ status: 404, description: "Khong tim thay / khong du quyen" })
+  async getOne(
     @CurrentUser() user: AuthenticatedUser,
     @Param("id", new ParseUUIDPipe()) id: string,
     @Res({ passthrough: true }) res: Response,
   ): Promise<OrderResponse> {
-    res.setHeader("Cache-Control", "no-store");
-    return this.orders.getOrderForOwner(user, id);
+    noStore(res);
+    return this.tracking.getOrder(user, id);
+  }
+
+  /** Timeline don. actorName chi tra cho staff/admin. */
+  @Get("orders/:id/history")
+  @ApiOperation({ summary: "Timeline chuyen trang thai cua don" })
+  async getHistory(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param("id", new ParseUUIDPipe()) id: string,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<OrderHistoryEntryDto[]> {
+    noStore(res);
+    return this.tracking.getHistory(user, id);
+  }
+
+  /** Chu don huy don khi con PLACED (REQ-504). */
+  @Post("orders/:id/cancel")
+  @Roles("CUSTOMER")
+  @HttpCode(200)
+  @ApiOperation({ summary: "Chu don huy don (chi khi con PLACED)" })
+  @ApiResponse({ status: 409, description: "INVALID_TRANSITION / VERSION_CONFLICT" })
+  async cancel(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param("id", new ParseUUIDPipe()) id: string,
+    @Body() dto: CancelOrderDto,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<OrderResponse> {
+    noStore(res);
+    return this.tracking.cancel(user, id, dto);
   }
 }
