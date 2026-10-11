@@ -1,0 +1,443 @@
+/**
+ * Hop dong cong khai giua apps/web va apps/api.
+ *
+ * Rang buoc cua goi nay (xem .kiro/steering/tech.md):
+ *  - Browser-safe: khong import Prisma client/model, khong dung API chi co o Node,
+ *    khong chua secret hay connection string.
+ *  - Backend la nguon chuan cua hop dong API. File nay chi khai bao nhung gi
+ *    ca hai ben deu can doc, khong chua nghiep vu.
+ *
+ * Dung const object + union type thay vi `enum` de tuong thich `isolatedModules`
+ * va de tree-shake o phia web.
+ */
+/** Vai tro nguoi dung. Server quan ly trong bang profiles, khong tin client. */
+export declare const UserRole: {
+    readonly CUSTOMER: "CUSTOMER";
+    readonly STAFF: "STAFF";
+    readonly ADMIN: "ADMIN";
+};
+export type UserRole = (typeof UserRole)[keyof typeof UserRole];
+/** Hinh thuc nhan hang. MVP chi dung PICKUP; DELIVERY la nhanh tuong lai. */
+export declare const FulfillmentType: {
+    readonly PICKUP: "PICKUP";
+    readonly DELIVERY: "DELIVERY";
+};
+export type FulfillmentType = (typeof FulfillmentType)[keyof typeof FulfillmentType];
+/** Phuong thuc thanh toan. MVP chi dung PAY_AT_COUNTER. */
+export declare const PaymentMethod: {
+    readonly PAY_AT_COUNTER: "PAY_AT_COUNTER";
+};
+export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod];
+/**
+ * Trang thai don (pickup).
+ * PLACED -> CONFIRMED -> PREPARING -> READY -> COMPLETED.
+ * PLACED -> CANCELLED (chu don) | REJECTED (staff dung store / admin, bat buoc ly do).
+ * OUT_FOR_DELIVERY chua co API/UI o MVP, chi la nhanh thiet ke tuong lai.
+ */
+export declare const OrderStatus: {
+    readonly PLACED: "PLACED";
+    readonly CONFIRMED: "CONFIRMED";
+    readonly PREPARING: "PREPARING";
+    readonly READY: "READY";
+    readonly COMPLETED: "COMPLETED";
+    readonly CANCELLED: "CANCELLED";
+    readonly REJECTED: "REJECTED";
+};
+export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus];
+/** Trang thai ket thuc: khong chuyen tiep duoc nua. */
+export declare const TERMINAL_ORDER_STATUSES: readonly ["COMPLETED", "CANCELLED", "REJECTED"];
+export declare function isTerminalOrderStatus(status: OrderStatus): boolean;
+/**
+ * Do thi chuyen trang thai hop le (pickup, MVP).
+ *
+ * Tien dan: PLACED -> CONFIRMED -> PREPARING -> READY -> COMPLETED.
+ * Ket thuc som: PLACED -> CANCELLED (chu don) | REJECTED (staff dung store/admin).
+ * KHONG lui buoc, KHONG bo buoc, khong chuyen tu trang thai terminal.
+ *
+ * Dung chung client/server: UI chi hien nut cho cac transition co trong day.
+ */
+export declare const ORDER_TRANSITIONS: Readonly<Record<OrderStatus, readonly OrderStatus[]>>;
+export declare function canTransition(from: OrderStatus, to: OrderStatus): boolean;
+/**
+ * Trang thai cho phep STAFF thu tien (PAY_AT_COUNTER).
+ *
+ * Chi READY: khach den quay lay mon thi tra tien. Giu bat bien "khong co duong
+ * hoan tien" vi huy/tu choi chi xay ra o PLACED, ma PLACED khong thu duoc tien.
+ */
+export declare const PAYMENT_COLLECTABLE_STATUSES: readonly ["READY"];
+export declare function canCollectPayment(status: OrderStatus): boolean;
+/** Do dai toi da cua ly do tu choi / huy. */
+export declare const REASON_MAX_LENGTH = 300;
+/**
+ * Trang thai thanh toan, tach roi khoi trang thai don.
+ * MVP chi dung UNPAID -> PAID. Cac gia tri con lai danh cho prepay tuong lai
+ * va khong co endpoint nao sinh ra chung o ban nay.
+ */
+export declare const PaymentStatus: {
+    readonly UNPAID: "UNPAID";
+    readonly PENDING: "PENDING";
+    readonly PAID: "PAID";
+    readonly FAILED: "FAILED";
+    readonly REFUND_PENDING: "REFUND_PENDING";
+    readonly REFUNDED: "REFUNDED";
+};
+export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus];
+/** Ma loi tra ve cho client. Khong hien truc tiep cho khach, xem docs/wireframes.md. */
+export declare const ApiErrorCode: {
+    readonly VALIDATION_ERROR: "VALIDATION_ERROR";
+    readonly UNAUTHENTICATED: "UNAUTHENTICATED";
+    readonly FORBIDDEN: "FORBIDDEN";
+    readonly NOT_FOUND: "NOT_FOUND";
+    readonly PRICE_CHANGED: "PRICE_CHANGED";
+    readonly ITEM_UNAVAILABLE: "ITEM_UNAVAILABLE";
+    readonly IDEMPOTENCY_CONFLICT: "IDEMPOTENCY_CONFLICT";
+    readonly INVALID_TRANSITION: "INVALID_TRANSITION";
+    readonly VERSION_CONFLICT: "VERSION_CONFLICT";
+    readonly QUOTE_ALREADY_USED: "QUOTE_ALREADY_USED";
+    readonly QUOTE_EXPIRED: "QUOTE_EXPIRED";
+    readonly RATE_LIMITED: "RATE_LIMITED";
+    readonly INTERNAL_ERROR: "INTERNAL_ERROR";
+};
+export type ApiErrorCode = (typeof ApiErrorCode)[keyof typeof ApiErrorCode];
+/** Body loi thong nhat. Khong bao gio chua SQL, stack trace hay token. */
+export interface ApiErrorBody {
+    code: ApiErrorCode;
+    message: string;
+    details?: unknown;
+    requestId: string;
+}
+/** Bao danh sach co phan trang. limit toi da 100, xem docs/api-contract.md. */
+export interface Paginated<T> {
+    items: T[];
+    page: number;
+    limit: number;
+    total: number;
+}
+/**
+ * Liveness. Khong chua secret, khong chua gia tri bien moi truong,
+ * khong chua connection string.
+ */
+export interface HealthResponse {
+    status: "ok";
+    service: string;
+    version: string;
+    timestamp: string;
+}
+/** Ket qua kiem tra tung thanh phan trong readiness. */
+export declare const ReadinessCheckStatus: {
+    readonly OK: "OK";
+    readonly NOT_CONFIGURED: "NOT_CONFIGURED";
+    readonly ERROR: "ERROR";
+};
+export type ReadinessCheckStatus = (typeof ReadinessCheckStatus)[keyof typeof ReadinessCheckStatus];
+/**
+ * Readiness. Tra 200 khi READY, 503 khi NOT_READY.
+ * Kiem tra database duoc bo sung o buoc 04 khi co Prisma; truoc do la NOT_CONFIGURED.
+ */
+export interface ReadyResponse {
+    status: "READY" | "NOT_READY";
+    checks: {
+        database: ReadinessCheckStatus;
+    };
+    timestamp: string;
+}
+/**
+ * Thong tin nguoi dung sau khi backend xac minh Supabase access token va map
+ * sub -> profiles. role LUON lay tu DB (profiles.role), khong tu token/metadata.
+ */
+export interface AuthenticatedUser {
+    /** = profiles.id = Supabase auth sub */
+    id: string;
+    role: UserRole;
+    isActive: boolean;
+    email: string | null;
+}
+/** Response cua GET /v1/me. Khong chua token hay bat ky secret nao. */
+export interface MeResponse {
+    id: string;
+    role: UserRole;
+    fullName: string | null;
+    phone: string | null;
+    isActive: boolean;
+    /** Danh sach store_id ma user duoc gan lam STAFF (rong voi CUSTOMER/ADMIN). */
+    staffStoreIds: string[];
+}
+/** Danh muc cong khai. */
+export interface CategoryDto {
+    id: string;
+    name: string;
+    slug: string;
+    sortOrder: number;
+    isActive: boolean;
+}
+/**
+ * Variant (size) trong response catalog.
+ * `available` chi co khi truy van kem storeId: phan anh store_variants.is_available
+ * cua dung store do. Khong co storeId -> available = null (khong xet theo store).
+ */
+export interface VariantDto {
+    id: string;
+    sku: string;
+    size: string;
+    priceVnd: number;
+    isActive: boolean;
+    /** null khi khong loc theo store; true/false khi co storeId. */
+    available: boolean | null;
+}
+/** Tuy chon trong mot nhom modifier. */
+export interface ModifierOptionDto {
+    id: string;
+    name: string;
+    extraPriceVnd: number;
+    isActive: boolean;
+}
+/** Nhom modifier ap dung cho mot mon, kem luat min/max. */
+export interface ModifierGroupDto {
+    id: string;
+    name: string;
+    minSelect: number;
+    maxSelect: number;
+    options: ModifierOptionDto[];
+}
+/** Mon trong danh sach (chua kem modifier chi tiet). */
+export interface ProductListItemDto {
+    id: string;
+    categoryId: string;
+    name: string;
+    slug: string;
+    description: string | null;
+    imagePath: string | null;
+    isActive: boolean;
+    variants: VariantDto[];
+    /** Gia variant thap nhat con ban (sau khi loc theo store neu co). null khi khong co variant kha dung. */
+    fromPriceVnd: number | null;
+}
+/** Chi tiet mon: them modifier rules. */
+export interface ProductDetailDto extends ProductListItemDto {
+    modifierGroups: ModifierGroupDto[];
+}
+/**
+ * Mot dong gio hang gui len de bao gia / dat don.
+ * Client CHI gui ID + so luong + lua chon; KHONG gui gia (REQ-200).
+ */
+export interface QuoteItemInput {
+    variantId: string;
+    quantity: number;
+    /** ID cac modifier option da chon. MVP moi option quantity = 1, khong trung. */
+    modifierOptionIds: string[];
+    /** Ghi chu cho dong; se duoc normalize (trim + gom khoang trang) truoc khi hash. */
+    note?: string | null;
+}
+/** Thong tin nguoi nhan tai quay. */
+export interface RecipientInput {
+    name: string;
+    phone: string;
+}
+/**
+ * Request bao gia. MVP chi PICKUP + PAY_AT_COUNTER.
+ * Dung chung cho POST /checkout/quote va (o bước 08) phan cart cua POST /orders.
+ */
+export interface QuoteRequest {
+    storeId: string;
+    fulfillmentType: "PICKUP";
+    paymentMethod: "PAY_AT_COUNTER";
+    recipient: RecipientInput;
+    items: QuoteItemInput[];
+}
+/** Mot modifier da chon trong dong bao gia, kem gia tai thoi diem bao gia. */
+export interface QuoteLineModifier {
+    optionId: string;
+    groupName: string;
+    optionName: string;
+    extraPriceVnd: number;
+}
+/**
+ * Mot dong trong bao gia, da tinh gia o server.
+ * unitPriceVnd = basePriceVnd + tong extraPriceVnd cua modifiers.
+ * lineTotalVnd = unitPriceVnd * quantity.
+ */
+export interface QuoteLine {
+    variantId: string;
+    productName: string;
+    size: string;
+    basePriceVnd: number;
+    unitPriceVnd: number;
+    quantity: number;
+    lineTotalVnd: number;
+    modifiers: QuoteLineModifier[];
+    note: string | null;
+}
+/**
+ * Response bao gia. subtotal = tong lineTotal; MVP shipping = discount = 0 nen
+ * total = subtotal. Gia o day la nguon chuan cho dat don (bước 08).
+ */
+export interface QuoteResponse {
+    quoteId: string;
+    expiresAt: string;
+    items: QuoteLine[];
+    subtotalVnd: number;
+    shippingFeeVnd: 0;
+    discountVnd: 0;
+    totalVnd: number;
+}
+/** Request tao don: quoteId + DUNG cart payload da bao gia. */
+export interface CreateOrderRequest extends QuoteRequest {
+    quoteId: string;
+}
+/** Modifier snapshot trong mot dong don. Gia la ban chup luc dat. */
+export interface OrderItemModifierDto {
+    optionId: string;
+    groupName: string;
+    optionName: string;
+    extraPriceVnd: number;
+}
+/** Dong don voi snapshot ten/size/gia - khong doi khi menu doi (REQ-306). */
+export interface OrderItemDto {
+    id: string;
+    variantId: string;
+    productName: string;
+    size: string;
+    basePriceVnd: number;
+    unitPriceVnd: number;
+    quantity: number;
+    lineTotalVnd: number;
+    note: string | null;
+    modifiers: OrderItemModifierDto[];
+}
+/** Thanh toan cua don. MVP: dung mot ban ghi PAY_AT_COUNTER. */
+export interface OrderPaymentDto {
+    id: string;
+    method: PaymentMethod;
+    status: PaymentStatus;
+    amountVnd: number;
+    paidAt: string | null;
+    version: number;
+}
+/** Tong tien cua don. MVP shipping = discount = 0. */
+export interface OrderTotalsDto {
+    subtotalVnd: number;
+    shippingFeeVnd: number;
+    discountVnd: number;
+    totalVnd: number;
+}
+/** Response cua POST /orders va GET /orders/:id. */
+export interface OrderResponse {
+    id: string;
+    code: string;
+    status: OrderStatus;
+    /** Dung cho CAS khi chuyen trang thai (bước 09). */
+    version: number;
+    fulfillmentType: FulfillmentType;
+    storeId: string;
+    storeName: string;
+    storeAddress: string;
+    recipientName: string;
+    recipientPhone: string;
+    pickupNote: string | null;
+    items: OrderItemDto[];
+    totals: OrderTotalsDto;
+    payment: OrderPaymentDto;
+    createdAt: string;
+}
+/** Don trong danh sach (khach hoac staff board). Khong kem chi tiet dong. */
+export interface OrderListItemDto {
+    id: string;
+    code: string;
+    status: OrderStatus;
+    version: number;
+    storeId: string;
+    storeName: string;
+    itemCount: number;
+    totalVnd: number;
+    paymentStatus: PaymentStatus;
+    recipientName: string;
+    createdAt: string;
+    updatedAt: string;
+}
+/** Vai tro cua nguoi thuc hien mot buoc trong timeline. */
+export interface OrderHistoryEntryDto {
+    id: string;
+    fromStatus: OrderStatus | null;
+    toStatus: OrderStatus;
+    /** Ly do (bat buoc khi REJECTED). */
+    reason: string | null;
+    /** Vai tro nguoi thuc hien; null khi he thong. */
+    actorRole: UserRole | null;
+    /** Ten nguoi thuc hien - CHI tra cho staff/admin, khach nhan null. */
+    actorName: string | null;
+    createdAt: string;
+}
+/** Request chuyen trang thai (staff/admin). */
+export interface TransitionRequest {
+    toStatus: OrderStatus;
+    /** CAS: phai khop orders.version hien tai. */
+    expectedVersion: number;
+    /** Bat buoc khi toStatus = REJECTED. */
+    reason?: string | null;
+}
+/** Request huy don (chu don, chi khi PLACED). */
+export interface CancelOrderRequest {
+    expectedVersion: number;
+    reason?: string | null;
+}
+/** Request thu tien tai quay. Dung version cua PAYMENT, khong phai cua order. */
+export interface CollectPaymentRequest {
+    expectedPaymentVersion: number;
+}
+/** Chu ky polling tracking (REQ-503, quyet dinh D02-03). */
+export declare const TRACKING_POLL_INTERVAL_MS = 7000;
+/** Gioi han phan trang danh sach. limit toi da 100 (xem docs/api-contract.md). */
+export declare const PAGINATION: {
+    readonly defaultPage: 1;
+    readonly defaultLimit: 20;
+    readonly maxLimit: 100;
+};
+/** Gioi hanh gio hang, dong bo voi REQ-202 trong docs/requirements.md. */
+export declare const CART_LIMITS: {
+    readonly minQuantityPerLine: 1;
+    readonly maxQuantityPerLine: 20;
+    readonly maxLines: 50;
+};
+/** Han hieu luc cua quote, dong bo voi REQ-205 (quyet dinh D01-03). */
+export declare const QUOTE_TTL_SECONDS = 300;
+/** Tien la integer VND. Dung cho validate bien tren o ca hai phia. */
+export declare const MAX_SIGNED_INT32 = 2147483647;
+/** Do dai toi da cua ghi chu moi dong (REQ gioi han note). */
+export declare const NOTE_MAX_LENGTH = 200;
+/**
+ * Chuan hoa ghi chu: trim hai dau, gom moi chuoi khoang trang (gom xuong dong)
+ * thanh mot dau cach. Rong -> null. Dung chung client va server de hash khop.
+ */
+export declare function normalizeNote(note: string | null | undefined): string | null;
+/**
+ * Dang canonical cua request bao gia, dung lam dau vao bam (request_hash) va la
+ * noi dung "cart payload" ma POST /orders phai khop (bước 08).
+ *
+ * Quy tac on dinh:
+ *  - modifierOptionIds sap xep tang dan (thu tu chon khong anh huong).
+ *  - items sap xep theo khoa (variantId, modifiers da sort, note) de thu tu dong
+ *    khong anh huong; dong trung cau hinh y het KHONG tu gom (giu rieng) nhung
+ *    canonical van on dinh.
+ *  - note da normalize.
+ *  - KHONG gom transport/requestId/thoi gian vao canonical.
+ *
+ * Tra ve chuoi JSON on dinh (khong phai hash). Ben goi bam bang thuat toan cua
+ * minh (server: crypto SHA-256) de tranh phu thuoc crypto trong goi browser-safe.
+ */
+export interface CanonicalQuoteInput {
+    storeId: string;
+    fulfillmentType: string;
+    paymentMethod: string;
+    recipient: {
+        name: string;
+        phone: string;
+    };
+    items: Array<{
+        variantId: string;
+        quantity: number;
+        modifierOptionIds: string[];
+        note?: string | null;
+    }>;
+}
+export declare function canonicalizeQuote(input: CanonicalQuoteInput): string;
+//# sourceMappingURL=index.d.ts.map

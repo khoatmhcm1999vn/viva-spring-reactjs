@@ -1,0 +1,30 @@
+# Topology production hien tai: backend tren VM noi vao Supabase, KHONG dung service
+# "db" cuc bo. Phai chi dinh tuong minh, cung voi file tunnel:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.supabase.yml -f docker-compose.tunnel.yml \
+#     up -d --no-deps --no-build backend
+#
+# Thuong khong goi tay: scripts/deploy/vm-backend-up.sh goi dung lenh nay.
+#
+# Vi sao can file nay: trong docker-compose.yml backend "depends_on: db
+# (service_healthy)", nen mot backend dung Supabase van phai cho mot Postgres cuc bo
+# khoe moi khoi dong duoc. File nay go bo phu thuoc do va dua "db" vao profile
+# "local-db", nen "up" binh thuong khong bat no nua.
+#
+# Can Docker Compose >= 2.24 (cu phap !reset). VM: docker-compose-v2 2.40.3 theo
+# .kiro/steering/deployment.md.
+
+services:
+  db:
+    # Chi chay khi goi them --profile local-db. Container vivacon-db dang chay san tren
+    # VM (neu co) khong bi file nay dung toi; dung hay xoa no la mot quyet dinh rieng.
+    profiles: ["local-db"]
+
+  backend:
+    depends_on: !reset {}
+    environment:
+      # Bat buoc va KHONG co gia tri mac dinh. Thieu thi compose dung ngay, thay vi lang
+      # le roi ve jdbc:postgresql://db:5432 cua docker-compose.yml.
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL:?dat SPRING_DATASOURCE_URL (Supabase session pooler) trong .env}
+      DB_USERNAME: ${DB_USERNAME:?dat DB_USERNAME dang postgres.<project-ref> trong .env}
+      FRONTEND_ALLOWED_ORIGINS: ${FRONTEND_ALLOWED_ORIGINS:?dat FRONTEND_ALLOWED_ORIGINS trong .env}
