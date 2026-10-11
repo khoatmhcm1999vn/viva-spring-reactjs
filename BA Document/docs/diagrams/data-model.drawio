@@ -307,4 +307,1064 @@
       </root>
     </mxGraphModel>
   </diagram>
+  <diagram id="dm-phys-core" name="3. ERD vật lý — Tài khoản &amp; Nội dung">
+    <mxGraphModel dx="2100" dy="1300" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2100" pageHeight="1300" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="p3Title" value="ERD VẬT LÝ — NHÓM TÀI KHOẢN &amp;amp; NỘI DUNG (11 bảng)&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;DDL/JPA-derived (not live DB verified) · tên bảng/cột lấy từ @Table/@Column/@JoinColumn và schema.sql; không có naming strategy tuỳ biến → Spring Boot mặc định (camelCase → snake_case)&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;fontSize=17;fontStyle=1;fillColor=none;strokeColor=none;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="1960" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Setting" value="&lt;b&gt;setting&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;DDL + JPA (@Entity Setting, không @Table) · seq setting_id_seq&lt;/font&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=54;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fontSize=12;align=center;swimlaneFillColor=#FFFFFF;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="40" y="140" width="360" height="134" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Setting__id" value="&lt;b&gt;PK&lt;/b&gt;&amp;nbsp;&amp;nbsp;id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=#F1F8E9;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Setting">
+          <mxGeometry x="0" y="54" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Setting__account_id" value="&lt;b&gt;FK&lt;/b&gt;&amp;nbsp;&amp;nbsp;account_id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Setting">
+          <mxGeometry x="0" y="74" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Setting__type" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;type *&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;varchar(255)&lt;/font&gt;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Setting">
+          <mxGeometry x="0" y="94" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Setting__value" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;value *&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;varchar(255)&lt;/font&gt;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Setting">
+          <mxGeometry x="0" y="114" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Device" value="&lt;b&gt;device_metadata&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;JPA only (Hibernate ddl-auto) · seq device_metadata_id_seq&lt;/font&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=54;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fontSize=12;align=center;swimlaneFillColor=#FFFFFF;fillColor=#FFE6CC;strokeColor=#D79B00;fontColor=#1A1A1A;dashed=1;dashPattern=6 3;" vertex="1" parent="1">
+          <mxGeometry x="40" y="314" width="360" height="214" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Device__id" value="&lt;b&gt;PK&lt;/b&gt;&amp;nbsp;&amp;nbsp;id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=#F1F8E9;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Device">
+          <mxGeometry x="0" y="54" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Device__account_id" value="&lt;b&gt;FK&lt;/b&gt;&amp;nbsp;&amp;nbsp;account_id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Device">
+          <mxGeometry x="0" y="74" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Device__device" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;device&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;varchar(255)&lt;/font&gt;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Device">
+          <mxGeometry x="0" y="94" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Device__country" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;country&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;varchar(255)&lt;/font&gt;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Device">
+          <mxGeometry x="0" y="114" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Device__city" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;city&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;varchar(255)&lt;/font&gt;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Device">
+          <mxGeometry x="0" y="134" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Device__latitude" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;latitude&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;float8&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Device">
+          <mxGeometry x="0" y="154" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Device__longitude" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;longitude&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;float8&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Device">
+          <mxGeometry x="0" y="174" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Device__last_logged_in" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;last_logged_in&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;timestamp&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Device">
+          <mxGeometry x="0" y="194" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Following" value="&lt;b&gt;following&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;DDL + JPA · UK(from_account, to_account) uniquefollowingcomposition&lt;/font&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=54;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fontSize=12;align=center;swimlaneFillColor=#FFFFFF;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="40" y="568" width="360" height="114" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Following__id" value="&lt;b&gt;PK&lt;/b&gt;&amp;nbsp;&amp;nbsp;id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=#F1F8E9;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Following">
+          <mxGeometry x="0" y="54" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Following__from_account" value="&lt;b&gt;FK&lt;/b&gt;&amp;nbsp;&amp;nbsp;from_account&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Following">
+          <mxGeometry x="0" y="74" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Following__to_account" value="&lt;b&gt;FK&lt;/b&gt;&amp;nbsp;&amp;nbsp;to_account&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Following">
+          <mxGeometry x="0" y="94" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Role" value="&lt;b&gt;role&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;DDL + JPA · id: GenerationType.AUTO * · seq role_id_seq có trong DDL&lt;/font&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=54;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fontSize=12;align=center;swimlaneFillColor=#FFFFFF;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="40" y="722" width="360" height="94" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Role__id" value="&lt;b&gt;PK&lt;/b&gt;&amp;nbsp;&amp;nbsp;id *&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=#F1F8E9;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Role">
+          <mxGeometry x="0" y="54" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Role__name" value="&lt;b&gt;UK&lt;/b&gt;&amp;nbsp;&amp;nbsp;name&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;varchar(255)&lt;/font&gt;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Role">
+          <mxGeometry x="0" y="74" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Account" value="&lt;b&gt;account&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;DDL + JPA (Account extends AuditableEntity) · seq account_id_seq&lt;/font&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=54;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fontSize=12;align=center;swimlaneFillColor=#FFFFFF;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="560" y="140" width="360" height="454" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Account__id" value="&lt;b&gt;PK&lt;/b&gt;&amp;nbsp;&amp;nbsp;id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=#F1F8E9;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Account">
+          <mxGeometry x="0" y="54" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Account__username" value="&lt;b&gt;UK&lt;/b&gt;&amp;nbsp;&amp;nbsp;username&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;varchar(255)&lt;/font&gt;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Account">
+          <mxGeometry x="0" y="74" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Account__email" value="&lt;b&gt;UK&lt;/b&gt;&amp;nbsp;&amp;nbsp;email&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;varchar(255)&lt;/font&gt;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Account">
+          <mxGeometry x="0" y="94" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Account__password" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;password&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;varchar(255)&lt;/font&gt;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Account">
+          <mxGeometry x="0" y="114" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Account__full_name" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;full_name&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;varchar(255)&lt;/font&gt;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Account">
+          <mxGeometry x="0" y="134" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Account__role_id" value="&lt;b&gt;FK&lt;/b&gt;&amp;nbsp;&amp;nbsp;role_id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Account">
+          <mxGeometry x="0" y="154" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Account__bio" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;bio&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;varchar(200)&lt;/font&gt;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Account">
+          <mxGeometry x="0" y="174" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Account__refresh_token" value="&lt;b&gt;UK&lt;/b&gt;&amp;nbsp;&amp;nbsp;refresh_token&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;varchar(255)&lt;/font&gt;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Account">
+          <mxGeometry x="0" y="194" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Account__token_expired_date" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;token_expired_date&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;timestamp&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Account">
+          <mxGeometry x="0" y="214" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Account__verification_token" value="&lt;b&gt;UK&lt;/b&gt;&amp;nbsp;&amp;nbsp;verification_token&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;varchar(255)&lt;/font&gt;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Account">
+          <mxGeometry x="0" y="234" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Account__verification_expired_date" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;verification_expired_date&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;timestamp&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Account">
+          <mxGeometry x="0" y="254" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Account__phone_number" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;phone_number †&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;varchar(255)&lt;/font&gt;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=#FFF3E0;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Account">
+          <mxGeometry x="0" y="274" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Account__gender" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;gender †&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;varchar(255)&lt;/font&gt;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=#FFF3E0;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Account">
+          <mxGeometry x="0" y="294" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Account__public_key" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;public_key †&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;varchar(255)&lt;/font&gt;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=#FFF3E0;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Account">
+          <mxGeometry x="0" y="314" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Account__account_status" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;account_status *&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;varchar(255)&lt;/font&gt;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Account">
+          <mxGeometry x="0" y="334" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Account__created_by_account_id" value="&lt;b&gt;FK&lt;/b&gt;&amp;nbsp;&amp;nbsp;created_by_account_id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Account">
+          <mxGeometry x="0" y="354" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Account__created_at" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;created_at&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;timestamp&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Account">
+          <mxGeometry x="0" y="374" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Account__last_modified_by_account_id" value="&lt;b&gt;FK&lt;/b&gt;&amp;nbsp;&amp;nbsp;last_modified_by_account_id&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Account">
+          <mxGeometry x="0" y="394" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Account__last_modified_at" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;last_modified_at&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;timestamp&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Account">
+          <mxGeometry x="0" y="414" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Account__active" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;active&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;boolean&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Account">
+          <mxGeometry x="0" y="434" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Post" value="&lt;b&gt;post&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;DDL + JPA · seq post_id_seq · privacy = ORDINAL 0..2&lt;/font&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=54;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fontSize=12;align=center;swimlaneFillColor=#FFFFFF;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="140" width="360" height="214" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Post__id" value="&lt;b&gt;PK&lt;/b&gt;&amp;nbsp;&amp;nbsp;id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=#F1F8E9;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Post">
+          <mxGeometry x="0" y="54" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Post__caption" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;caption&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;varchar(1500)&lt;/font&gt;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Post">
+          <mxGeometry x="0" y="74" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Post__privacy" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;privacy&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;integer&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Post">
+          <mxGeometry x="0" y="94" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Post__created_by_account_id" value="&lt;b&gt;FK&lt;/b&gt;&amp;nbsp;&amp;nbsp;created_by_account_id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Post">
+          <mxGeometry x="0" y="114" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Post__created_at" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;created_at&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;timestamp&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Post">
+          <mxGeometry x="0" y="134" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Post__last_modified_by_account_id" value="&lt;b&gt;FK&lt;/b&gt;&amp;nbsp;&amp;nbsp;last_modified_by_account_id&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Post">
+          <mxGeometry x="0" y="154" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Post__last_modified_at" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;last_modified_at&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;timestamp&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Post">
+          <mxGeometry x="0" y="174" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Post__active" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;active&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;boolean&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Post">
+          <mxGeometry x="0" y="194" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Attachment" value="&lt;b&gt;attachment&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;DDL + JPA · seq attachment_id_seq · không có cột audit&lt;/font&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=54;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fontSize=12;align=center;swimlaneFillColor=#FFFFFF;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="394" width="360" height="194" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Attachment__id" value="&lt;b&gt;PK&lt;/b&gt;&amp;nbsp;&amp;nbsp;id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=#F1F8E9;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Attachment">
+          <mxGeometry x="0" y="54" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Attachment__url" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;url&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;varchar(255)&lt;/font&gt;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Attachment">
+          <mxGeometry x="0" y="74" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Attachment__actual_name" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;actual_name&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;varchar(255)&lt;/font&gt;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Attachment">
+          <mxGeometry x="0" y="94" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Attachment__unique_name" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;unique_name&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;varchar(255)&lt;/font&gt;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Attachment">
+          <mxGeometry x="0" y="114" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Attachment__timestamp" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;timestamp&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;timestamp&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Attachment">
+          <mxGeometry x="0" y="134" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Attachment__post_id" value="&lt;b&gt;FK&lt;/b&gt;&amp;nbsp;&amp;nbsp;post_id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Attachment">
+          <mxGeometry x="0" y="154" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Attachment__profile_id" value="&lt;b&gt;FK&lt;/b&gt;&amp;nbsp;&amp;nbsp;profile_id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Attachment">
+          <mxGeometry x="0" y="174" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Liking" value="&lt;b&gt;liking&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;DDL + JPA (entity Like) · UK(account_id, post_id) uniquelikecomposition&lt;/font&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=54;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fontSize=12;align=center;swimlaneFillColor=#FFFFFF;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="628" width="360" height="114" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Liking__id" value="&lt;b&gt;PK&lt;/b&gt;&amp;nbsp;&amp;nbsp;id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=#F1F8E9;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Liking">
+          <mxGeometry x="0" y="54" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Liking__account_id" value="&lt;b&gt;FK&lt;/b&gt;&amp;nbsp;&amp;nbsp;account_id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Liking">
+          <mxGeometry x="0" y="74" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Liking__post_id" value="&lt;b&gt;FK&lt;/b&gt;&amp;nbsp;&amp;nbsp;post_id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Liking">
+          <mxGeometry x="0" y="94" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Comment" value="&lt;b&gt;comment&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;DDL + JPA · seq comment_id_seq&lt;/font&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=54;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fontSize=12;align=center;swimlaneFillColor=#FFFFFF;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="1600" y="140" width="360" height="234" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Comment__id" value="&lt;b&gt;PK&lt;/b&gt;&amp;nbsp;&amp;nbsp;id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=#F1F8E9;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Comment">
+          <mxGeometry x="0" y="54" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Comment__content" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;content *&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;varchar(1500)&lt;/font&gt;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Comment">
+          <mxGeometry x="0" y="74" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Comment__post_id" value="&lt;b&gt;FK&lt;/b&gt;&amp;nbsp;&amp;nbsp;post_id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Comment">
+          <mxGeometry x="0" y="94" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Comment__parent_comment_id" value="&lt;b&gt;FK&lt;/b&gt;&amp;nbsp;&amp;nbsp;parent_comment_id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Comment">
+          <mxGeometry x="0" y="114" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Comment__created_by_account_id" value="&lt;b&gt;FK&lt;/b&gt;&amp;nbsp;&amp;nbsp;created_by_account_id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Comment">
+          <mxGeometry x="0" y="134" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Comment__created_at" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;created_at&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;timestamp&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Comment">
+          <mxGeometry x="0" y="154" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Comment__last_modified_by_account_id" value="&lt;b&gt;FK&lt;/b&gt;&amp;nbsp;&amp;nbsp;last_modified_by_account_id&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Comment">
+          <mxGeometry x="0" y="174" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Comment__last_modified_at" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;last_modified_at&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;timestamp&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Comment">
+          <mxGeometry x="0" y="194" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Comment__active" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;active&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;boolean&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Comment">
+          <mxGeometry x="0" y="214" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Htrp" value="&lt;b&gt;hashtag_rel_post&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;JPA only · seq hashtag_rel_post_id_seq · không có UK(hashtag_id, post_id)&lt;/font&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=54;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fontSize=12;align=center;swimlaneFillColor=#FFFFFF;fillColor=#FFE6CC;strokeColor=#D79B00;fontColor=#1A1A1A;dashed=1;dashPattern=6 3;" vertex="1" parent="1">
+          <mxGeometry x="1600" y="414" width="360" height="114" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Htrp__id" value="&lt;b&gt;PK&lt;/b&gt;&amp;nbsp;&amp;nbsp;id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=#F1F8E9;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Htrp">
+          <mxGeometry x="0" y="54" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Htrp__hashtag_id" value="&lt;b&gt;FK&lt;/b&gt;&amp;nbsp;&amp;nbsp;hashtag_id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Htrp">
+          <mxGeometry x="0" y="74" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Htrp__post_id" value="&lt;b&gt;FK&lt;/b&gt;&amp;nbsp;&amp;nbsp;post_id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Htrp">
+          <mxGeometry x="0" y="94" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Hashtag" value="&lt;b&gt;hashtag&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;JPA only · UK(name) uniquehashtagname · seq hashtag_id_seq&lt;/font&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=54;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fontSize=12;align=center;swimlaneFillColor=#FFFFFF;fillColor=#FFE6CC;strokeColor=#D79B00;fontColor=#1A1A1A;dashed=1;dashPattern=6 3;" vertex="1" parent="1">
+          <mxGeometry x="1600" y="568" width="360" height="94" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Hashtag__id" value="&lt;b&gt;PK&lt;/b&gt;&amp;nbsp;&amp;nbsp;id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=#F1F8E9;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Hashtag">
+          <mxGeometry x="0" y="54" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Hashtag__name" value="&lt;b&gt;UK&lt;/b&gt;&amp;nbsp;&amp;nbsp;name&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;varchar(1500)&lt;/font&gt;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p3Hashtag">
+          <mxGeometry x="0" y="74" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p3fSetting" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToMany;endArrow=ERmandOne;startSize=10;endSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#37474F;strokeWidth=1.5;" edge="1" parent="1" source="p3Setting__account_id" target="p3Account__id">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="420" y="224" /><mxPoint x="420" y="204" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p3fDevice" value="INFERRED" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToMany;endArrow=ERzeroToOne;startSize=10;endSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#C26A00;strokeWidth=1.5;dashed=1;dashPattern=8 4;fontColor=#C26A00;fontStyle=1;" edge="1" parent="1" source="p3Device__account_id" target="p3Account__id">
+          <mxGeometry x="-0.7" relative="1" as="geometry">
+            <Array as="points"><mxPoint x="440" y="398" /><mxPoint x="440" y="204" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p3fFollowFrom" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToMany;endArrow=ERzeroToOne;startSize=10;endSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#37474F;strokeWidth=1.5;" edge="1" parent="1" source="p3Following__from_account" target="p3Account__id">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="460" y="652" /><mxPoint x="460" y="204" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p3fFollowTo" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToMany;endArrow=ERzeroToOne;startSize=10;endSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#37474F;strokeWidth=1.5;" edge="1" parent="1" source="p3Following__to_account" target="p3Account__id">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="480" y="672" /><mxPoint x="480" y="204" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p3fRole" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToMany;endArrow=ERzeroToOne;startSize=10;endSize=10;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#37474F;strokeWidth=1.5;" edge="1" parent="1" source="p3Account__role_id" target="p3Role__id">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="530" y="304" /><mxPoint x="530" y="786" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p3fAccCb" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToMany;endArrow=ERzeroToOne;startSize=10;endSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#78909C;strokeWidth=1;" edge="1" parent="1" source="p3Account__created_by_account_id" target="p3Account__id">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="935" y="504" /><mxPoint x="935" y="204" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p3fAccLm" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToMany;endArrow=ERzeroToOne;startSize=10;endSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#78909C;strokeWidth=1;" edge="1" parent="1" source="p3Account__last_modified_by_account_id" target="p3Account__id">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="945" y="544" /><mxPoint x="945" y="204" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p3fPostCb" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToMany;endArrow=ERzeroToOne;startSize=10;endSize=10;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#78909C;strokeWidth=1;" edge="1" parent="1" source="p3Post__created_by_account_id" target="p3Account__id">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1060" y="264" /><mxPoint x="1060" y="204" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p3fPostLm" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToMany;endArrow=ERzeroToOne;startSize=10;endSize=10;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#78909C;strokeWidth=1;" edge="1" parent="1" source="p3Post__last_modified_by_account_id" target="p3Account__id">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1040" y="304" /><mxPoint x="1040" y="204" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p3fAttProfile" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToMany;endArrow=ERzeroToOne;startSize=10;endSize=10;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#37474F;strokeWidth=1.5;" edge="1" parent="1" source="p3Attachment__profile_id" target="p3Account__id">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1020" y="578" /><mxPoint x="1020" y="204" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p3fLikeAcc" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToMany;endArrow=ERzeroToOne;startSize=10;endSize=10;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#37474F;strokeWidth=1.5;" edge="1" parent="1" source="p3Liking__account_id" target="p3Account__id">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1000" y="712" /><mxPoint x="1000" y="204" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p3fComCb" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToMany;endArrow=ERzeroToOne;startSize=10;endSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#78909C;strokeWidth=1;" edge="1" parent="1" source="p3Comment__created_by_account_id" target="p3Account__id">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1995" y="284" /><mxPoint x="1995" y="116" /><mxPoint x="965" y="116" /><mxPoint x="965" y="204" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p3fComLm" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToMany;endArrow=ERzeroToOne;startSize=10;endSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#78909C;strokeWidth=1;" edge="1" parent="1" source="p3Comment__last_modified_by_account_id" target="p3Account__id">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="2010" y="324" /><mxPoint x="2010" y="104" /><mxPoint x="955" y="104" /><mxPoint x="955" y="204" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p3fAttPost" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToMany;endArrow=ERzeroToOne;startSize=10;endSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#37474F;strokeWidth=1.5;" edge="1" parent="1" source="p3Attachment__post_id" target="p3Post__id">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1460" y="558" /><mxPoint x="1460" y="204" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p3fLikePost" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToMany;endArrow=ERzeroToOne;startSize=10;endSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#37474F;strokeWidth=1.5;" edge="1" parent="1" source="p3Liking__post_id" target="p3Post__id">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1475" y="732" /><mxPoint x="1475" y="204" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p3fComPost" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToMany;endArrow=ERzeroToOne;startSize=10;endSize=10;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#37474F;strokeWidth=1.5;" edge="1" parent="1" source="p3Comment__post_id" target="p3Post__id">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1560" y="244" /><mxPoint x="1560" y="204" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p3fHtrpPost" value="INFERRED" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToMany;endArrow=ERzeroToOne;startSize=10;endSize=10;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#C26A00;strokeWidth=1.5;dashed=1;dashPattern=8 4;fontColor=#C26A00;fontStyle=1;" edge="1" parent="1" source="p3Htrp__post_id" target="p3Post__id">
+          <mxGeometry x="-0.7" relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1540" y="518" /><mxPoint x="1540" y="204" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p3fComParent" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToMany;endArrow=ERzeroToOne;startSize=10;endSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#37474F;strokeWidth=1.5;" edge="1" parent="1" source="p3Comment__parent_comment_id" target="p3Comment__id">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1975" y="264" /><mxPoint x="1975" y="204" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p3fHtrpTag" value="INFERRED" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToMany;endArrow=ERzeroToOne;startSize=10;endSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#C26A00;strokeWidth=1.5;dashed=1;dashPattern=8 4;fontColor=#C26A00;fontStyle=1;" edge="1" parent="1" source="p3Htrp__hashtag_id" target="p3Hashtag__id">
+          <mxGeometry x="-0.7" relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1975" y="498" /><mxPoint x="1975" y="632" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dm-phys-core_lg" value="CHÚ GIẢI — ERD VẬT LÝ" style="swimlane;startSize=30;html=1;whiteSpace=wrap;fontStyle=1;fontSize=12;collapsible=0;fillColor=#F5F5F5;strokeColor=#666666;swimlaneFillColor=#FFFFFF;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="40" y="876" width="960" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="dm-phys-core_lgs0" value="" style="endArrow=ERzeroToOne;startArrow=ERzeroToMany;endFill=0;startFill=0;html=1;strokeColor=#37474F;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="60" y="938" as="sourcePoint" /><mxPoint x="160" y="938" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="dm-phys-core_lgt0" value="FK khai báo trong schema.sql — &lt;b&gt;VERIFIED (DDL)&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;whiteSpace=wrap;fillColor=none;strokeColor=none;" vertex="1" parent="dm-phys-core_lg">
+          <mxGeometry x="135" y="46" width="805" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="dm-phys-core_lgs1" value="" style="endArrow=ERzeroToOne;startArrow=ERzeroToMany;endFill=0;startFill=0;html=1;strokeColor=#78909C;strokeWidth=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="60" y="976" as="sourcePoint" /><mxPoint x="160" y="976" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="dm-phys-core_lgt1" value="FK audit created_by / last_modified_by trong schema.sql — &lt;b&gt;VERIFIED (DDL)&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;whiteSpace=wrap;fillColor=none;strokeColor=none;" vertex="1" parent="dm-phys-core_lg">
+          <mxGeometry x="135" y="84" width="805" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="dm-phys-core_lgs2" value="" style="endArrow=ERzeroToOne;startArrow=ERzeroToMany;endFill=0;startFill=0;html=1;strokeColor=#C26A00;strokeWidth=1.5;dashed=1;dashPattern=8 4;fontColor=#C26A00;fontStyle=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="60" y="1014" as="sourcePoint" /><mxPoint x="160" y="1014" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="dm-phys-core_lgt2" value="@ManyToOne + @JoinColumn, KHÔNG có trong schema.sql — &lt;b&gt;INFERRED&lt;/b&gt;: FK do Hibernate ddl-auto sinh, chưa kiểm trên DB thật" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;whiteSpace=wrap;fillColor=none;strokeColor=none;" vertex="1" parent="dm-phys-core_lg">
+          <mxGeometry x="135" y="122" width="805" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="dm-phys-core_lgh1" value="&lt;b&gt;bảng có trong schema.sql&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;fillColor=#D5E8D4;strokeColor=#82B366;" vertex="1" parent="dm-phys-core_lg">
+          <mxGeometry x="20" y="166" width="200" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="dm-phys-core_lgh2" value="&lt;b&gt;bảng chỉ có ở JPA&lt;/b&gt; (viền nét đứt)" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;fillColor=#FFE6CC;strokeColor=#D79B00;dashed=1;dashPattern=6 3;" vertex="1" parent="dm-phys-core_lg">
+          <mxGeometry x="235" y="166" width="220" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="dm-phys-core_lgh3" value="&lt;b&gt;bảng tham chiếu&lt;/b&gt; (chi tiết ở trang khác)" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;fillColor=#F5F5F5;strokeColor=#999999;" vertex="1" parent="dm-phys-core_lg">
+          <mxGeometry x="470" y="166" width="250" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="dm-phys-core_lgm" value="&lt;b&gt;PK&lt;/b&gt; khoá chính · &lt;b&gt;FK&lt;/b&gt; khoá ngoại · &lt;b&gt;UK&lt;/b&gt; UNIQUE một cột · &lt;b&gt;PF&lt;/b&gt; vừa PK vừa FK (JOINED) · &lt;b&gt;NN&lt;/b&gt; NOT NULL&lt;br&gt;&lt;b&gt;†&lt;/b&gt; cột do JPA thêm, không có trong schema.sql · &lt;b&gt;‡&lt;/b&gt; cột chỉ có trong schema.sql, không được ánh xạ · &lt;b&gt;*&lt;/b&gt; DDL và JPA khác nhau (xem trang 5)&lt;br&gt;Chân chim phía FK: vòng + chẻ ba = 0..N. Phía bảng được tham chiếu: vòng + vạch = 0..1 (FK cho phép NULL), hai vạch = đúng 1 (FK NOT NULL)." style="text;html=1;align=left;verticalAlign=top;fontSize=11;whiteSpace=wrap;fillColor=none;strokeColor=none;" vertex="1" parent="dm-phys-core_lg">
+          <mxGeometry x="20" y="206" width="920" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="dm-phys-core_lgp" value="&lt;i&gt;Nguồn: branch feature/ai-assisted-dev-setup @ ca46696 (working tree), sinh ngày 2026-10-10. DDL/JPA-derived, KHÔNG đối chiếu DB đang chạy.&lt;/i&gt;" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;whiteSpace=wrap;fillColor=none;strokeColor=none;fontColor=#455A64;" vertex="1" parent="dm-phys-core_lg">
+          <mxGeometry x="20" y="286" width="920" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="p3Notes" value="&lt;b&gt;GHI CHÚ VẬT LÝ (đọc từ mã nguồn)&lt;/b&gt;&lt;br&gt;&lt;br&gt;• &lt;b&gt;Index:&lt;/b&gt; ngoài PK và UNIQUE, không có index nào được khai báo (schema.sql không có CREATE INDEX, entity không dùng @Index). PostgreSQL không tự tạo index cho cột FK.&lt;br&gt;• &lt;b&gt;Xoá mềm:&lt;/b&gt; cột &lt;b&gt;active&lt;/b&gt; chỉ có ở các bảng kế thừa AuditableEntity: account, post, comment (trang này), conversation, report_template (trang 4). Các bảng nối bị xoá vật lý.&lt;br&gt;• &lt;b&gt;ON DELETE:&lt;/b&gt; mọi FK trong schema.sql là NO ACTION; không có cascade ở mức DB.&lt;br&gt;• &lt;b&gt;device_metadata.city&lt;/b&gt; thực tế lưu múi giờ: DeviceServiceImpl.verifyDevice gán city = location.getLocation().getTimeZone().&lt;br&gt;• &lt;b&gt;post&lt;/b&gt; không có cột tác giả riêng: chủ sở hữu là created_by_account_id.&lt;br&gt;• Kiểu của bảng chỉ có ở JPA là kiểu mặc định của Hibernate cho PostgreSQL (Long→bigint, String→varchar(255), LocalDateTime→timestamp, Double→float8), chưa kiểm trên DB thật." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;spacingLeft=10;spacingTop=8;spacingRight=8;fillColor=#FFF8E1;strokeColor=#D6B656;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="876" width="1020" height="180" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="dm-phys-msg" name="4. ERD vật lý — Chat, Thông báo &amp; Kiểm duyệt">
+    <mxGraphModel dx="2560" dy="1250" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2560" pageHeight="1250" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="p4Title" value="ERD VẬT LÝ — CHAT, THÔNG BÁO &amp;amp; KIỂM DUYỆT (8 bảng)&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;DDL/JPA-derived (not live DB verified) · account, post, comment ở đây là bảng tham chiếu, chi tiết cột ở trang 3&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;fontSize=17;fontStyle=1;fillColor=none;strokeColor=none;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="2440" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Conv" value="&lt;b&gt;conversation&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;DDL + JPA (extends AuditableEntity) · seq conversation_id_seq&lt;/font&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=54;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fontSize=12;align=center;swimlaneFillColor=#FFFFFF;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="40" y="140" width="360" height="194" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Conv__id" value="&lt;b&gt;PK&lt;/b&gt;&amp;nbsp;&amp;nbsp;id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=#F1F8E9;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Conv">
+          <mxGeometry x="0" y="54" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Conv__name" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;name&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;varchar(255)&lt;/font&gt;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Conv">
+          <mxGeometry x="0" y="74" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Conv__created_by_account_id" value="&lt;b&gt;FK&lt;/b&gt;&amp;nbsp;&amp;nbsp;created_by_account_id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Conv">
+          <mxGeometry x="0" y="94" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Conv__created_at" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;created_at&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;timestamp&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Conv">
+          <mxGeometry x="0" y="114" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Conv__last_modified_by_account_id" value="&lt;b&gt;FK&lt;/b&gt;&amp;nbsp;&amp;nbsp;last_modified_by_account_id&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Conv">
+          <mxGeometry x="0" y="134" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Conv__last_modified_at" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;last_modified_at&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;timestamp&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Conv">
+          <mxGeometry x="0" y="154" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Conv__active" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;active&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;boolean&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Conv">
+          <mxGeometry x="0" y="174" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Part" value="&lt;b&gt;participant&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;DDL + JPA · UK(conversation_id, account_id)&lt;/font&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=54;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fontSize=12;align=center;swimlaneFillColor=#FFFFFF;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="40" y="374" width="360" height="114" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Part__id" value="&lt;b&gt;PK&lt;/b&gt;&amp;nbsp;&amp;nbsp;id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=#F1F8E9;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Part">
+          <mxGeometry x="0" y="54" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Part__conversation_id" value="&lt;b&gt;FK&lt;/b&gt;&amp;nbsp;&amp;nbsp;conversation_id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Part">
+          <mxGeometry x="0" y="74" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Part__account_id" value="&lt;b&gt;FK&lt;/b&gt;&amp;nbsp;&amp;nbsp;account_id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Part">
+          <mxGeometry x="0" y="94" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Msg" value="&lt;b&gt;message&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;DDL + JPA · seq message_id_seq · recipient_id trỏ tới conversation&lt;/font&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=54;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fontSize=12;align=center;swimlaneFillColor=#FFFFFF;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="40" y="528" width="360" height="214" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Msg__id" value="&lt;b&gt;PK&lt;/b&gt;&amp;nbsp;&amp;nbsp;id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=#F1F8E9;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Msg">
+          <mxGeometry x="0" y="54" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Msg__sender_id" value="&lt;b&gt;FK&lt;/b&gt;&amp;nbsp;&amp;nbsp;sender_id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Msg">
+          <mxGeometry x="0" y="74" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Msg__recipient_id" value="&lt;b&gt;FK&lt;/b&gt;&amp;nbsp;&amp;nbsp;recipient_id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Msg">
+          <mxGeometry x="0" y="94" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Msg__content" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;content *&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;varchar(1000)&lt;/font&gt;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Msg">
+          <mxGeometry x="0" y="114" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Msg__timestamp" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;timestamp *&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;date&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Msg">
+          <mxGeometry x="0" y="134" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Msg__status" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;status&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;integer&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Msg">
+          <mxGeometry x="0" y="154" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Msg__message_type" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;message_type †&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;integer&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=#FFF3E0;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Msg">
+          <mxGeometry x="0" y="174" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Msg__test" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;test ‡&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;varchar(255)&lt;/font&gt;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=#ECEFF1;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#607D8B;" vertex="1" parent="p4Msg">
+          <mxGeometry x="0" y="194" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4AccRef" value="&lt;b&gt;account&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;tham chiếu — chi tiết ở trang 3&lt;/font&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=54;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fontSize=12;align=center;swimlaneFillColor=#FFFFFF;fillColor=#F5F5F5;strokeColor=#999999;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="560" y="300" width="360" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="p4AccRef__id" value="&lt;b&gt;PK&lt;/b&gt;&amp;nbsp;&amp;nbsp;id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=#F1F8E9;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4AccRef">
+          <mxGeometry x="0" y="54" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Notif" value="&lt;b&gt;notification&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;JPA only · seq notification_id_seq&lt;/font&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=54;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fontSize=12;align=center;swimlaneFillColor=#FFFFFF;fillColor=#FFE6CC;strokeColor=#D79B00;fontColor=#1A1A1A;dashed=1;dashPattern=6 3;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="140" width="360" height="254" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Notif__id" value="&lt;b&gt;PK&lt;/b&gt;&amp;nbsp;&amp;nbsp;id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=#F1F8E9;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Notif">
+          <mxGeometry x="0" y="54" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Notif__type" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;type&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;varchar(255)&lt;/font&gt;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Notif">
+          <mxGeometry x="0" y="74" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Notif__presentation_id" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;presentation_id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Notif">
+          <mxGeometry x="0" y="94" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Notif__trace_id" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;trace_id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Notif">
+          <mxGeometry x="0" y="114" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Notif__action_author_id" value="&lt;b&gt;FK&lt;/b&gt;&amp;nbsp;&amp;nbsp;action_author_id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Notif">
+          <mxGeometry x="0" y="134" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Notif__receiver_id" value="&lt;b&gt;FK&lt;/b&gt;&amp;nbsp;&amp;nbsp;receiver_id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Notif">
+          <mxGeometry x="0" y="154" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Notif__title" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;title&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;varchar(255)&lt;/font&gt;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Notif">
+          <mxGeometry x="0" y="174" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Notif__content" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;content&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;varchar(255)&lt;/font&gt;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Notif">
+          <mxGeometry x="0" y="194" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Notif__status" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;status&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;integer&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Notif">
+          <mxGeometry x="0" y="214" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Notif__timestamp" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;timestamp&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;timestamp&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Notif">
+          <mxGeometry x="0" y="234" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Rt" value="&lt;b&gt;report_template&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;JPA only · @Inheritance(JOINED), extends AuditableEntity · id AUTO *&lt;/font&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=54;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fontSize=12;align=center;swimlaneFillColor=#FFFFFF;fillColor=#FFE6CC;strokeColor=#D79B00;fontColor=#1A1A1A;dashed=1;dashPattern=6 3;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="434" width="360" height="214" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Rt__id" value="&lt;b&gt;PK&lt;/b&gt;&amp;nbsp;&amp;nbsp;id *&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=#F1F8E9;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Rt">
+          <mxGeometry x="0" y="54" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Rt__content" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;content&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;varchar(3000)&lt;/font&gt;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Rt">
+          <mxGeometry x="0" y="74" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Rt__sentitive_type" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;sentitive_type&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;varchar(255)&lt;/font&gt;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Rt">
+          <mxGeometry x="0" y="94" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Rt__created_by_account_id" value="&lt;b&gt;FK&lt;/b&gt;&amp;nbsp;&amp;nbsp;created_by_account_id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Rt">
+          <mxGeometry x="0" y="114" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Rt__created_at" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;created_at&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;timestamp&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Rt">
+          <mxGeometry x="0" y="134" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Rt__last_modified_by_account_id" value="&lt;b&gt;FK&lt;/b&gt;&amp;nbsp;&amp;nbsp;last_modified_by_account_id&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Rt">
+          <mxGeometry x="0" y="154" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Rt__last_modified_at" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;last_modified_at&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;timestamp&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Rt">
+          <mxGeometry x="0" y="174" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Rt__active" value="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;active&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;boolean&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4Rt">
+          <mxGeometry x="0" y="194" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4AccRep" value="&lt;b&gt;account_report&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;JPA only · subtype JOINED của report_template&lt;/font&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=54;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fontSize=12;align=center;swimlaneFillColor=#FFFFFF;fillColor=#FFE6CC;strokeColor=#D79B00;fontColor=#1A1A1A;dashed=1;dashPattern=6 3;" vertex="1" parent="1">
+          <mxGeometry x="1600" y="434" width="360" height="94" as="geometry" />
+        </mxCell>
+        <mxCell id="p4AccRep__id" value="&lt;b&gt;PF&lt;/b&gt;&amp;nbsp;&amp;nbsp;id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=#F1F8E9;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4AccRep">
+          <mxGeometry x="0" y="54" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4AccRep__account_id" value="&lt;b&gt;FK&lt;/b&gt;&amp;nbsp;&amp;nbsp;account_id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4AccRep">
+          <mxGeometry x="0" y="74" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4AccRef2" value="&lt;b&gt;account&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;tham chiếu — chi tiết ở trang 3&lt;/font&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=54;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fontSize=12;align=center;swimlaneFillColor=#FFFFFF;fillColor=#F5F5F5;strokeColor=#999999;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="2120" y="454" width="360" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="p4AccRef2__id" value="&lt;b&gt;PK&lt;/b&gt;&amp;nbsp;&amp;nbsp;id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=#F1F8E9;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4AccRef2">
+          <mxGeometry x="0" y="54" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4PostRep" value="&lt;b&gt;post_report&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;JPA only · subtype JOINED của report_template&lt;/font&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=54;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fontSize=12;align=center;swimlaneFillColor=#FFFFFF;fillColor=#FFE6CC;strokeColor=#D79B00;fontColor=#1A1A1A;dashed=1;dashPattern=6 3;" vertex="1" parent="1">
+          <mxGeometry x="1600" y="568" width="360" height="94" as="geometry" />
+        </mxCell>
+        <mxCell id="p4PostRep__id" value="&lt;b&gt;PF&lt;/b&gt;&amp;nbsp;&amp;nbsp;id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=#F1F8E9;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4PostRep">
+          <mxGeometry x="0" y="54" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4PostRep__post_id" value="&lt;b&gt;FK&lt;/b&gt;&amp;nbsp;&amp;nbsp;post_id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4PostRep">
+          <mxGeometry x="0" y="74" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4PostRef" value="&lt;b&gt;post&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;tham chiếu — chi tiết ở trang 3&lt;/font&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=54;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fontSize=12;align=center;swimlaneFillColor=#FFFFFF;fillColor=#F5F5F5;strokeColor=#999999;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="2120" y="588" width="360" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="p4PostRef__id" value="&lt;b&gt;PK&lt;/b&gt;&amp;nbsp;&amp;nbsp;id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=#F1F8E9;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4PostRef">
+          <mxGeometry x="0" y="54" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4ComRep" value="&lt;b&gt;comment_report&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;JPA only · subtype JOINED của report_template&lt;/font&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=54;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fontSize=12;align=center;swimlaneFillColor=#FFFFFF;fillColor=#FFE6CC;strokeColor=#D79B00;fontColor=#1A1A1A;dashed=1;dashPattern=6 3;" vertex="1" parent="1">
+          <mxGeometry x="1600" y="702" width="360" height="94" as="geometry" />
+        </mxCell>
+        <mxCell id="p4ComRep__id" value="&lt;b&gt;PF&lt;/b&gt;&amp;nbsp;&amp;nbsp;id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=#F1F8E9;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4ComRep">
+          <mxGeometry x="0" y="54" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4ComRep__comment_id" value="&lt;b&gt;FK&lt;/b&gt;&amp;nbsp;&amp;nbsp;comment_id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4ComRep">
+          <mxGeometry x="0" y="74" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4ComRef" value="&lt;b&gt;comment&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;tham chiếu — chi tiết ở trang 3&lt;/font&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=54;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fontSize=12;align=center;swimlaneFillColor=#FFFFFF;fillColor=#F5F5F5;strokeColor=#999999;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="2120" y="722" width="360" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="p4ComRef__id" value="&lt;b&gt;PK&lt;/b&gt;&amp;nbsp;&amp;nbsp;id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#546E7A&quot;&gt;bigint&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;NN&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=#F1F8E9;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Courier New;fontSize=11;whiteSpace=nowrap;fontColor=#1A1A1A;" vertex="1" parent="p4ComRef">
+          <mxGeometry x="0" y="54" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="p4fPartConv" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToMany;endArrow=ERmandOne;startSize=10;endSize=10;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#37474F;strokeWidth=1.5;" edge="1" parent="1" source="p4Part__conversation_id" target="p4Conv__id">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="26" y="458" /><mxPoint x="26" y="204" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p4fMsgConv" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToMany;endArrow=ERzeroToOne;startSize=10;endSize=10;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#37474F;strokeWidth=1.5;" edge="1" parent="1" source="p4Msg__recipient_id" target="p4Conv__id">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="14" y="632" /><mxPoint x="14" y="204" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p4fConvCb" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToMany;endArrow=ERzeroToOne;startSize=10;endSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#78909C;strokeWidth=1;" edge="1" parent="1" source="p4Conv__created_by_account_id" target="p4AccRef__id">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="530" y="244" /><mxPoint x="530" y="364" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p4fConvLm" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToMany;endArrow=ERzeroToOne;startSize=10;endSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#78909C;strokeWidth=1;" edge="1" parent="1" source="p4Conv__last_modified_by_account_id" target="p4AccRef__id">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="510" y="284" /><mxPoint x="510" y="364" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p4fPartAcc" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToMany;endArrow=ERmandOne;startSize=10;endSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#37474F;strokeWidth=1.5;" edge="1" parent="1" source="p4Part__account_id" target="p4AccRef__id">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="500" y="478" /><mxPoint x="500" y="364" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p4fMsgSender" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToMany;endArrow=ERzeroToOne;startSize=10;endSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#37474F;strokeWidth=1.5;" edge="1" parent="1" source="p4Msg__sender_id" target="p4AccRef__id">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="520" y="612" /><mxPoint x="520" y="364" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p4fNotifActor" value="INFERRED" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToMany;endArrow=ERzeroToOne;startSize=10;endSize=10;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#C26A00;strokeWidth=1.5;dashed=1;dashPattern=8 4;fontColor=#C26A00;fontStyle=1;" edge="1" parent="1" source="p4Notif__action_author_id" target="p4AccRef__id">
+          <mxGeometry x="-0.7" relative="1" as="geometry">
+            <Array as="points"><mxPoint x="940" y="284" /><mxPoint x="940" y="364" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p4fNotifRecv" value="INFERRED" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToMany;endArrow=ERzeroToOne;startSize=10;endSize=10;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#C26A00;strokeWidth=1.5;dashed=1;dashPattern=8 4;fontColor=#C26A00;fontStyle=1;" edge="1" parent="1" source="p4Notif__receiver_id" target="p4AccRef__id">
+          <mxGeometry x="-0.7" relative="1" as="geometry">
+            <Array as="points"><mxPoint x="960" y="304" /><mxPoint x="960" y="364" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p4fRtLm" value="INFERRED" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToMany;endArrow=ERzeroToOne;startSize=10;endSize=10;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#C26A00;strokeWidth=1.5;dashed=1;dashPattern=8 4;fontColor=#C26A00;fontStyle=1;" edge="1" parent="1" source="p4Rt__last_modified_by_account_id" target="p4AccRef__id">
+          <mxGeometry x="-0.7" relative="1" as="geometry">
+            <Array as="points"><mxPoint x="950" y="598" /><mxPoint x="950" y="364" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p4fRtCb" value="INFERRED" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToMany;endArrow=ERzeroToOne;startSize=10;endSize=10;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#C26A00;strokeWidth=1.5;dashed=1;dashPattern=8 4;fontColor=#C26A00;fontStyle=1;" edge="1" parent="1" source="p4Rt__created_by_account_id" target="p4AccRef__id">
+          <mxGeometry x="-0.7" relative="1" as="geometry">
+            <Array as="points"><mxPoint x="970" y="558" /><mxPoint x="970" y="364" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p4fAccRepId" value="INFERRED" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToOne;endArrow=ERmandOne;startSize=10;endSize=10;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#C26A00;strokeWidth=1.5;dashed=1;dashPattern=8 4;fontColor=#C26A00;fontStyle=1;" edge="1" parent="1" source="p4AccRep__id" target="p4Rt__id">
+          <mxGeometry x="-0.7" relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="p4fPostRepId" value="INFERRED" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToOne;endArrow=ERmandOne;startSize=10;endSize=10;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#C26A00;strokeWidth=1.5;dashed=1;dashPattern=8 4;fontColor=#C26A00;fontStyle=1;" edge="1" parent="1" source="p4PostRep__id" target="p4Rt__id">
+          <mxGeometry x="-0.7" relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1500" y="632" /><mxPoint x="1500" y="498" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p4fComRepId" value="INFERRED" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToOne;endArrow=ERmandOne;startSize=10;endSize=10;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#C26A00;strokeWidth=1.5;dashed=1;dashPattern=8 4;fontColor=#C26A00;fontStyle=1;" edge="1" parent="1" source="p4ComRep__id" target="p4Rt__id">
+          <mxGeometry x="-0.7" relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1470" y="766" /><mxPoint x="1470" y="498" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p4fAccRepAcc" value="INFERRED" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToMany;endArrow=ERzeroToOne;startSize=10;endSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#C26A00;strokeWidth=1.5;dashed=1;dashPattern=8 4;fontColor=#C26A00;fontStyle=1;" edge="1" parent="1" source="p4AccRep__account_id" target="p4AccRef2__id">
+          <mxGeometry x="-0.7" relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="p4fPostRepPost" value="INFERRED" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToMany;endArrow=ERzeroToOne;startSize=10;endSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#C26A00;strokeWidth=1.5;dashed=1;dashPattern=8 4;fontColor=#C26A00;fontStyle=1;" edge="1" parent="1" source="p4PostRep__post_id" target="p4PostRef__id">
+          <mxGeometry x="-0.7" relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="p4fComRepCom" value="INFERRED" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;fontSize=9;labelBackgroundColor=#FFFFFF;startFill=0;endFill=0;startArrow=ERzeroToMany;endArrow=ERzeroToOne;startSize=10;endSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#C26A00;strokeWidth=1.5;dashed=1;dashPattern=8 4;fontColor=#C26A00;fontStyle=1;" edge="1" parent="1" source="p4ComRep__comment_id" target="p4ComRef__id">
+          <mxGeometry x="-0.7" relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="dm-phys-msg_lg" value="CHÚ GIẢI — ERD VẬT LÝ" style="swimlane;startSize=30;html=1;whiteSpace=wrap;fontStyle=1;fontSize=12;collapsible=0;fillColor=#F5F5F5;strokeColor=#666666;swimlaneFillColor=#FFFFFF;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="40" y="856" width="960" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="dm-phys-msg_lgs0" value="" style="endArrow=ERzeroToOne;startArrow=ERzeroToMany;endFill=0;startFill=0;html=1;strokeColor=#37474F;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="60" y="918" as="sourcePoint" /><mxPoint x="160" y="918" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="dm-phys-msg_lgt0" value="FK khai báo trong schema.sql — &lt;b&gt;VERIFIED (DDL)&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;whiteSpace=wrap;fillColor=none;strokeColor=none;" vertex="1" parent="dm-phys-msg_lg">
+          <mxGeometry x="135" y="46" width="805" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="dm-phys-msg_lgs1" value="" style="endArrow=ERzeroToOne;startArrow=ERzeroToMany;endFill=0;startFill=0;html=1;strokeColor=#78909C;strokeWidth=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="60" y="956" as="sourcePoint" /><mxPoint x="160" y="956" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="dm-phys-msg_lgt1" value="FK audit created_by / last_modified_by trong schema.sql — &lt;b&gt;VERIFIED (DDL)&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;whiteSpace=wrap;fillColor=none;strokeColor=none;" vertex="1" parent="dm-phys-msg_lg">
+          <mxGeometry x="135" y="84" width="805" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="dm-phys-msg_lgs2" value="" style="endArrow=ERzeroToOne;startArrow=ERzeroToMany;endFill=0;startFill=0;html=1;strokeColor=#C26A00;strokeWidth=1.5;dashed=1;dashPattern=8 4;fontColor=#C26A00;fontStyle=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="60" y="994" as="sourcePoint" /><mxPoint x="160" y="994" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="dm-phys-msg_lgt2" value="@ManyToOne + @JoinColumn, KHÔNG có trong schema.sql — &lt;b&gt;INFERRED&lt;/b&gt;: FK do Hibernate ddl-auto sinh, chưa kiểm trên DB thật" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;whiteSpace=wrap;fillColor=none;strokeColor=none;" vertex="1" parent="dm-phys-msg_lg">
+          <mxGeometry x="135" y="122" width="805" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="dm-phys-msg_lgh1" value="&lt;b&gt;bảng có trong schema.sql&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;fillColor=#D5E8D4;strokeColor=#82B366;" vertex="1" parent="dm-phys-msg_lg">
+          <mxGeometry x="20" y="166" width="200" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="dm-phys-msg_lgh2" value="&lt;b&gt;bảng chỉ có ở JPA&lt;/b&gt; (viền nét đứt)" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;fillColor=#FFE6CC;strokeColor=#D79B00;dashed=1;dashPattern=6 3;" vertex="1" parent="dm-phys-msg_lg">
+          <mxGeometry x="235" y="166" width="220" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="dm-phys-msg_lgh3" value="&lt;b&gt;bảng tham chiếu&lt;/b&gt; (chi tiết ở trang khác)" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;fillColor=#F5F5F5;strokeColor=#999999;" vertex="1" parent="dm-phys-msg_lg">
+          <mxGeometry x="470" y="166" width="250" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="dm-phys-msg_lgm" value="&lt;b&gt;PK&lt;/b&gt; khoá chính · &lt;b&gt;FK&lt;/b&gt; khoá ngoại · &lt;b&gt;UK&lt;/b&gt; UNIQUE một cột · &lt;b&gt;PF&lt;/b&gt; vừa PK vừa FK (JOINED) · &lt;b&gt;NN&lt;/b&gt; NOT NULL&lt;br&gt;&lt;b&gt;†&lt;/b&gt; cột do JPA thêm, không có trong schema.sql · &lt;b&gt;‡&lt;/b&gt; cột chỉ có trong schema.sql, không được ánh xạ · &lt;b&gt;*&lt;/b&gt; DDL và JPA khác nhau (xem trang 5)&lt;br&gt;Chân chim phía FK: vòng + chẻ ba = 0..N. Phía bảng được tham chiếu: vòng + vạch = 0..1 (FK cho phép NULL), hai vạch = đúng 1 (FK NOT NULL)." style="text;html=1;align=left;verticalAlign=top;fontSize=11;whiteSpace=wrap;fillColor=none;strokeColor=none;" vertex="1" parent="dm-phys-msg_lg">
+          <mxGeometry x="20" y="206" width="920" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="dm-phys-msg_lgp" value="&lt;i&gt;Nguồn: branch feature/ai-assisted-dev-setup @ ca46696 (working tree), sinh ngày 2026-10-10. DDL/JPA-derived, KHÔNG đối chiếu DB đang chạy.&lt;/i&gt;" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;whiteSpace=wrap;fillColor=none;strokeColor=none;fontColor=#455A64;" vertex="1" parent="dm-phys-msg_lg">
+          <mxGeometry x="20" y="286" width="920" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="p4Notes" value="&lt;b&gt;GHI CHÚ VẬT LÝ (đọc từ mã nguồn)&lt;/b&gt;&lt;br&gt;&lt;br&gt;• &lt;b&gt;message.recipient_id&lt;/b&gt; là FK tới &lt;b&gt;conversation&lt;/b&gt;, không tới account (fk2a3ajdqt4au2cns4ko5m5qiil). Tên cột dễ gây hiểu nhầm.&lt;br&gt;• &lt;b&gt;notification.presentation_id / trace_id&lt;/b&gt; là id đa hình (bài đăng, bình luận… tuỳ &lt;b&gt;type&lt;/b&gt;), KHÔNG có FK — vì vậy không vẽ đường nối.&lt;br&gt;• &lt;b&gt;notification.status&lt;/b&gt; và &lt;b&gt;message.status&lt;/b&gt; lưu enum MessageStatus theo ORDINAL (0 SENT, 1 RECEIVED, 2 SEEN); notification.status không khai @Enumerated nên dùng mặc định ORDINAL.&lt;br&gt;• &lt;b&gt;Kiểm duyệt&lt;/b&gt; dùng @Inheritance(JOINED): mỗi báo cáo có một dòng ở report_template và một dòng ở bảng con, cùng id. FK id → report_template.id do Hibernate sinh (INFERRED).&lt;br&gt;• Tên bảng con lấy từ @Entity(name = &quot;AccountReport&quot;…) qua naming strategy mặc định → account_report, post_report, comment_report (INFERRED, chưa kiểm DB thật).&lt;br&gt;• report_template.sentitive_type: NUDITY, VIOLENCE, SUICIDE, TERRORISM, SPAM, OTHER (EnumType.STRING)." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;spacingLeft=10;spacingTop=8;spacingRight=8;fillColor=#FFF8E1;strokeColor=#D6B656;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="856" width="1440" height="170" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="dm-phys-diff" name="5. Đối chiếu schema.sql ↔ JPA">
+    <mxGraphModel dx="1800" dy="1250" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1250" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="p5Title" value="ĐỐI CHIẾU LƯỢC ĐỒ: schema.sql ↔ ÁNH XẠ JPA&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Không có dump metadata của DB đang chạy trong repo, nên cột &quot;DB thật&quot; bị bỏ trống có chủ đích. Mọi hệ quả về DB dựng từ schema.sql rồi để Hibernate ddl-auto: update bổ sung là suy luận từ hành vi Hibernate.&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;fontSize=17;fontStyle=1;fillColor=none;strokeColor=none;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="1720" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p5Table" value="" style="shape=table;startSize=0;container=1;collapsible=0;childLayout=tableLayout;fixedRows=1;rowLines=1;fontSize=11;strokeColor=#666666;fillColor=none;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="110" width="1720" height="764" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r0" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;strokeColor=inherit;html=1;" vertex="1" parent="p5Table">
+          <mxGeometry x="0" y="0" width="1720" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r0c0" value="Đối tượng" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#E0E0E0;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;fontStyle=1;" vertex="1" parent="p5r0">
+          <mxGeometry x="0" y="0" width="300" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r0c1" value="schema.sql" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#E0E0E0;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;fontStyle=1;" vertex="1" parent="p5r0">
+          <mxGeometry x="300" y="0" width="300" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r0c2" value="JPA (entity)" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#E0E0E0;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;fontStyle=1;" vertex="1" parent="p5r0">
+          <mxGeometry x="600" y="0" width="330" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r0c3" value="Hệ quả và mức chứng cứ" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#E0E0E0;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;fontStyle=1;" vertex="1" parent="p5r0">
+          <mxGeometry x="930" y="0" width="790" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r1" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;strokeColor=inherit;html=1;" vertex="1" parent="p5Table">
+          <mxGeometry x="0" y="36" width="1720" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r1c0" value="device_metadata, hashtag, hashtag_rel_post, notification, report_template, account_report, post_report, comment_report" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FFFFFF;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;fontStyle=1;" vertex="1" parent="p5r1">
+          <mxGeometry x="0" y="0" width="300" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r1c1" value="Không có" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FFFFFF;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r1">
+          <mxGeometry x="300" y="0" width="300" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r1c2" value="@Entity có ánh xạ đầy đủ" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FFFFFF;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r1">
+          <mxGeometry x="600" y="0" width="330" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r1c3" value="Chỉ tồn tại khi backend khởi động với ddl-auto: update. FK, UNIQUE và sequence của 8 bảng này là &lt;b&gt;INFERRED&lt;/b&gt; (tên constraint do Hibernate sinh)." style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FFFFFF;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r1">
+          <mxGeometry x="930" y="0" width="790" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r2" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;strokeColor=inherit;html=1;" vertex="1" parent="p5Table">
+          <mxGeometry x="0" y="92" width="1720" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r2c0" value="account.phone_number, gender, public_key" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FAFAFA;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;fontStyle=1;" vertex="1" parent="p5r2">
+          <mxGeometry x="0" y="0" width="300" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r2c1" value="Không có" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FAFAFA;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r2">
+          <mxGeometry x="300" y="0" width="300" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r2c2" value="@Column; gender là @Enumerated(STRING)" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FAFAFA;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r2">
+          <mxGeometry x="600" y="0" width="330" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r2c3" value="Hibernate thêm cột (nullable) khi khởi động. Đánh dấu † ở trang 3." style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FAFAFA;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r2">
+          <mxGeometry x="930" y="0" width="790" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r3" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;strokeColor=inherit;html=1;" vertex="1" parent="p5Table">
+          <mxGeometry x="0" y="148" width="1720" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r3c0" value="account.account_status" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FFFFFF;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;fontStyle=1;" vertex="1" parent="p5r3">
+          <mxGeometry x="0" y="0" width="300" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r3c1" value="varchar(255), cho phép NULL" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FFFFFF;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r3">
+          <mxGeometry x="300" y="0" width="300" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r3c2" value="@Column(nullable = false), EnumType.STRING" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FFFFFF;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r3">
+          <mxGeometry x="600" y="0" width="330" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r3c3" value="ddl-auto: update không sửa nullability của cột đã có, nên DB dựng từ schema.sql vẫn cho NULL (INFERRED)." style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FFFFFF;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r3">
+          <mxGeometry x="930" y="0" width="790" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r4" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;strokeColor=inherit;html=1;" vertex="1" parent="p5Table">
+          <mxGeometry x="0" y="204" width="1720" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r4c0" value="message.timestamp" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FAFAFA;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;fontStyle=1;" vertex="1" parent="p5r4">
+          <mxGeometry x="0" y="0" width="300" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r4c1" value="date NOT NULL" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FAFAFA;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r4">
+          <mxGeometry x="300" y="0" width="300" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r4c2" value="LocalDateTime" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FAFAFA;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r4">
+          <mxGeometry x="600" y="0" width="330" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r4c3" value="update không đổi kiểu cột: trên DB dựng từ schema.sql phần giờ bị mất (INFERRED)." style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FAFAFA;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r4">
+          <mxGeometry x="930" y="0" width="790" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r5" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;strokeColor=inherit;html=1;" vertex="1" parent="p5Table">
+          <mxGeometry x="0" y="260" width="1720" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r5c0" value="message.message_type" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FFFFFF;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;fontStyle=1;" vertex="1" parent="p5r5">
+          <mxGeometry x="0" y="0" width="300" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r5c1" value="Không có" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FFFFFF;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r5">
+          <mxGeometry x="300" y="0" width="300" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r5c2" value="@Enumerated(ORDINAL) → integer" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FFFFFF;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r5">
+          <mxGeometry x="600" y="0" width="330" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r5c3" value="Hibernate thêm cột. Giá trị 0 TYPING, 1 USUAL_TEXT, 2 NEW_PARTICIPANT." style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FFFFFF;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r5">
+          <mxGeometry x="930" y="0" width="790" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r6" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;strokeColor=inherit;html=1;" vertex="1" parent="p5Table">
+          <mxGeometry x="0" y="316" width="1720" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r6c0" value="message.test" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FAFAFA;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;fontStyle=1;" vertex="1" parent="p5r6">
+          <mxGeometry x="0" y="0" width="300" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r6c1" value="varchar(255)" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FAFAFA;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r6">
+          <mxGeometry x="300" y="0" width="300" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r6c2" value="Không ánh xạ" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FAFAFA;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r6">
+          <mxGeometry x="600" y="0" width="330" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r6c3" value="Cột thừa, code không đọc/ghi. Đánh dấu ‡ ở trang 4." style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FAFAFA;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r6">
+          <mxGeometry x="930" y="0" width="790" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r7" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;strokeColor=inherit;html=1;" vertex="1" parent="p5Table">
+          <mxGeometry x="0" y="372" width="1720" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r7c0" value="message.content" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FFFFFF;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;fontStyle=1;" vertex="1" parent="p5r7">
+          <mxGeometry x="0" y="0" width="300" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r7c1" value="varchar(1000) NOT NULL" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FFFFFF;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r7">
+          <mxGeometry x="300" y="0" width="300" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r7c2" value="@Column(nullable = false), không khai length" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FFFFFF;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r7">
+          <mxGeometry x="600" y="0" width="330" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r7c3" value="DB mới do Hibernate dựng sẽ là varchar(255)." style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FFFFFF;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r7">
+          <mxGeometry x="930" y="0" width="790" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r8" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;strokeColor=inherit;html=1;" vertex="1" parent="p5Table">
+          <mxGeometry x="0" y="428" width="1720" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r8c0" value="comment.content" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FAFAFA;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;fontStyle=1;" vertex="1" parent="p5r8">
+          <mxGeometry x="0" y="0" width="300" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r8c1" value="varchar(1500)" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FAFAFA;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r8">
+          <mxGeometry x="300" y="0" width="300" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r8c2" value="@Column, không khai length" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FAFAFA;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r8">
+          <mxGeometry x="600" y="0" width="330" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r8c3" value="Như trên: varchar(255) nếu Hibernate tạo bảng." style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FAFAFA;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r8">
+          <mxGeometry x="930" y="0" width="790" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r9" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;strokeColor=inherit;html=1;" vertex="1" parent="p5Table">
+          <mxGeometry x="0" y="484" width="1720" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r9c0" value="role.id, report_template.id" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FFFFFF;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;fontStyle=1;" vertex="1" parent="p5r9">
+          <mxGeometry x="0" y="0" width="300" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r9c1" value="role_id_seq có trong DDL; report_template không có" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FFFFFF;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r9">
+          <mxGeometry x="300" y="0" width="300" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r9c2" value="@GeneratedValue(strategy = AUTO), không có @SequenceGenerator" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FFFFFF;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r9">
+          <mxGeometry x="600" y="0" width="330" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r9c3" value="Hibernate 5 (Spring Boot 2 bật new_generator_mappings) dùng sequence chung hibernate_sequence, không dùng role_id_seq (INFERRED)." style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FFFFFF;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r9">
+          <mxGeometry x="930" y="0" width="790" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r10" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;strokeColor=inherit;html=1;" vertex="1" parent="p5Table">
+          <mxGeometry x="0" y="540" width="1720" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r10c0" value="setting.account_id, type, value" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FAFAFA;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;fontStyle=1;" vertex="1" parent="p5r10">
+          <mxGeometry x="0" y="0" width="300" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r10c1" value="NOT NULL" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FAFAFA;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r10">
+          <mxGeometry x="300" y="0" width="300" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r10c2" value="Không khai nullable = false" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FAFAFA;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r10">
+          <mxGeometry x="600" y="0" width="330" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r10c3" value="DDL chặt hơn JPA. DB do Hibernate dựng sẽ cho NULL." style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FAFAFA;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r10">
+          <mxGeometry x="930" y="0" width="790" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r11" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;strokeColor=inherit;html=1;" vertex="1" parent="p5Table">
+          <mxGeometry x="0" y="596" width="1720" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r11c0" value="device_metadata_id_seq, hashtag_id_seq, hashtag_rel_post_id_seq, notification_id_seq" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FFFFFF;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;fontStyle=1;" vertex="1" parent="p5r11">
+          <mxGeometry x="0" y="0" width="300" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r11c1" value="Không có" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FFFFFF;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r11">
+          <mxGeometry x="300" y="0" width="300" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r11c2" value="@SequenceGenerator(allocationSize = 1)" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FFFFFF;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r11">
+          <mxGeometry x="600" y="0" width="330" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r11c3" value="Hibernate tạo sequence khi update." style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FFFFFF;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r11">
+          <mxGeometry x="930" y="0" width="790" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r12" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;strokeColor=inherit;html=1;" vertex="1" parent="p5Table">
+          <mxGeometry x="0" y="652" width="1720" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r12c0" value="22 FK của 11 bảng trong DDL" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FAFAFA;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;fontStyle=1;" vertex="1" parent="p5r12">
+          <mxGeometry x="0" y="0" width="300" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r12c1" value="FOREIGN KEY có tên fk…, ON DELETE NO ACTION" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FAFAFA;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r12">
+          <mxGeometry x="300" y="0" width="300" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r12c2" value="@ManyToOne + @JoinColumn cùng cột" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FAFAFA;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r12">
+          <mxGeometry x="600" y="0" width="330" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r12c3" value="Khớp nhau. Vẽ nét liền ở trang 3–4 (&lt;b&gt;VERIFIED&lt;/b&gt;)." style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FAFAFA;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r12">
+          <mxGeometry x="930" y="0" width="790" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r13" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;strokeColor=inherit;html=1;" vertex="1" parent="p5Table">
+          <mxGeometry x="0" y="708" width="1720" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r13c0" value="DB đang chạy" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FFFFFF;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;fontStyle=1;" vertex="1" parent="p5r13">
+          <mxGeometry x="0" y="0" width="300" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r13c1" value="—" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FFFFFF;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r13">
+          <mxGeometry x="300" y="0" width="300" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r13c2" value="—" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FFFFFF;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r13">
+          <mxGeometry x="600" y="0" width="330" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5r13c3" value="Không kiểm trực tiếp. deployment.md (documented) ghi 19 bảng + 3 view month_year, quarter_year, list_year — khớp 11 bảng DDL + 8 bảng JPA, và 3 view do stored function tạo (trang 6)." style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=#FFFFFF;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=11;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;fontColor=#1A1A1A;" vertex="1" parent="p5r13">
+          <mxGeometry x="930" y="0" width="790" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="p5Prov" value="&lt;i&gt;Nguồn: container/prepare/schema/schema.sql, src/main/java/com/vivacon/entity/**, src/main/resources/application-{dev,prod}.yml (generate-ddl: true, ddl-auto: update). Branch feature/ai-assisted-dev-setup @ ca46696, 2026-10-10.&lt;/i&gt;" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;whiteSpace=wrap;fillColor=none;strokeColor=none;fontColor=#455A64;" vertex="1" parent="1">
+          <mxGeometry x="40" y="894" width="1720" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="dm-phys-proc" name="6. Truy cập dữ liệu — stored functions">
+    <mxGraphModel dx="1900" dy="1250" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1900" pageHeight="1250" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="p6Title" value="TRUY CẬP DỮ LIỆU — 14 STORED FUNCTION VÀ NƠI GỌI&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Đây là phụ thuộc ĐỌC, không phải quan hệ khoá ngoại. Nguồn: container/prepare/functions/*.sql và dao/impl/* (EntityManager.createStoredProcedureQuery)&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;fontSize=17;fontStyle=1;fillColor=none;strokeColor=none;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="1820" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p6Dao0" value="&lt;b&gt;ConversationDaoImpl&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;dao/impl/ConversationDaoImpl.java&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=12;fillColor=#B1DDF0;strokeColor=#10739E;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="40" y="130" width="300" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="p6Fn0_0" value="&lt;b&gt;checkConversationBetweenTwoAccount()&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;đọc: conversation, participant&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;align=left;spacingLeft=8;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="440" y="130" width="520" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p6E0_0" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#37474F;strokeWidth=1.2;exitX=1;exitY=0.2232;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="p6Dao0" target="p6Fn0_0">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="p6Fn0_1" value="&lt;b&gt;searchConversationByName()&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;đọc: account, conversation, participant&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;align=left;spacingLeft=8;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="440" y="192" width="520" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p6E0_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#37474F;strokeWidth=1.2;exitX=1;exitY=0.7768;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="p6Dao0" target="p6Fn0_1">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="p6Dao1" value="&lt;b&gt;HashTagDAOImpl&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;dao/impl/HashTagDAOImpl.java&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=12;fillColor=#B1DDF0;strokeColor=#10739E;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="40" y="276" width="300" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p6Fn1_0" value="&lt;b&gt;getTopTrendingHashTagInCertainTime()&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;đọc: hashtag, hashtag_rel_post, post&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;align=left;spacingLeft=8;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="440" y="276" width="520" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p6E1_0" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#37474F;strokeWidth=1.2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="p6Dao1" target="p6Fn1_0">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="p6Dao2" value="&lt;b&gt;PostDAOImpl&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;dao/impl/PostDAOImpl.java&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=12;fillColor=#B1DDF0;strokeColor=#10739E;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="40" y="360" width="300" height="298" as="geometry" />
+        </mxCell>
+        <mxCell id="p6Fn2_0" value="&lt;b&gt;postQuantityStatisticInRecentMonths()&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;đọc: post · tạo lại view month_year&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;align=left;spacingLeft=8;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="440" y="360" width="520" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p6E2_0" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#37474F;strokeWidth=1.2;exitX=1;exitY=0.0839;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="p6Dao2" target="p6Fn2_0">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="p6Fn2_1" value="&lt;b&gt;postQuantityStatisticInQuarters()&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;đọc: post · tạo lại view quarter_year&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;align=left;spacingLeft=8;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="440" y="422" width="520" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p6E2_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#37474F;strokeWidth=1.2;exitX=1;exitY=0.2919;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="p6Dao2" target="p6Fn2_1">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="p6Fn2_2" value="&lt;b&gt;postQuantityStatisticInYears()&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;đọc: post · tạo lại view list_year&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;align=left;spacingLeft=8;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="440" y="484" width="520" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p6E2_2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#37474F;strokeWidth=1.2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="p6Dao2" target="p6Fn2_2">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="p6Fn2_3" value="&lt;b&gt;getTopPostInteraction()&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;đọc: account, comment, liking, post&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;align=left;spacingLeft=8;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="440" y="546" width="520" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p6E2_3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#37474F;strokeWidth=1.2;exitX=1;exitY=0.7081;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="p6Dao2" target="p6Fn2_3">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="p6Fn2_4" value="&lt;b&gt;getTopNewestPost()&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;đọc: account, attachment, post&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;align=left;spacingLeft=8;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="440" y="608" width="520" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p6E2_4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#37474F;strokeWidth=1.2;exitX=1;exitY=0.9161;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="p6Dao2" target="p6Fn2_4">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="p6Dao3" value="&lt;b&gt;UserDAOImpl&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;dao/impl/UserDAOImpl.java&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=12;fillColor=#B1DDF0;strokeColor=#10739E;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="40" y="692" width="300" height="360" as="geometry" />
+        </mxCell>
+        <mxCell id="p6Fn3_0" value="&lt;b&gt;getTopAccountMostFollowers()&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;đọc: account, following&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;align=left;spacingLeft=8;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="440" y="692" width="520" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p6E3_0" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#37474F;strokeWidth=1.2;exitX=1;exitY=0.0694;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="p6Dao3" target="p6Fn3_0">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="p6Fn3_1" value="&lt;b&gt;userQuantityStatisticInRecentMonths()&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;đọc: account · tạo lại view month_year&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;align=left;spacingLeft=8;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="440" y="754" width="520" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p6E3_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#37474F;strokeWidth=1.2;exitX=1;exitY=0.2417;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="p6Dao3" target="p6Fn3_1">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="p6Fn3_2" value="&lt;b&gt;userQuantityStatisticInQuarters()&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;đọc: account · tạo lại view quarter_year&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;align=left;spacingLeft=8;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="440" y="816" width="520" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p6E3_2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#37474F;strokeWidth=1.2;exitX=1;exitY=0.4139;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="p6Dao3" target="p6Fn3_2">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="p6Fn3_3" value="&lt;b&gt;userQuantityStatisticInYears()&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;đọc: account · tạo lại view list_year&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;align=left;spacingLeft=8;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="440" y="878" width="520" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p6E3_3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#37474F;strokeWidth=1.2;exitX=1;exitY=0.5861;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="p6Dao3" target="p6Fn3_3">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="p6Fn3_4" value="&lt;b&gt;getAllFollowerPerUser()&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;đọc: following&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;align=left;spacingLeft=8;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="440" y="940" width="520" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p6E3_4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#37474F;strokeWidth=1.2;exitX=1;exitY=0.7583;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="p6Dao3" target="p6Fn3_4">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="p6Fn3_5" value="&lt;b&gt;getLastestLoginLocationPerAccount()&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;đọc: device_metadata&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;align=left;spacingLeft=8;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="440" y="1002" width="520" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p6E3_5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#37474F;strokeWidth=1.2;exitX=1;exitY=0.9306;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="p6Dao3" target="p6Fn3_5">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="p6V_month_year" value="&lt;b&gt;VIEW month_year&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;view PERMANENT trong schema public&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;fillColor=#F8CECC;strokeColor=#B85450;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="520" width="280" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p6V_quarter_year" value="&lt;b&gt;VIEW quarter_year&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;view PERMANENT trong schema public&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;fillColor=#F8CECC;strokeColor=#B85450;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="640" width="280" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p6V_list_year" value="&lt;b&gt;VIEW list_year&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;view PERMANENT trong schema public&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;fillColor=#F8CECC;strokeColor=#B85450;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="760" width="280" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p6VE0" value="DROP + CREATE OR REPLACE VIEW" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;endArrow=open;endFill=0;dashed=1;dashPattern=6 4;strokeColor=#B85450;fontSize=9;fontColor=#B85450;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;" edge="1" parent="1" source="p6Fn2_0" target="p6V_month_year">
+          <mxGeometry x="-0.6" relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1080" y="385" /><mxPoint x="1080" y="538" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p6VE1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;endArrow=open;endFill=0;dashed=1;dashPattern=6 4;strokeColor=#B85450;fontSize=9;fontColor=#B85450;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;" edge="1" parent="1" source="p6Fn2_1" target="p6V_quarter_year">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1060" y="447" /><mxPoint x="1060" y="658" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p6VE2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;endArrow=open;endFill=0;dashed=1;dashPattern=6 4;strokeColor=#B85450;fontSize=9;fontColor=#B85450;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;" edge="1" parent="1" source="p6Fn2_2" target="p6V_list_year">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1040" y="509" /><mxPoint x="1040" y="778" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p6VE3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;endArrow=open;endFill=0;dashed=1;dashPattern=6 4;strokeColor=#B85450;fontSize=9;fontColor=#B85450;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.7;entryDx=0;entryDy=0;" edge="1" parent="1" source="p6Fn3_1" target="p6V_month_year">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1000" y="779" /><mxPoint x="1000" y="562" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p6VE4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;endArrow=open;endFill=0;dashed=1;dashPattern=6 4;strokeColor=#B85450;fontSize=9;fontColor=#B85450;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.7;entryDx=0;entryDy=0;" edge="1" parent="1" source="p6Fn3_2" target="p6V_quarter_year">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1020" y="841" /><mxPoint x="1020" y="682" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p6VE5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jumpStyle=arc;jumpSize=6;endArrow=open;endFill=0;dashed=1;dashPattern=6 4;strokeColor=#B85450;fontSize=9;fontColor=#B85450;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.7;entryDx=0;entryDy=0;" edge="1" parent="1" source="p6Fn3_3" target="p6V_list_year">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1030" y="903" /><mxPoint x="1030" y="802" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p6Note" value="&lt;b&gt;VÌ SAO TRANG NÀY QUAN TRỌNG&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Sáu hàm thống kê bắt đầu bằng &lt;b&gt;DROP VIEW IF EXISTS&lt;/b&gt; rồi &lt;b&gt;CREATE OR REPLACE VIEW&lt;/b&gt; (statistic_function.sql dòng 14–16, 48–50, 84–86 và tương tự từ dòng 264). View là permanent, dùng chung cho mọi phiên, nên hai request dashboard đồng thời có thể giẫm lên nhau.&lt;br&gt;• Các hàm đọc trực tiếp bảng nghiệp vụ; Hibernate không biết các phụ thuộc này. Đổi tên cột trong entity mà không sửa SQL sẽ chỉ lỗi lúc chạy.&lt;br&gt;• getLastestLoginLocationPerAccount đọc device_metadata — bảng không có trong schema.sql, nên hàm này lỗi nếu DB chỉ dựng từ schema.sql.&lt;br&gt;• getAllFollowerPerUser được RecommendationServiceImpl gọi qua UserDAOImpl.getFollowersPerAccount mỗi 5 phút (@Scheduled).&lt;br&gt;&lt;br&gt;&lt;i&gt;Nguồn: branch feature/ai-assisted-dev-setup @ ca46696, 2026-10-10. Danh sách bảng được trích từ FROM/JOIN của từng hàm; CTE nội bộ đã loại.&lt;/i&gt;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;spacingLeft=10;spacingTop=8;spacingRight=8;fillColor=#FFF8E1;strokeColor=#D6B656;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="1440" y="130" width="420" height="340" as="geometry" />
+        </mxCell>
+        <mxCell id="p6Legend" value="&lt;b&gt;Chú giải&lt;/b&gt;&lt;br&gt;Mũi tên liền: DAO gọi hàm (CALL qua EntityManager) — VERIFIED.&lt;br&gt;Nét đứt đỏ: hàm xoá và tạo lại view — VERIFIED trong SQL.&lt;br&gt;Không có đường nối tới bảng: danh sách bảng đọc ghi ngay trong ô hàm." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;spacingLeft=10;spacingTop=8;spacingRight=8;fillColor=#FFFFFF;strokeColor=#666666;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="1440" y="500" width="420" height="90" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
 </mxfile>

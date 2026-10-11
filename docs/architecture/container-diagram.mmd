@@ -1,0 +1,60 @@
+---
+title: "Vivacon - C4 Level 2 - Containers (AS_IS)"
+---
+%% C4 "container" = separately runnable/deployable unit, NOT a Docker container.
+%% Logical view only; hosting (Compose, VM, Vercel, tunnel) is in deployment-topology.mmd.
+%% Flowchart fallback for C4, see .kiro/steering/c4-model.md.
+%% Evidence: docs/architecture/architecture-inventory.md sections 1-3.
+flowchart LR
+    user["<b>Member / Administrator</b><br/>[Person]<br/>Uses Vivacon in a web browser"]
+
+    subgraph browser_ext["Called from the browser"]
+        direction TB
+        sight["<b>SightEngine</b><br/>[External System, third-party SaaS]<br/>Image moderation"]
+        gmaps["<b>Google Maps JS API</b><br/>[External System, Google]<br/>Login-location map"]
+    end
+
+    subgraph vivacon["Vivacon [Software System]"]
+        direction LR
+        spa["<b>Single-page app</b><br/>[Container: React 17, CRA, MUI 5]<br/>Routes, pages, Context state;<br/>axios client + SockJS/STOMP client<br/><i>runs in the browser</i>"]
+        web["<b>Web server</b><br/>[Container: nginx 1.27]<br/>Serves the bundle, SPA fallback,<br/>reverse proxy for /api/ and /ws/"]
+        api["<b>API application</b><br/>[Container: Spring Boot 2.5, Java 11]<br/>REST /api/v1, STOMP broker /ws,<br/>JWT security, business logic,<br/>scheduled recommendations,<br/>GeoLite2 file for IP lookup"]
+        db[("<b>Database</b><br/>[Container: PostgreSQL]<br/>19 entity tables + stored functions<br/>for statistics and chat search")]
+    end
+
+    subgraph server_ext["Called from the API"]
+        direction TB
+        cloudinary["<b>Cloudinary</b><br/>[External System, third-party SaaS]<br/>Image storage"]
+        msid["<b>Microsoft identity platform</b><br/>[External System, Microsoft]<br/>OAuth2 token endpoint"]
+        msgraph["<b>Microsoft Graph</b><br/>[External System, Microsoft]<br/>Email delivery"]
+    end
+
+    user -->|"Uses, browser"| spa
+    spa -->|"GET bundle, HTTPS"| web
+    spa -->|"REST JSON, Bearer JWT<br/>/api/v1/**"| web
+    spa <-->|"SockJS + STOMP<br/>WS-Authorization, /ws"| web
+    web -->|"HTTP/1.1 proxy<br/>/api/, /ws/ with Upgrade"| api
+    api -->|"JDBC: JPA repositories<br/>+ stored procedure calls"| db
+    api -->|"Upload image, HTTPS SDK"| cloudinary
+    api -->|"Token request, HTTPS<br/>(async handler)"| msid
+    api -->|"sendMail, HTTPS<br/>(async handler)"| msgraph
+    spa -->|"GET check.json, HTTPS"| sight
+    spa -->|"Maps JS loader, HTTPS"| gmaps
+
+    classDef person fill:#E0F2FE,stroke:#0284C7,stroke-width:2px,color:#0F172A
+    classDef client fill:#E0F2FE,stroke:#0284C7,stroke-width:2px,color:#0F172A
+    classDef service fill:#DBEAFE,stroke:#2563EB,stroke-width:2px,color:#0F172A
+    classDef integration fill:#FFEDD5,stroke:#EA580C,stroke-width:2px,color:#0F172A
+    classDef storage fill:#DCFCE7,stroke:#16A34A,stroke-width:2px,color:#0F172A
+    classDef external fill:#F1F5F9,stroke:#64748B,stroke-width:2px,color:#0F172A
+    classDef processing fill:#F3E8FF,stroke:#9333EA,stroke-width:2px,color:#0F172A
+    class user person
+    class spa client
+    class web integration
+    class api service
+    class db storage
+    class cloudinary,msid,msgraph,gmaps external
+    class sight processing
+    style vivacon fill:#FFFFFF,stroke:#2563EB,stroke-width:2px,stroke-dasharray:6 4,color:#1E3A8A
+    style browser_ext fill:#FFFFFF,stroke:#CBD5E1,color:#334155
+    style server_ext fill:#FFFFFF,stroke:#CBD5E1,color:#334155

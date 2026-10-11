@@ -1,0 +1,56 @@
+---
+title: "Vivacon - Deployment topology (AS-IS, Docker Compose)"
+---
+%% Physical/hosting view, kept separate from the logical C4 diagrams.
+%% Solid = defined in tracked files (docker-compose*.yml, Dockerfiles, vercel.json).
+%% Dashed = documented in .kiro/steering/deployment.md only, not provable from code.
+%% No hostnames, IP addresses or credentials on purpose.
+flowchart LR
+    browser["<b>Browser</b><br/>React SPA bundle"]
+
+    subgraph saas["Optional public edge"]
+        direction TB
+        vercel["<b>Vercel static hosting</b><br/>frontend/vercel.json<br/><i>CRA build, rewrite to index.html,<br/>no API rewrite</i>"]
+        cfedge["<b>Cloudflare edge</b><br/>TLS termination, public hostname"]
+    end
+
+    subgraph host["Docker host - compose project 'vivacon' (docker-compose.yml)"]
+        direction TB
+        cloudflared["<b>cloudflared</b><br/>docker-compose.tunnel.yml (opt-in)<br/><i>tunnel --url http://frontend:80</i>"]
+        frontend["<b>frontend</b> - nginx<br/>frontend/Dockerfile<br/><i>only published port:<br/>FRONTEND_PORT -> 80</i>"]
+        backend["<b>backend</b> - Spring Boot<br/>Dockerfile, profile prod<br/><i>:8080 internal, mem_limit 1200m</i>"]
+        dbc[("<b>db</b> - postgres:14<br/>named volume vivacon-db-data<br/><i>internal only</i>")]
+        adminer["<b>adminer</b><br/>docker-compose.override.yml<br/><i>dev only</i>"]
+    end
+
+    managed[("<b>Managed PostgreSQL</b><br/>Supabase session pooler<br/><i>selected by SPRING_DATASOURCE_URL<br/>+ DB_USERNAME</i>")]
+
+    browser -->|"HTTPS: static bundle"| vercel
+    browser -->|"HTTPS / WSS: /api, /ws"| cfedge
+    browser -->|"HTTP: LAN or local access"| frontend
+    cfedge -->|"outbound tunnel"| cloudflared
+    cloudflared -->|"HTTP"| frontend
+    frontend -->|"HTTP proxy /api/, /ws/<br/>BACKEND_ORIGIN=backend:8080"| backend
+    backend -->|"JDBC, default URL<br/>jdbc:postgresql://db:5432"| dbc
+    backend -.->|"JDBC + sslmode=require<br/>documented current deployment"| managed
+    adminer -.->|"dev only"| dbc
+
+    legend["<b>Legend</b><br/>solid = defined in tracked config<br/>dashed = documented in deployment.md / dev-only<br/>the base compose file publishes only the frontend port"]
+
+    classDef client fill:#E0F2FE,stroke:#0284C7,stroke-width:2px,color:#0F172A
+    classDef service fill:#DBEAFE,stroke:#2563EB,stroke-width:2px,color:#0F172A
+    classDef integration fill:#FFEDD5,stroke:#EA580C,stroke-width:2px,color:#0F172A
+    classDef storage fill:#DCFCE7,stroke:#16A34A,stroke-width:2px,color:#0F172A
+    classDef external fill:#F1F5F9,stroke:#64748B,stroke-width:2px,color:#0F172A
+    classDef devonly fill:#F8FAFC,stroke:#94A3B8,stroke-width:1px,stroke-dasharray:4 3,color:#475569
+    classDef note fill:#FFFFFF,stroke:#94A3B8,stroke-width:1px,stroke-dasharray:3 3,color:#334155
+    class browser client
+    class vercel,cfedge external
+    class cloudflared,frontend integration
+    class backend service
+    class dbc storage
+    class managed storage
+    class adminer devonly
+    class legend note
+    style host fill:#FFFFFF,stroke:#2563EB,stroke-width:2px,stroke-dasharray:6 4,color:#1E3A8A
+    style saas fill:#FFFFFF,stroke:#64748B,stroke-width:1px,stroke-dasharray:6 4,color:#334155

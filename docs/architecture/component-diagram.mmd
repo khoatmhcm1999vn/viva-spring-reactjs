@@ -1,0 +1,108 @@
+---
+title: "Vivacon - C4 Level 3 - Components of the API application (AS_IS)"
+---
+%% One container only: the Spring Boot API (src/main/java/com/vivacon).
+%% Components are groups of packages/classes, not individual classes.
+%% Flowchart fallback for C4, see .kiro/steering/c4-model.md.
+%% Evidence: docs/architecture/architecture-inventory.md section 4.
+flowchart TB
+    web["<b>Web server</b><br/>[Container: nginx 1.27]<br/>Proxies /api/ and /ws/ from the SPA"]
+
+    subgraph api["API application [Container: Spring Boot 2.5, Java 11]"]
+        direction TB
+
+        subgraph entry["Entry and security"]
+            direction LR
+            sec["<b>HTTP security chain</b><br/>[Component: Spring Security 5, JJWT]<br/>HTTPSecurityConfiguration, JWTRequestFilter,<br/>corsFilter, JwtUtils<br/><i>stateless, Bearer JWT, CORS allow-list</i>"]
+            stomp["<b>STOMP endpoint + inbound auth</b><br/>[Component: Spring WebSocket, SockJS]<br/>STOMPMessageBrokerConfiguration,<br/>CustomInterceptor<br/><i>/ws SockJS, WS-Authorization header,<br/>in-memory simple broker</i>"]
+        end
+
+        subgraph handlers["Request handlers"]
+            direction LR
+            rest["<b>REST controllers</b><br/>[Component: Spring MVC]<br/>controller/** (18)<br/><i>auth, profile, post, comment, like,<br/>following, newsfeed, hashtag, chat,<br/>notification, report, admin,<br/>statistic, attachment</i>"]
+            msg["<b>STOMP message handlers</b><br/>[Component: Spring Messaging]<br/>ChatController @MessageMapping<br/><i>/app/chat, /app/conversation,<br/>/app/conversation/typing ...</i>"]
+        end
+
+        subgraph domain["Domain"]
+            direction LR
+            svc["<b>Domain services</b><br/>[Component: Spring beans]<br/>service/impl/*ServiceImpl,<br/>service/report/*<br/><i>business rules, @Transactional</i>"]
+            device["<b>Device verification</b><br/>[Component: uap-java, GeoIP2]<br/>DeviceServiceImpl<br/><i>uap-java + MaxMind reader</i>"]
+            media["<b>Media upload</b><br/>[Component: Cloudinary SDK]<br/>AttachmentController -> CloudinaryServiceImpl"]
+            reco["<b>Recommendation job</b><br/>[Component: Spring @Scheduled]<br/>RecommendationServiceImpl<br/><i>@Scheduled every 5 min</i>"]
+            mapper["<b>Mappers</b><br/>[Component: ModelMapper 2.3]<br/>mapper/**<br/><i>ModelMapper + per-item enrichment</i>"]
+        end
+
+        subgraph side["Side effects"]
+            direction LR
+            events["<b>In-process event bus</b><br/>[Component: Spring ApplicationEvent]<br/>ApplicationEventPublisher,<br/>event/handler/* @Async @EventListener<br/><i>thread pool core 4 / max 12</i>"]
+            push["<b>WebsocketSender</b><br/>[Component: Spring Messaging]<br/>SimpMessagingTemplate<br/><i>/user/{username}/notification</i>"]
+            mail["<b>EmailSender</b><br/>[Component: RestTemplate]<br/>+ MicrosoftOAuth2TokenProvider<br/><i>Graph sendMail over HTTPS</i>"]
+            presence["<b>Online presence</b><br/>[Component: Spring session events]<br/>WebSocketSessionEventHandler,<br/>ActiveSessionManagerImpl<br/><i>/topic/account/online</i>"]
+        end
+
+        subgraph data["Data access"]
+            direction LR
+            repo["<b>JPA repositories</b><br/>[Component: Spring Data JPA, Hibernate]<br/>repository/** (18)<br/><i>CRUD and derived queries</i>"]
+            dao["<b>Statistics and search DAO</b><br/>[Component: JPA EntityManager]<br/>dao/impl/*<br/><i>EntityManager stored procedure calls</i>"]
+            geo[("<b>GeoLite2-City.mmdb</b><br/>[File in API image]<br/>offline IP-to-city data")]
+        end
+    end
+
+    db[("<b>Database</b><br/>[Container: PostgreSQL]<br/>entity tables + stored functions")]
+    cloudinary["<b>Cloudinary</b><br/>[External System, third-party SaaS]<br/>image storage"]
+    msgraph["<b>Microsoft identity platform +<br/>Microsoft Graph</b><br/>[External Systems, Microsoft]<br/>OAuth2 token, sendMail"]
+
+    web -->|"HTTP /api/v1/**"| sec
+    web <-->|"SockJS / STOMP frames"| stomp
+    sec -->|"Authenticated request"| rest
+    stomp -->|"SEND /app/**"| msg
+    stomp -.->|"CONNECT / DISCONNECT events"| presence
+
+    rest --> svc
+    msg --> svc
+    rest -->|"multipart files"| media
+    svc --> device
+    svc --> mapper
+    svc -->|"publishEvent"| events
+    device -->|"NewDeviceLocationLoginEvent"| events
+    msg -->|"convertAndSend<br/>/conversation/{id}/message"| stomp
+
+    events --> push
+    events --> mail
+    push -->|"push to broker"| stomp
+    presence -->|"broadcast to broker"| stomp
+
+    svc --> repo
+    svc -->|"statistics, trending,<br/>conversation search"| dao
+    mapper -->|"counts, flags"| repo
+    events -->|"save notifications,<br/>hashtags, settings"| repo
+    reco -->|"getAllFollowerPerUser"| dao
+    device --> geo
+
+    repo -->|"JDBC"| db
+    dao -->|"JDBC, CALL stored functions"| db
+    media -->|"HTTPS SDK"| cloudinary
+    mail -->|"HTTPS"| msgraph
+
+    legend["<b>Legend</b><br/>solid arrow = synchronous call in the same thread<br/>dashed arrow = framework-raised application event<br/>event bus handlers run @Async on a separate pool"]
+
+    classDef client fill:#E0F2FE,stroke:#0284C7,stroke-width:2px,color:#0F172A
+    classDef service fill:#DBEAFE,stroke:#2563EB,stroke-width:2px,color:#0F172A
+    classDef integration fill:#FFEDD5,stroke:#EA580C,stroke-width:2px,color:#0F172A
+    classDef storage fill:#DCFCE7,stroke:#16A34A,stroke-width:2px,color:#0F172A
+    classDef external fill:#F1F5F9,stroke:#64748B,stroke-width:2px,color:#0F172A
+    classDef processing fill:#F3E8FF,stroke:#9333EA,stroke-width:2px,color:#0F172A
+    classDef note fill:#FFFFFF,stroke:#94A3B8,stroke-width:1px,stroke-dasharray:3 3,color:#334155
+    class web client
+    class sec,stomp,rest,msg integration
+    class svc,device,media,mapper service
+    class reco,events,push,mail,presence processing
+    class repo,dao,geo,db storage
+    class cloudinary,msgraph external
+    class legend note
+    style api fill:#FFFFFF,stroke:#2563EB,stroke-width:2px,stroke-dasharray:6 4,color:#1E3A8A
+    style entry fill:#FFF7ED,stroke:#FDBA74,color:#7C2D12
+    style handlers fill:#FFF7ED,stroke:#FDBA74,color:#7C2D12
+    style domain fill:#EFF6FF,stroke:#93C5FD,color:#1E3A8A
+    style side fill:#FAF5FF,stroke:#D8B4FE,color:#581C87
+    style data fill:#F0FDF4,stroke:#86EFAC,color:#14532D

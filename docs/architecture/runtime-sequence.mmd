@@ -1,0 +1,51 @@
+---
+title: "Vivacon - Runtime - Send a chat message in an existing conversation (AS-IS)"
+---
+%% Traced from code; each message names the method that performs it.
+%% Evidence: docs/architecture/architecture-inventory.md section 5.
+%% nginx sits on the path in the Docker/VM deployment only; with the CRA dev server
+%% the browser talks to the API directly.
+sequenceDiagram
+    autonumber
+    actor A as Sender (browser)<br/>ChatPage + useSocket
+    participant N as nginx<br/>/ws/ proxy
+    participant I as STOMP inbound<br/>CustomInterceptor
+    participant C as ChatController
+    participant S as MessageServiceImpl
+    participant R as JPA repositories
+    participant DB as PostgreSQL
+    participant B as Simple broker<br/>(in-memory)
+    actor P as Other participants<br/>(browsers)
+
+    Note over A,B: Session setup, once per page load: App.js -> useSocket.connect()
+    A->>N: SockJS handshake GET /ws/info, then upgrade
+    N->>I: proxy with Upgrade / Connection headers
+    Note right of I: registerStompEndpoints: Origin must match<br/>vivacon.frontend.allowed-origins, else 403
+    A->>I: STOMP CONNECT, header WS-Authorization: JWT
+    I->>I: preSend: JwtUtils.getUsername + loadUserByUsername,<br/>accessor.setUser(principal)
+    A->>B: SUBSCRIBE /conversation/{id}/message<br/>(ids from REST GET /api/v1/conversation/id)
+
+    Note over A,P: User presses Enter: ChatPage.sendMessage -> chatInExistedConversation
+    A->>I: SEND /app/chat {conversationId, content}, WS-Authorization
+    I->>C: processChatMessage(@Valid UsualTextMessage)
+    C->>S: save(messageRequest)
+    Note right of S: @Transactional begins
+    S->>R: getCurrentAccount: AccountRepository.findByUsernameIgnoreCase
+    R->>DB: SELECT account
+    S->>R: ParticipantRepository.findByConversationIdAndAccountId
+    R->>DB: SELECT participant
+
+    alt sender is a participant
+        S->>R: MessageRepository.save(message)
+        R->>DB: INSERT message
+        S->>R: ConversationRepository.updateLastModifiedAtById
+        R->>DB: UPDATE conversation
+        S-->>C: MessageResponse (transaction commits)
+        C->>B: SimpMessagingTemplate.convertAndSend<br/>/conversation/{id}/message
+        B-->>A: MESSAGE frame
+        B-->>P: MESSAGE frame
+        Note over A,P: useSocket.onMessageReceived -> reducer GET_RECEIVE_MESSAGE
+    else not a participant
+        S--xC: UnauthorizedWebSocketException (rollback)
+        Note over C,A: No @MessageExceptionHandler exists, so the sender<br/>gets no reply frame (inferred from Spring default)
+    end

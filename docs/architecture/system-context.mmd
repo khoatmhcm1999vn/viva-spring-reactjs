@@ -1,0 +1,51 @@
+---
+title: "Vivacon - C4 Level 1 - System Context (AS_IS)"
+---
+%% C4 semantics drawn as a Mermaid flowchart (fallback, see .kiro/steering/c4-model.md).
+%% Native C4Context was rendered with the pinned CLI and rejected: labels overlap nodes,
+%% edges cross boxes, and server-side vs browser-side calls cannot be grouped.
+%% Evidence for every node and edge: docs/architecture/architecture-inventory.md
+flowchart LR
+    subgraph people["People"]
+        direction TB
+        user["<b>Member</b><br/>[Person, role USER]<br/>Posts photos, follows, likes,<br/>comments, chats, reports content"]
+        admin["<b>Administrator</b><br/>[Person, role ADMIN / SUPER_ADMIN]<br/>Moderates reports, manages accounts,<br/>views the statistics dashboard"]
+    end
+
+    subgraph boundary["Focal software system"]
+        vivacon["<b>Vivacon</b><br/>[Software System]<br/>Instagram-style social network:<br/>accounts, posts, social graph,<br/>realtime chat and notifications,<br/>moderation, admin statistics"]
+    end
+
+    subgraph server_side["Called by the Vivacon server"]
+        direction TB
+        cloudinary["<b>Cloudinary</b><br/>[External System, third-party SaaS]<br/>Stores uploaded images,<br/>returns public URLs"]
+        msid["<b>Microsoft identity platform</b><br/>[External System, Microsoft]<br/>Issues OAuth2 access tokens<br/>for the sending mailbox"]
+        msgraph["<b>Microsoft Graph</b><br/>[External System, Microsoft]<br/>Sends verification and<br/>new-device emails to members"]
+    end
+
+    subgraph browser_side["Called by the Vivacon SPA in the browser"]
+        direction TB
+        sight["<b>SightEngine</b><br/>[External System, third-party SaaS]<br/>Image moderation<br/>(nudity, weapons, gore)"]
+        gmaps["<b>Google Maps JS API</b><br/>[External System, Google]<br/>Renders a member's<br/>login-location map"]
+    end
+
+    user -->|"Uses, HTTPS + WebSocket"| vivacon
+    admin -->|"Uses dashboard, HTTPS"| vivacon
+    vivacon -->|"Uploads images, HTTPS SDK"| cloudinary
+    vivacon -->|"Refresh-token grant, HTTPS"| msid
+    vivacon -->|"POST /me/sendMail, HTTPS"| msgraph
+    vivacon -->|"Checks uploaded image URLs, HTTPS"| sight
+    vivacon -->|"Loads map script and tiles, HTTPS"| gmaps
+
+    classDef person fill:#E0F2FE,stroke:#0284C7,stroke-width:2px,color:#0F172A
+    classDef system fill:#DBEAFE,stroke:#2563EB,stroke-width:3px,color:#0F172A
+    classDef external fill:#F1F5F9,stroke:#64748B,stroke-width:2px,color:#0F172A
+    classDef processing fill:#F3E8FF,stroke:#9333EA,stroke-width:2px,color:#0F172A
+    class user,admin person
+    class vivacon system
+    class cloudinary,msid,msgraph,gmaps external
+    class sight processing
+    style people fill:#FFFFFF,stroke:#CBD5E1,color:#334155
+    style boundary fill:#FFFFFF,stroke:#2563EB,stroke-width:2px,stroke-dasharray:6 4,color:#1E3A8A
+    style server_side fill:#FFFFFF,stroke:#CBD5E1,color:#334155
+    style browser_side fill:#FFFFFF,stroke:#CBD5E1,color:#334155

@@ -267,4 +267,332 @@
       </root>
     </mxGraphModel>
   </diagram>
+  <diagram id="sa-solution" name="3. Kiến trúc giải pháp — đối chiếu mã nguồn">
+    <mxGraphModel dx="2600" dy="1250" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2600" pageHeight="1250" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="s3Title" value="VIVACON — KIẾN TRÚC GIẢI PHÁP (AS-IS), MỖI KHỐI GHI FILE/LỚP LÀM BẰNG CHỨNG&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Chỉ vẽ thành phần có đường gọi thật trong mã nguồn. Thứ có trong repo nhưng không ai gọi nằm ở ô xám phía dưới.&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;fontSize=17;fontStyle=1;fillColor=none;strokeColor=none;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="2520" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="s3cBrowser" value="TRÌNH DUYỆT — React 17 SPA (frontend/src)" style="swimlane;startSize=30;html=1;whiteSpace=wrap;fontStyle=1;fontSize=12;collapsible=0;fillColor=#DAE8FC;strokeColor=#6C8EBF;swimlaneFillColor=#FFFFFF;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="40" y="100" width="400" height="800" as="geometry" />
+        </mxCell>
+        <mxCell id="s3cEdge" value="LỚP VÀO / TRANSPORT" style="swimlane;startSize=30;html=1;whiteSpace=wrap;fontStyle=1;fontSize=12;collapsible=0;fillColor=#F5F5F5;strokeColor=#666666;swimlaneFillColor=#FFFFFF;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="500" y="100" width="320" height="800" as="geometry" />
+        </mxCell>
+        <mxCell id="s3cApi" value="SPRING BOOT 2.5 — VÀO &amp;amp; BẢO MẬT" style="swimlane;startSize=30;html=1;whiteSpace=wrap;fontStyle=1;fontSize=12;collapsible=0;fillColor=#B1DDF0;strokeColor=#10739E;swimlaneFillColor=#FFFFFF;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="880" y="100" width="420" height="800" as="geometry" />
+        </mxCell>
+        <mxCell id="s3cDom" value="NGHIỆP VỤ &amp;amp; TÁC VỤ PHỤ" style="swimlane;startSize=30;html=1;whiteSpace=wrap;fontStyle=1;fontSize=12;collapsible=0;fillColor=#B1DDF0;strokeColor=#10739E;swimlaneFillColor=#FFFFFF;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="1360" y="100" width="420" height="800" as="geometry" />
+        </mxCell>
+        <mxCell id="s3cData" value="LƯU TRỮ" style="swimlane;startSize=30;html=1;whiteSpace=wrap;fontStyle=1;fontSize=12;collapsible=0;fillColor=#D5E8D4;strokeColor=#82B366;swimlaneFillColor=#FFFFFF;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="1840" y="100" width="340" height="800" as="geometry" />
+        </mxCell>
+        <mxCell id="s3cExt" value="DỊCH VỤ NGOÀI — GỌI TỪ SERVER" style="swimlane;startSize=30;html=1;whiteSpace=wrap;fontStyle=1;fontSize=12;collapsible=0;fillColor=#E1D5E7;strokeColor=#9673A6;swimlaneFillColor=#FFFFFF;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="2240" y="100" width="320" height="800" as="geometry" />
+        </mxCell>
+        <mxCell id="s3Routes" value="&lt;b&gt;routes/routes.js&lt;/b&gt; — RouterList + PrivateRoute&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;nhánh khách / user / admin theo roles trong JWT&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontColor=#1A1A1A;" vertex="1" parent="s3cBrowser">
+          <mxGeometry x="40" y="50" width="320" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="s3Pages" value="&lt;b&gt;components/pages/*&lt;/b&gt;, dashboard/, common/&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;PostsListPage, ChatPage, SettingPage → LoginActivityPage, Dashboard, CreatePostModal&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontColor=#1A1A1A;" vertex="1" parent="s3cBrowser">
+          <mxGeometry x="40" y="140" width="320" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="s3State" value="&lt;b&gt;App.js contexts + globalSocketState&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Context + useReducer. redux có trong package.json nhưng không dùng&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontColor=#1A1A1A;" vertex="1" parent="s3cBrowser">
+          <mxGeometry x="40" y="250" width="320" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="s3Api" value="&lt;b&gt;api/*Service.js (12) → api/axiosConfig.js&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;baseURL ${REACT_APP_API_URL}/v1, Bearer từ cookie jwt-token; 401 → POST /refresh-token rồi gửi lại&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontColor=#1A1A1A;" vertex="1" parent="s3cBrowser">
+          <mxGeometry x="40" y="350" width="320" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="s3Sock" value="&lt;b&gt;hooks/useSocket.js&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;SockJS + stompjs 2.3.3, header WS-Authorization. SUB /topic/account/online, /user/{u}/notification, /conversation/{id}/message. SEND /app/chat …&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontColor=#1A1A1A;" vertex="1" parent="s3cBrowser">
+          <mxGeometry x="40" y="460" width="320" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="s3Cookie" value="&lt;b&gt;utils/cookie.js&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;js-cookie: jwt-token, refresh-token (SameSite=Lax)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontColor=#1A1A1A;" vertex="1" parent="s3cBrowser">
+          <mxGeometry x="40" y="580" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="s3Nginx" value="&lt;b&gt;nginx 1.27&lt;/b&gt; — frontend/nginx.conf.template&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;location / → index.html (SPA)&lt;br&gt;/api/ → backend_upstream (${BACKEND_ORIGIN})&lt;br&gt;/ws/ → backend_upstream + Upgrade/Connection, timeout 3600 s&lt;br&gt;/healthz → 200&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#1A1A1A;" vertex="1" parent="s3cEdge">
+          <mxGeometry x="20" y="320" width="280" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="s3Dev" value="&lt;b&gt;Chạy dev&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;CRA :3000 gọi thẳng API :8090 (frontend/.env.development) — không qua nginx&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#FFFFFF;strokeColor=#999999;fontColor=#1A1A1A;dashed=1;" vertex="1" parent="s3cEdge">
+          <mxGeometry x="20" y="570" width="280" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="s3Vercel" value="&lt;b&gt;Vercel&lt;/b&gt; — frontend/vercel.json&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;chỉ phục vụ bundle tĩnh, rewrite → index.html; không proxy /api, /ws&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#FFFFFF;strokeColor=#999999;fontColor=#1A1A1A;dashed=1;" vertex="1" parent="s3cEdge">
+          <mxGeometry x="20" y="685" width="280" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="s3Stomp" value="&lt;b&gt;STOMP endpoint /ws (SockJS)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;STOMPMessageBrokerConfiguration · CustomInterceptor đọc WS-Authorization → JwtUtils → principal&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#E1F5FE;strokeColor=#10739E;fontColor=#1A1A1A;" vertex="1" parent="s3cApi">
+          <mxGeometry x="20" y="50" width="320" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="s3Chat" value="&lt;b&gt;ChatController @MessageMapping&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;/app/chat, /app/conversation, /app/conversation/account/add, /app/conversation/typing&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#E1F5FE;strokeColor=#10739E;fontColor=#1A1A1A;" vertex="1" parent="s3cApi">
+          <mxGeometry x="20" y="150" width="320" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="s3Broker" value="&lt;b&gt;Simple broker (trong bộ nhớ)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;enableSimpleBroker /conversation, /user, /topic · không có relay ngoài&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#FFE6CC;strokeColor=#D79B00;fontColor=#1A1A1A;" vertex="1" parent="s3cApi">
+          <mxGeometry x="20" y="250" width="320" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="s3Cors" value="&lt;b&gt;CorsFilter&lt;/b&gt; — HTTPSecurityConfiguration.corsFilter()&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;allow-list vivacon.frontend.allowed-origins&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#E1F5FE;strokeColor=#10739E;fontColor=#1A1A1A;" vertex="1" parent="s3cApi">
+          <mxGeometry x="20" y="360" width="320" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="s3Jwt" value="&lt;b&gt;JWTRequestFilter → JwtUtils&lt;/b&gt; (JJWT, HS512)&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Authorization: Bearer · STATELESS · CSRF tắt&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#E1F5FE;strokeColor=#10739E;fontColor=#1A1A1A;" vertex="1" parent="s3cApi">
+          <mxGeometry x="20" y="450" width="320" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="s3Rules" value="&lt;b&gt;Quy tắc phân quyền&lt;/b&gt; — configure(HttpSecurity)&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;/api/v1/admin/** ADMIN|SUPER_ADMIN · còn lại authenticated()&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#E1F5FE;strokeColor=#10739E;fontColor=#1A1A1A;" vertex="1" parent="s3cApi">
+          <mxGeometry x="20" y="550" width="320" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="s3Rest" value="&lt;b&gt;REST controllers (18)&lt;/b&gt; — controller/**&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;/api/v1: auth, profile, post, comment, like, following, newsfeed, chat, notification, report, admin, statistic, attachment&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#E1F5FE;strokeColor=#10739E;fontColor=#1A1A1A;" vertex="1" parent="s3cApi">
+          <mxGeometry x="20" y="650" width="320" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="s3Reco" value="&lt;b&gt;RecommendationServiceImpl&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;@Scheduled mỗi 5 phút, chấm điểm bạn chung&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#E1F5FE;strokeColor=#10739E;fontColor=#1A1A1A;" vertex="1" parent="s3cDom">
+          <mxGeometry x="20" y="50" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="s3Svc" value="&lt;b&gt;Domain services&lt;/b&gt; — service/impl/*ServiceImpl&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;nghiệp vụ, @Transactional; mapper/** (ModelMapper) đếm và gắn cờ cho DTO&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#E1F5FE;strokeColor=#10739E;fontColor=#1A1A1A;" vertex="1" parent="s3cDom">
+          <mxGeometry x="20" y="130" width="320" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="s3Events" value="&lt;b&gt;Event bus trong tiến trình&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;ApplicationEventPublisher → event/handler/* @Async @EventListener, pool 4/12 (ListenerConfiguration)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#FFE6CC;strokeColor=#D79B00;fontColor=#1A1A1A;" vertex="1" parent="s3cDom">
+          <mxGeometry x="20" y="230" width="320" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="s3Ws" value="&lt;b&gt;WebsocketSender&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;SimpMessagingTemplate → /user/{u}/notification&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#FFE6CC;strokeColor=#D79B00;fontColor=#1A1A1A;" vertex="1" parent="s3cDom">
+          <mxGeometry x="20" y="330" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="s3Mail" value="&lt;b&gt;EmailSender + MicrosoftOAuth2TokenProvider&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;new RestTemplate(); bỏ qua kèm cảnh báo nếu chưa cấu hình MS_OAUTH_*&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#FFE6CC;strokeColor=#D79B00;fontColor=#1A1A1A;" vertex="1" parent="s3cDom">
+          <mxGeometry x="20" y="400" width="320" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="s3Media" value="&lt;b&gt;CloudinaryServiceImpl&lt;/b&gt; ← AttachmentController&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;multipart → uploader().upload → secure_url&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#E1F5FE;strokeColor=#10739E;fontColor=#1A1A1A;" vertex="1" parent="s3cDom">
+          <mxGeometry x="20" y="560" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="s3Device" value="&lt;b&gt;DeviceServiceImpl&lt;/b&gt; (uap-java + GeoIP2)&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;gọi khi login và /account/verify; thiết bị lạ → publish NewDeviceLocationLoginEvent&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#E1F5FE;strokeColor=#10739E;fontColor=#1A1A1A;" vertex="1" parent="s3cDom">
+          <mxGeometry x="20" y="640" width="320" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="s3Dao" value="&lt;b&gt;dao/impl/*&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;EntityManager gọi 14 stored function&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#1A1A1A;" vertex="1" parent="s3cData">
+          <mxGeometry x="20" y="50" width="300" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="s3Repo" value="&lt;b&gt;repository/**&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;18 Spring Data JPA repository (Hibernate)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#1A1A1A;" vertex="1" parent="s3cData">
+          <mxGeometry x="20" y="140" width="300" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="s3Pg" value="&lt;b&gt;PostgreSQL&lt;/b&gt; (org.postgresql.Driver)&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;19 bảng = 11 schema.sql + 8 do Hibernate ddl-auto · 14 hàm container/prepare/functions&lt;/font&gt;" style="shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=12;whiteSpace=wrap;html=1;fontSize=11;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#1A1A1A;" vertex="1" parent="s3cData">
+          <mxGeometry x="20" y="230" width="300" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="s3Geo" value="&lt;b&gt;GeoLite2-City.mmdb&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;tệp trong image (Dockerfile COPY), GeolocationConfiguration&lt;/font&gt;" style="shape=note;size=14;whiteSpace=wrap;html=1;fontSize=11;align=left;spacingLeft=8;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#1A1A1A;" vertex="1" parent="s3cData">
+          <mxGeometry x="20" y="640" width="300" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="s3Msid" value="&lt;b&gt;Microsoft identity platform&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;login.microsoftonline.com/{tenant}/oauth2/v2.0/token&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#E1D5E7;strokeColor=#9673A6;fontColor=#1A1A1A;" vertex="1" parent="s3cExt">
+          <mxGeometry x="20" y="380" width="280" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="s3Graph" value="&lt;b&gt;Microsoft Graph&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;graph.microsoft.com/v1.0/me/sendMail&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#E1D5E7;strokeColor=#9673A6;fontColor=#1A1A1A;" vertex="1" parent="s3cExt">
+          <mxGeometry x="20" y="475" width="280" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="s3Cloud" value="&lt;b&gt;Cloudinary&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;lưu ảnh bài đăng và ảnh đại diện&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#E1D5E7;strokeColor=#9673A6;fontColor=#1A1A1A;" vertex="1" parent="s3cExt">
+          <mxGeometry x="20" y="555" width="280" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="s3cBx" value="DỊCH VỤ NGOÀI — GỌI TỪ TRÌNH DUYỆT" style="swimlane;startSize=30;html=1;whiteSpace=wrap;fontStyle=1;fontSize=12;collapsible=0;fillColor=#E1D5E7;strokeColor=#9673A6;swimlaneFillColor=#FFFFFF;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="40" y="940" width="400" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="s3Sight" value="&lt;b&gt;SightEngine&lt;/b&gt; — api.sightengine.com&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;HTTPS GET /1.0/check.json từ imageModerationService.detectImages, SAU khi ảnh đã lên Cloudinary&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#E1D5E7;strokeColor=#9673A6;fontColor=#1A1A1A;" vertex="1" parent="s3cBx">
+          <mxGeometry x="40" y="50" width="320" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="s3Gmaps" value="&lt;b&gt;Google Maps JS API&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;HTTPS Maps JS loader: LoginActivityPage useJsApiLoader, REACT_APP_GOOGLE_MAP_KEY&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#E1D5E7;strokeColor=#9673A6;fontColor=#1A1A1A;" vertex="1" parent="s3cBx">
+          <mxGeometry x="40" y="150" width="320" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="s3e1" value="HTTPS JSON /api/v1/**" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#37474F;strokeWidth=1.5;endArrow=block;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.3409;entryDx=0;entryDy=0;" edge="1" parent="1" source="s3Api" target="s3Nginx">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="s3e2" value="SockJS / STOMP /ws" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#D79B00;strokeWidth=1.5;dashed=1;dashPattern=6 4;endArrow=open;endFill=0;fontColor=#8A5A00;startArrow=open;startFill=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.8636;entryDx=0;entryDy=0;" edge="1" parent="1" source="s3Sock" target="s3Nginx">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="s3e3" value="proxy /api/" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#37474F;strokeWidth=1.5;endArrow=block;endFill=1;exitX=1;exitY=0.3409;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="s3Nginx" target="s3Cors">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="s3e4" value="proxy /ws/ + Upgrade" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#D79B00;strokeWidth=1.5;dashed=1;dashPattern=6 4;endArrow=open;endFill=0;fontColor=#8A5A00;startArrow=open;startFill=0;exitX=0.8571;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="s3Nginx" target="s3Stomp">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="760" y="190" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="s3e5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#37474F;strokeWidth=1.5;endArrow=block;endFill=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="s3Cors" target="s3Jwt">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="s3e6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#37474F;strokeWidth=1.5;endArrow=block;endFill=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="s3Jwt" target="s3Rules">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="s3e7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#37474F;strokeWidth=1.5;endArrow=block;endFill=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="s3Rules" target="s3Rest">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="s3e8" value="SEND /app/**" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#37474F;strokeWidth=1.5;endArrow=block;endFill=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="s3Stomp" target="s3Chat">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="s3e9" value="convertAndSend" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#D79B00;strokeWidth=1.5;dashed=1;dashPattern=6 4;endArrow=open;endFill=0;fontColor=#8A5A00;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="s3Chat" target="s3Broker">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="s3e10" value="MESSAGE frames" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#D79B00;strokeWidth=1.5;dashed=1;dashPattern=6 4;endArrow=open;endFill=0;fontColor=#8A5A00;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="1" source="s3Broker" target="s3Stomp">
+          <mxGeometry x="-0.2" relative="1" as="geometry">
+            <Array as="points"><mxPoint x="890" y="390" /><mxPoint x="890" y="210" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="s3e11" value="MessageServiceImpl.save" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#37474F;strokeWidth=1.5;endArrow=block;endFill=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="s3Chat" target="s3Svc">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="s3e12" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#37474F;strokeWidth=1.5;endArrow=block;endFill=1;exitX=1;exitY=0.125;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="1" source="s3Rest" target="s3Svc">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1250" y="760" /><mxPoint x="1250" y="290" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="s3e13" value="multipart" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#37474F;strokeWidth=1.5;endArrow=block;endFill=1;exitX=1;exitY=0.3125;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="s3Rest" target="s3Media">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1290" y="775" /><mxPoint x="1290" y="690" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="s3e14" value="login" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#37474F;strokeWidth=1.5;endArrow=block;endFill=1;exitX=1;exitY=0.5625;exitDx=0;exitDy=0;entryX=0;entryY=0.7857;entryDx=0;entryDy=0;" edge="1" parent="1" source="s3Rest" target="s3Device">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="s3e15" value="/user/{u}/notification" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#D79B00;strokeWidth=1.5;dashed=1;dashPattern=6 4;endArrow=open;endFill=0;fontColor=#8A5A00;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="1" source="s3Ws" target="s3Broker">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1330" y="460" /><mxPoint x="1330" y="410" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="s3e16" value="publishEvent" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#D79B00;strokeWidth=1.5;dashed=1;dashPattern=6 4;endArrow=open;endFill=0;fontColor=#8A5A00;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="s3Svc" target="s3Events">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="s3e17" value="@Async" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#D79B00;strokeWidth=1.5;dashed=1;dashPattern=6 4;endArrow=open;endFill=0;fontColor=#8A5A00;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="s3Events" target="s3Ws">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="s3e18" value="@Async" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#D79B00;strokeWidth=1.5;dashed=1;dashPattern=6 4;endArrow=open;endFill=0;fontColor=#8A5A00;exitX=1;exitY=0.8;exitDx=0;exitDy=0;entryX=0.9688;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="s3Events" target="s3Mail">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1725" y="394" /><mxPoint x="1725" y="494" /><mxPoint x="1690" y="494" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="s3e19" value="getAllFollowerPerUser" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#37474F;strokeWidth=1.5;endArrow=block;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.4286;entryDx=0;entryDy=0;" edge="1" parent="1" source="s3Reco" target="s3Dao">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="s3e20" value="JPA" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#37474F;strokeWidth=1.5;endArrow=block;endFill=1;exitX=1;exitY=0.5625;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="s3Svc" target="s3Repo">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="s3e21" value="CALL" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#37474F;strokeWidth=1.5;endArrow=block;endFill=1;exitX=1;exitY=0.125;exitDx=0;exitDy=0;entryX=0;entryY=0.7857;entryDx=0;entryDy=0;" edge="1" parent="1" source="s3Svc" target="s3Dao">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1765" y="240" /><mxPoint x="1765" y="205" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="s3e22" value="JDBC" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#2E7D32;strokeWidth=2;endArrow=block;endFill=1;fontColor=#1B5E20;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="s3Repo" target="s3Pg">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="s3e23" value="JDBC" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#2E7D32;strokeWidth=2;endArrow=block;endFill=1;fontColor=#1B5E20;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.3;entryDx=0;entryDy=0;" edge="1" parent="1" source="s3Dao" target="s3Pg">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="2200" y="185" /><mxPoint x="2200" y="366" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="s3e24" value="đọc tệp" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#37474F;strokeWidth=1.5;endArrow=block;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="s3Device" target="s3Geo">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="s3e25" value="HTTPS token (refresh_token grant)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#37474F;strokeWidth=1.5;endArrow=block;endFill=1;exitX=1;exitY=0.1154;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="s3Mail" target="s3Msid">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="s3e26" value="HTTPS POST sendMail" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#37474F;strokeWidth=1.5;endArrow=block;endFill=1;exitX=1;exitY=0.8462;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="s3Mail" target="s3Graph">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="s3e27" value="HTTPS SDK upload" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#37474F;strokeWidth=1.5;endArrow=block;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="s3Media" target="s3Cloud">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="s3e28" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#37474F;strokeWidth=1.5;endArrow=block;endFill=1;exitX=0;exitY=0.6667;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="s3Pages" target="s3Sight">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="66" y="300" /><mxPoint x="66" y="1030" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="s3e29" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#37474F;strokeWidth=1.5;endArrow=block;endFill=1;exitX=0;exitY=0.4444;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="s3Pages" target="s3Gmaps">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="52" y="280" /><mxPoint x="52" y="1130" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="s3Unused" value="&lt;b&gt;CÓ TRONG REPO NHƯNG KHÔNG CÓ ĐƯỜNG GỌI RUNTIME — không vẽ vào sơ đồ&lt;/b&gt;&lt;br&gt;&lt;br&gt;• &lt;b&gt;AWS S3&lt;/b&gt;: S3Configuration tạo bean AmazonS3 và AWSS3ServiceImpl tồn tại, nhưng không lớp nào inject AWSS3Service. Trang 1 đang ghi &quot;Cloudinary / AWS S3&quot; — theo mã nguồn chỉ Cloudinary được dùng.&lt;br&gt;• &lt;b&gt;spring-boot-starter-mail&lt;/b&gt;: không có JavaMailSender; email đi qua Microsoft Graph REST.&lt;br&gt;• &lt;b&gt;spring-boot-starter-thymeleaf&lt;/b&gt;: HomeController trả view &quot;index&quot; nhưng không có thư mục templates/.&lt;br&gt;• &lt;b&gt;GeoNames&lt;/b&gt; (googleMapService.getLocationInformation): nơi gọi duy nhất đã bị comment.&lt;br&gt;• &lt;b&gt;redux, redux-saga, @stomp/stompjs&lt;/b&gt;: khai báo trong package.json, không được import ở runtime.&lt;br&gt;• Không có message queue, cache (Redis, @Cacheable) hay STOMP relay ngoài." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;spacingLeft=10;spacingTop=8;spacingRight=8;fillColor=#F5F5F5;strokeColor=#999999;fontColor=#1A1A1A;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="500" y="940" width="780" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="s3Sec" value="&lt;b&gt;QUAN SÁT BẢO MẬT KHI ĐỐI CHIẾU (chưa sửa code)&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Rule /api/v1/conversation/{id}/messages (số nhiều) không khớp endpoint /conversation/{id}/message → mọi user đã đăng nhập đọc được lịch sử chat.&lt;br&gt;• Rule DELETE /api/v1/post/{id} không khớp endpoint thật DELETE /api/v1/post/comment/{id}.&lt;br&gt;• /api/v1/statistic/** chỉ cần đăng nhập, không cần ADMIN.&lt;br&gt;• STOMP SUBSCRIBE không kiểm quyền (WebSocketSecurityConfiguration: anyMessage().permitAll()).&lt;br&gt;• /actuator/** permitAll ở Spring; an toàn chỉ vì nginx không proxy đường này." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;spacingLeft=10;spacingTop=8;spacingRight=8;fillColor=#FFF4F4;strokeColor=#B85450;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="1320" y="940" width="620" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="s3Legend" value="&lt;b&gt;CHÚ GIẢI&lt;/b&gt;&lt;br&gt;&lt;br&gt;Đường liền xám đậm: gọi đồng bộ (HTTP, gọi hàm trong tiến trình).&lt;br&gt;Đường nét đứt cam: bất đồng bộ — WebSocket/STOMP đẩy về client, ApplicationEvent @Async.&lt;br&gt;Đường xanh lá đậm: truy cập lưu trữ qua JDBC.&lt;br&gt;Khung nét đứt xám: cấu hình có trong repo nhưng không nằm trên đường request của Docker.&lt;br&gt;Mọi khối trên trang này là &lt;b&gt;VERIFIED&lt;/b&gt; từ mã nguồn; không có quan hệ INFERRED.&lt;br&gt;&lt;br&gt;&lt;i&gt;Nguồn: branch feature/ai-assisted-dev-setup @ ca46696 (working tree), 2026-10-10. Đã đọc: frontend/src/{routes,api,hooks,components}, frontend/nginx.conf.template, frontend/vercel.json, src/main/java/com/vivacon/{controller,security,configuration,service,event,dao,repository}, pom.xml, application-*.yml.&lt;/i&gt;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;spacingLeft=10;spacingTop=8;spacingRight=8;fillColor=#FFFFFF;strokeColor=#666666;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="1980" y="940" width="580" height="250" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="sa-runtime" name="4. Hạ tầng runtime — mức chứng cứ">
+    <mxGraphModel dx="2300" dy="920" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2300" pageHeight="920" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="s4Title" value="VIVACON — HẠ TẦNG RUNTIME, PHÂN BIỆT &quot;CÓ TRONG CẤU HÌNH&quot; VÀ &quot;CHỈ CÓ TRONG TÀI LIỆU&quot;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Không ghi hostname, IP hay thông tin đăng nhập. Nguồn cấu hình: docker-compose.yml, docker-compose.override.yml, docker-compose.tunnel.yml, Dockerfile, frontend/Dockerfile, frontend/vercel.json&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;fontSize=17;fontStyle=1;fillColor=none;strokeColor=none;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="2220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="s4Browser" value="&lt;b&gt;Trình duyệt&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;bundle React chỉ gọi đường dẫn tương đối /api, /ws khi build bằng frontend/Dockerfile (REACT_APP_API_URL=/api)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="40" y="200" width="260" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="s4gEdge" value="BIÊN CÔNG KHAI (tuỳ chọn)" style="swimlane;startSize=30;html=1;whiteSpace=wrap;fontStyle=1;fontSize=12;collapsible=0;fillColor=#F5F5F5;strokeColor=#666666;swimlaneFillColor=#FFFFFF;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="360" y="120" width="360" height="480" as="geometry" />
+        </mxCell>
+        <mxCell id="s4Cf" value="&lt;b&gt;Cloudflare edge&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;TLS + hostname công khai; chỉ có khi chạy docker-compose.tunnel.yml (quick tunnel *.trycloudflare.com)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#E1D5E7;strokeColor=#9673A6;fontColor=#1A1A1A;" vertex="1" parent="s4gEdge">
+          <mxGeometry x="30" y="80" width="300" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="s4Vercel" value="&lt;b&gt;Vercel static hosting&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;frontend/vercel.json: CI=false npm run build, rewrite → index.html, không rewrite /api. Trạng thái &quot;đang live&quot; chỉ có trong deployment.md&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#E1D5E7;strokeColor=#9673A6;fontColor=#1A1A1A;" vertex="1" parent="s4gEdge">
+          <mxGeometry x="30" y="300" width="300" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="s4gHost" value="DOCKER HOST — compose project &quot;vivacon&quot; (docker-compose.yml)" style="swimlane;startSize=30;html=1;whiteSpace=wrap;fontStyle=1;fontSize=12;collapsible=0;fillColor=#F3E5F5;strokeColor=#9673A6;swimlaneFillColor=#FFFFFF;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="780" y="120" width="1060" height="480" as="geometry" />
+        </mxCell>
+        <mxCell id="s4Cfd" value="&lt;b&gt;cloudflared&lt;/b&gt; — docker-compose.tunnel.yml&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;opt-in, phải chỉ định -f · tunnel --url http://frontend:80 · mem_limit 128m&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#FFE6CC;strokeColor=#D79B00;fontColor=#1A1A1A;" vertex="1" parent="s4gHost">
+          <mxGeometry x="30" y="80" width="280" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="s4Fe" value="&lt;b&gt;frontend&lt;/b&gt; — nginx 1.27&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;frontend/Dockerfile · cổng DUY NHẤT được publish: FRONTEND_PORT → 80 · mem_limit 128m&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#FFE6CC;strokeColor=#D79B00;fontColor=#1A1A1A;" vertex="1" parent="s4gHost">
+          <mxGeometry x="380" y="80" width="280" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="s4Be" value="&lt;b&gt;backend&lt;/b&gt; — Spring Boot, profile prod&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Dockerfile (temurin 11 JRE) · :8080 nội bộ · healthcheck /actuator/health · mem_limit 1200m&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#B1DDF0;strokeColor=#10739E;fontColor=#1A1A1A;" vertex="1" parent="s4gHost">
+          <mxGeometry x="740" y="80" width="290" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="s4Adminer" value="&lt;b&gt;adminer&lt;/b&gt; — docker-compose.override.yml&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;chỉ dev, tự nạp khi chạy docker compose up không có -f&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fontSize=11;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;fillColor=#FFFFFF;strokeColor=#999999;fontColor=#1A1A1A;dashed=1;" vertex="1" parent="s4gHost">
+          <mxGeometry x="30" y="320" width="280" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="s4Db" value="&lt;b&gt;db&lt;/b&gt; — postgres:14&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;volume vivacon-db-data · init: schema.sql + 2 tệp function · không publish cổng (override mở 5433 cho dev)&lt;/font&gt;" style="shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=12;whiteSpace=wrap;html=1;fontSize=11;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#1A1A1A;" vertex="1" parent="s4gHost">
+          <mxGeometry x="740" y="300" width="290" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="s4Managed" value="&lt;b&gt;PostgreSQL được quản lý (Supabase)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;DOCUMENTED ONLY: deployment.md. Code chỉ cho phép chọn qua SPRING_DATASOURCE_URL + DB_USERNAME&lt;/font&gt;" style="shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=12;whiteSpace=wrap;html=1;fontSize=11;fillColor=#FFFFFF;strokeColor=#7B1FA2;dashed=1;dashPattern=2 4;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="1920" y="200" width="320" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="s4e1" value="HTTPS / WSS /api, /ws" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#37474F;strokeWidth=1.5;endArrow=block;endFill=1;exitX=1;exitY=0.3636;exitDx=0;exitDy=0;entryX=0;entryY=0.3333;entryDx=0;entryDy=0;" edge="1" parent="1" source="s4Browser" target="s4Cf">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="s4e2" value="outbound tunnel" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#37474F;strokeWidth=1.5;endArrow=block;endFill=1;exitX=1;exitY=0.3333;exitDx=0;exitDy=0;entryX=0;entryY=0.3333;entryDx=0;entryDy=0;" edge="1" parent="1" source="s4Cf" target="s4Cfd">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="s4e3" value="http://frontend:80" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#37474F;strokeWidth=1.5;endArrow=block;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="s4Cfd" target="s4Fe">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="s4e4" value="/api/, /ws/ → backend:8080" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#37474F;strokeWidth=1.5;endArrow=block;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="s4Fe" target="s4Be">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="s4e5" value="JDBC mặc định db:5432" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#2E7D32;strokeWidth=2;endArrow=block;endFill=1;fontColor=#1B5E20;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="s4Be" target="s4Db">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="s4e6" value="JDBC sslmode=require (documented)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#7B1FA2;strokeWidth=1.5;dashed=1;dashPattern=2 4;endArrow=block;endFill=1;fontColor=#4A148C;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.4;entryDx=0;entryDy=0;" edge="1" parent="1" source="s4Be" target="s4Managed">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="s4e7" value="HTTPS bundle tĩnh" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#37474F;strokeWidth=1.5;endArrow=block;endFill=1;exitX=0.3;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="s4Browser" target="s4Vercel">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="118" y="480" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="s4e8" value="HTTP FRONTEND_PORT (LAN / máy local)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#37474F;strokeWidth=1.5;endArrow=block;endFill=1;exitX=0.7;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="s4Browser" target="s4Fe">
+          <mxGeometry x="0.2" relative="1" as="geometry">
+            <Array as="points"><mxPoint x="222" y="660" /><mxPoint x="1300" y="660" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="s4e9" value="dev only" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jumpStyle=arc;jumpSize=8;fontSize=10;labelBackgroundColor=#FFFFFF;strokeColor=#7B1FA2;strokeWidth=1.5;dashed=1;dashPattern=2 4;endArrow=block;endFill=1;fontColor=#4A148C;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.4643;entryDx=0;entryDy=0;" edge="1" parent="1" source="s4Adminer" target="s4Db">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="s4Facts" value="&lt;b&gt;SỰ THẬT ĐỌC ĐƯỢC TỪ CẤU HÌNH (VERIFIED)&lt;/b&gt;&lt;br&gt;&lt;br&gt;• docker-compose.yml chỉ publish cổng của frontend; db và backend chỉ nói chuyện trong mạng compose.&lt;br&gt;• docker compose up (không -f) tự nạp override: mở db 5433, backend 8091 và thêm adminer. Deploy dùng -f docker-compose.yml để bỏ override.&lt;br&gt;• backend và frontend khai báo image: nên có thể build nơi khác rồi docker load, chạy up --no-build.&lt;br&gt;• DB_PASSWORD và JWT_SECRET_SALT khai báo ${VAR:?}: thiếu là compose dừng ngay.&lt;br&gt;• Image backend mặc định profile prod (vivacon.verification.bypass=false)." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;spacingLeft=10;spacingTop=8;spacingRight=8;fillColor=#FFFFFF;strokeColor=#666666;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="40" y="720" width="720" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="s4Diff" value="&lt;b&gt;CHÊNH LỆCH VỚI TRANG 1 &quot;TỔNG QUAN TRIỂN KHAI&quot; (không sửa trang 1)&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Trang 1 ghi &quot;Cloudinary / AWS S3&quot;: theo mã nguồn chỉ Cloudinary có đường gọi; S3 chỉ được cấu hình.&lt;br&gt;• Trang 1 vẽ Supabase (ap-south-1, PostgreSQL 17, session pooler) là nét liền: các chi tiết này chỉ có trong deployment.md, không suy ra được từ mã nguồn — ở trang này vẽ nét chấm tím.&lt;br&gt;• Trang 1 không có service db cục bộ và adminer; cả hai vẫn được định nghĩa trong compose.&lt;br&gt;• Trang 1 mô tả hostname tunnel tạm thời: đúng với cấu hình mặc định TUNNEL_COMMAND (quick tunnel)." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;spacingLeft=10;spacingTop=8;spacingRight=8;fillColor=#FFF4F4;strokeColor=#B85450;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="800" y="720" width="720" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="s4Legend" value="&lt;b&gt;CHÚ GIẢI&lt;/b&gt;&lt;br&gt;&lt;br&gt;Đường liền: định nghĩa trong file cấu hình được git track.&lt;br&gt;Đường xanh lá đậm: kết nối lưu trữ.&lt;br&gt;Đường chấm tím: chỉ có trong tài liệu (deployment.md) hoặc chỉ dùng ở dev.&lt;br&gt;Khung nét đứt: thành phần tuỳ chọn hoặc chỉ dev.&lt;br&gt;&lt;br&gt;&lt;i&gt;Nguồn: branch feature/ai-assisted-dev-setup @ ca46696, 2026-10-10. Không kiểm máy chủ đang chạy.&lt;/i&gt;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;spacingLeft=10;spacingTop=8;spacingRight=8;fillColor=#FFFFFF;strokeColor=#666666;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="1560" y="720" width="680" height="260" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
 </mxfile>

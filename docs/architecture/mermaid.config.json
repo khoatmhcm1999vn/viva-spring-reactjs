@@ -1,0 +1,20 @@
+{
+  "theme": "base",
+  "themeVariables": {
+    "fontFamily": "Segoe UI, Helvetica, Arial, sans-serif",
+    "fontSize": "15px",
+    "primaryTextColor": "#0F172A",
+    "lineColor": "#475569"
+  },
+  "flowchart": {
+    "htmlLabels": true,
+    "wrappingWidth": 260,
+    "curve": "basis",
+    "nodeSpacing": 45,
+    "rankSpacing": 60
+  },
+  "sequence": {
+    "mirrorActors": false,
+    "showSequenceNumbers": true
+  }
+}
