@@ -1,0 +1,12 @@
+﻿probe_started_utc=2026-10-11T09:31:37Z
+[T1] DNS A <tunnel-host> -> resolves, 2 record(s)
+[T2] GET https://<tunnel-host>/ -> 200 spa_index=True
+[T3] GET /api/v1/post no token, Origin=vercel -> 401 ACAO=https://viva-spring-reactjs-five.vercel.app ACAC=true
+[T4] OPTIONS preflight Origin=vercel -> 200 ACAO=https://viva-spring-reactjs-five.vercel.app ACAC=true
+[T5] OPTIONS preflight Origin=evil.example.com -> 403 ACAO=
+[T6] GET /ws/info Origin=vercel -> 200 websocket_true=True
+[T7] GET /ws/info Origin=evil.example.com -> 403
+[T8] GET /actuator/health -> 200 spa_html=True actuator_json=False
+[T9] GET /api/v1/account/check?username=admin -> 200 json_has_id=True ms=617 (body not recorded)
+[T10] TLS Tls13, cert issuer CN=WE1, valid until 2027-01-04
+probe_finished_utc=2026-10-11T09:31:41Z

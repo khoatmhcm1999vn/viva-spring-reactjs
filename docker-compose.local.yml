@@ -1,0 +1,75 @@
+# Moi truong LOCAL tach biet khoi deployment that (VM + Supabase + Vercel).
+#
+# Dung CUNG docker-compose.yml, va chi dinh tuong minh, KHONG kem override:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.local.yml up -d --build
+#   docker compose -f docker-compose.yml -f docker-compose.local.yml down        # giu du lieu
+#   docker compose -f docker-compose.yml -f docker-compose.local.yml down -v     # xoa ca DB local
+#
+# KHONG BAO GIO dung file nay tren VM hay server: no bat
+# vivacon.verification.bypass, tuc ai cung dang ky duoc bang email cua nguoi khac.
+#
+# File nay lam bon viec de local khong the cham vao production, ke ca khi .env bi
+# copy nham tu VM:
+#
+# 1. Ghim datasource vao service "db" trong compose. Gia tri o day KHONG noi suy tu
+#    .env, nen mot SPRING_DATASOURCE_URL tro sang Supabase trong .env cung bi bo qua.
+#    Dieu nay quan trong vi ddl-auto: update se SUA schema cua database ma backend
+#    noi vao.
+# 2. Doi ten project, container, volume va tag image thanh *-local, nen local khong
+#    de len stack "vivacon" va khong ghi de image :latest dung de ship sang VM.
+# 3. Gioi han origin ve localhost.
+# 4. Khong co cloudflared o day, tuc local khong bao gio co duong vao cong khai.
+#
+# Nhung thu VAN dung chung voi production neu ban dien credential that vao .env:
+# Cloudinary, mailbox Microsoft. Xem docs/SETUP_MACOS.md, muc "Co lap voi deployment".
+
+name: vivacon-local
+
+services:
+  db:
+    container_name: vivacon-local-db
+    environment:
+      POSTGRES_DB: vivacon
+      POSTGRES_USER: postgres
+    ports:
+      # Mo cong de dung psql / DBeaver / backend chay tren host. 5433 de khong dung
+      # Postgres cai bang Homebrew (5432) neu co.
+      - "${DB_PORT:-5433}:5432"
+
+  backend:
+    image: vivacon-backend:local
+    container_name: vivacon-local-backend
+    environment:
+      # Profile prod de khop cong 8080 ma nginx va healthcheck mong doi.
+      SPRING_PROFILES_ACTIVE: prod
+      # Ghim cung (xem muc 1 o tren).
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/vivacon
+      DB_USERNAME: postgres
+      FRONTEND_ALLOWED_ORIGINS: http://localhost:8081,http://localhost:3000
+      # Local khong gui duoc email, nen khong co bypass thi tai khoan moi ket o
+      # STILL_NOT_ACTIVE va /login tra 403 kem body 1002. Env nay ghi de
+      # vivacon.verification.bypass: false trong application-prod.yml.
+      VIVACON_VERIFICATION_BYPASS: "true"
+    ports:
+      # Swagger: http://localhost:8091/swagger-ui/index.html
+      - "${BACKEND_PORT:-8091}:8080"
+
+  frontend:
+    image: vivacon-frontend:local
+    container_name: vivacon-local-frontend
+
+  adminer:
+    image: adminer:4
+    container_name: vivacon-local-adminer
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+    ports:
+      - "${ADMINER_PORT:-8901}:8080"
+
+volumes:
+  vivacon-db-data:
+    name: vivacon-local-db-data

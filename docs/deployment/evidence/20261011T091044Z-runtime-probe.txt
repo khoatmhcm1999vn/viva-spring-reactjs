@@ -1,0 +1,21 @@
+probe_started_utc=2026-10-11T09:10:44Z
+probe_host=<dev-workstation> (Windows dev machine, not the VM)
+[1] GET https://viva-spring-reactjs-five.vercel.app/  -> 200  content-type=text/html; charset=utf-8  x-vercel-cache=HIT
+[2] GET https://viva-spring-reactjs-five.vercel.app/newsfeed -> 200  serves_spa_index=True
+[3] GET https://viva-spring-reactjs-five.vercel.app/api/v1/post -> 200  body_is_html=True  (Vercel has no backend; rewrite returns index.html)
+[4] GET bundle /static/js/main.fdd1f145.js -> 200  size_bytes=4372905
+    bundle REACT_APP_API_URL = https://<tunnel-host>/api
+    bundle REACT_APP_SOCKET_URL = https://<tunnel-host>/ws
+    bundle REACT_APP_VERCEL_GIT_COMMIT_SHA = e12d3e0059b8d1d432661d36a38329bfb2d6cbee
+    bundle REACT_APP_VERCEL_GIT_COMMIT_REF = main
+    bundle REACT_APP_VERCEL_ENV = production
+    bundle REACT_APP_DETECT_IMAGES_SECRET non-empty = False  (value intentionally not recorded)
+    bundle REACT_APP_GOOGLE_MAP_KEY non-empty = False  (value intentionally not recorded)
+    bundle contains 'vivacon.cf' = False; contains 'localhost:8090' = False
+[5] DNS A <tunnel-host> -> DOES NOT RESOLVE (<tunnel-host> : DNS name does not exist)
+[6-9] skipped: tunnel host baked into the live bundle does not resolve
+[10] TCP 192.168.221.128:80 from dev machine -> True
+[11] TCP 192.168.221.128:22 from dev machine -> True
+[12] GET http://192.168.221.128/healthz -> 200
+[13] GET http://192.168.221.128/api/v1/post (no token) -> 401
+probe_finished_utc=2026-10-11T09:10:48Z

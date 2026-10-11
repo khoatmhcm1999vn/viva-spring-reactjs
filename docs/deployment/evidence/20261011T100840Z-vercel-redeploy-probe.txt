@@ -1,0 +1,6 @@
+﻿probe_utc=2026-10-11T10:09:22Z
+bundle=/static/js/main.34da39fd.js (previous bundle: /static/js/main.fdd1f145.js)
+REACT_APP_API_URL = https://<tunnel-host>/api  (matches tunnel registered 09:25:55Z: True)
+REACT_APP_SOCKET_URL = https://<tunnel-host>/ws  (matches tunnel registered 09:25:55Z: True)
+REACT_APP_VERCEL_GIT_COMMIT_SHA = e12d3e0059b8d1d432661d36a38329bfb2d6cbee
+OPTIONS https://<tunnel-host>/api/v1/post Origin=vercel -> 200 ACAO=https://viva-spring-reactjs-five.vercel.app

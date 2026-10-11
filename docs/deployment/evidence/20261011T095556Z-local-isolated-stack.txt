@@ -1,0 +1,27 @@
+﻿# Local verification of docker-compose.local.yml on the Windows dev workstation (x86_64).
+# NOT a deployment check and NOT run on macOS/arm64. Images built from HEAD 76701cf + working tree.
+# env file: throwaway values, plus a deliberately wrong SPRING_DATASOURCE_URL/DB_USERNAME/FRONTEND_ALLOWED_ORIGINS/BACKEND_IMAGE to prove the local file overrides them.
+build: docker compose -f docker-compose.yml -f docker-compose.local.yml build backend frontend -> exit 0, 126 s
+recreate: down -v, then up -d --no-build (fresh volume vivacon-local-db-data)
+smoke_started_utc=2026-10-11T09:55:56Z
+[L1] backend SPRING_DATASOURCE_URL inside container = jdbc:postgresql://db:5432/vivacon
+[L2] backend VIVACON_VERIFICATION_BYPASS = true
+[L3] fresh local DB after first backend boot: base_tables=19 public_functions=14
+[L4] load mock_data/data.sql -> psql errors=0
+[L5] seeded rows: 3 roles, 6 accounts, 27 posts
+[L6] GET /healthz -> 200
+[L7] GET /api/v1/post (no token) -> 401
+[L8] POST /api/v1/registration (new test user) -> 200
+[L9] POST /api/v1/login -> 200 access+refresh tokens present=True (tokens not recorded)
+[L10] GET /api/v1/newsfeed with token -> 200 pageDTO_shape=True
+[L11] GET /ws/info Origin=http://localhost:8081 -> 200
+[L12] GET /ws/info Origin=production Vercel -> 403 (expect 403: local refuses prod origin)
+smoke_finished_utc=2026-10-11T09:55:57Z
+
+# Host-run backend (JDK 11, mvnw spring-boot:run, dev profile) against the compose DB
+env: SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5433/vivacon, DB_PASSWORD, JWT_SECRET_SALT (values not recorded)
+GET http://localhost:8090/actuator/health -> 200 {"status":"UP"}
+GET http://localhost:8090/api/v1/post (no token) -> 401
+GET http://localhost:8090/ws/info Origin=http://localhost:3000 -> 200
+GET http://localhost:8090/api/v1/account/check?username=hungdoan -> 200 (mock_data user, exists only in vivacon-local-db)
+teardown: down -v removed vivacon-local-* containers and volume vivacon-local-db-data; volume vivacon-db-data untouched

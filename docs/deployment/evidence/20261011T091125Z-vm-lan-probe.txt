@@ -1,0 +1,9 @@
+probe_started_utc=2026-10-11T09:11:25Z
+[A] GET /api/v1/post (no token) -> 401 content-type=application/json;charset=UTF-8
+[B] GET /actuator/health via nginx -> 200 body_is_spa_html=True body_is_actuator_json=False
+[C] GET /ws/info Origin=http://192.168.221.128 -> 200 websocket_true=True
+[D] GET /ws/info Origin=https://evil.example.com -> 403
+[E] GET /ws/info Origin=https://viva-spring-reactjs-five.vercel.app -> 200
+[F] GET /api/v1/account/check?username=admin -> 200 json_has_id=True (body not recorded)
+[G] latency of [F] over 5 calls (ms): 529,285,350,283,282  median=285
+probe_finished_utc=2026-10-11T09:11:27Z
