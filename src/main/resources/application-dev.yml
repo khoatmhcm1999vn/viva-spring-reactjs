@@ -8,11 +8,11 @@ spring:
   name: Vivacon
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/vivacon?useSSL=false&useUnicode=true
+    url: jdbc:postgresql://localhost:5433/vivacon?useSSL=false&useUnicode=true
     username: postgres
     # Lay tu ./config/application-dev.yml hoac bien moi truong DB_PASSWORD.
     # Rong thi Hikari khong ket noi duoc va app chet ngay luc boot.
-    password: ${DB_PASSWORD:}
+    password: Admin123*
   jpa:
     generate-ddl: true
     hibernate:
@@ -63,7 +63,7 @@ vivacon:
     # ke ca ADMIN. Day la bi mat quan trong nhat trong file nay.
     # Lay tu ./config/application-dev.yml hoac bien moi truong JWT_SECRET_SALT.
     # Rong thi app van boot nhung moi lan login se loi khi ky token.
-    secret_salt: ${JWT_SECRET_SALT:}
+    secret_salt: Vivacon@123456
     jwt_validity: 36000000 # 1000 * 60 * 60 - 1 Hour
     jwt_issuer: Vivacon_Khoa_Truc_Hung
     refresh_expiration: 360000000 # 1000 * 60 * 60 * 100- 100 Hour
@@ -116,8 +116,8 @@ aws:
 # Spring Boot tu doc ./config/ voi do uu tien CAO HON classpath nen no se ghi de 3 dong duoi.
 # Hoac set bien moi truong: CLOUDINARY_CLOUD_NAME / CLOUDINARY_API_KEY / CLOUDINARY_API_SECRET
 cloudinary:
-  cloud-name: ${CLOUDINARY_CLOUD_NAME:}
-  api-key: ${CLOUDINARY_API_KEY:}
-  api-secret: ${CLOUDINARY_API_SECRET:}
+  cloud-name: dhjbnicrr
+  api-key: 716683488489554
+  api-secret: lXvFAP3e8kp93s6D2hgc_C_hy3Y
 
 

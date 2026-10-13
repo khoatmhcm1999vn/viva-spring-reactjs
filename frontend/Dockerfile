@@ -8,6 +8,13 @@
 # tu Docker khong con la cung mot thu voi bundle tu Vercel.
 FROM node:22-bookworm-slim AS build
 
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+       python3 \
+       make \
+       g++ \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 # Copy rieng manifest truoc de layer npm install duoc cache: sua code trong src
