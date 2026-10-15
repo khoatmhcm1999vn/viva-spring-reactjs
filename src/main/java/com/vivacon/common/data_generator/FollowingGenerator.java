@@ -23,7 +23,8 @@ public class FollowingGenerator extends DataGenerator {
             Set<Integer> uniqueAccountIdSet = new HashSet<>();
             for (int followingIndex = 0; followingIndex < followingCount; followingIndex++) {
                 int randomAccountId = ThreadLocalRandom.current().nextInt(1, endAccountIndex);
-                if(uniqueAccountIdSet.contains(randomAccountId)){
+                // Khong cho tu follow chinh minh.
+                if(randomAccountId == currentAccountId || uniqueAccountIdSet.contains(randomAccountId)){
                     continue;
                 }
                 else {

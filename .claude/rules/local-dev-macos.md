@@ -30,6 +30,19 @@ Select JDK 11 per shell: `export JAVA_HOME=$(/usr/libexec/java_home -v 11)`.
   `INSERT INTO role (id, name) VALUES (1,'ADMIN'),(2,'USER'),(3,'SUPER_ADMIN');`.
 - `mock_data/data.sql` does not advance sequences, so loading it causes ID collisions on
   the next insert. Do not load it as-is.
+- Seed data comes from `common/data_generator/DataGenerator` (50 users + 3 admins +
+  `admin` super admin, ~700 posts, ~30k comments). It writes one file per table, each ending
+  in `setval`, to `mock_data/sql/` (gitignored). Run it from the built backend image, no host
+  Maven needed:
+  `docker run --rm --user root -v "$PWD/mock_data:/app/mock_data" -w /app --entrypoint java vivacon-backend:latest -cp /app/vivacon.jar -Dloader.main=com.vivacon.common.data_generator.DataGenerator org.springframework.boot.loader.PropertiesLauncher`
+  Load in one transaction (`psql -1 -v ON_ERROR_STOP=1`) after `TRUNCATE` of every table
+  except `role`, in FK order: account, following, hashtag, post, hashtag_rel_post,
+  attachment, comment, liking, setting, device_metadata. Build the script with `printf`, not
+  zsh `echo` (it turns `\echo` into an escape byte). Generated accounts share an unknown
+  BCrypt hash; in dev, set a known plaintext password afterwards
+  (`UPDATE account SET password='Vivacon@123'`, the current local value).
+- Generated dates fall in 2021-06..2022-06, but the statistics functions count only the last
+  12 months, so dashboard time-series charts show zeros unless dates are shifted.
 - On an empty database the recommendation `@Scheduled` task logs
   `NumberFormatException: ""` every 5 minutes (pre-existing; harmless until follows exist).
 - `frontend/Dockerfile` builds on full `node:16-bullseye` because arm64 needs node-gyp

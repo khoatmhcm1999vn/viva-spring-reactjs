@@ -28,6 +28,10 @@ public class PostGenerator extends DataGenerator {
 
                 String createdAt = getRandomTimestamp();
                 String lastModifiedAt = getRandomTimestamp();
+                // generateHashTag() doc this.postId de ghi hashtag_rel_post, nen phai gan ID
+                // that cua bai nay TRUOC khi sinh caption. Truoc day gan postIndex (so thu tu
+                // bai trong moi user, 1..19) SAU caption, nen moi hashtag tro vao bai 1..19.
+                this.postId = (int) counting;
                 String caption = generateSentence(10, true);
                 int privacy = ThreadLocalRandom.current().nextInt(1, 3);
 
@@ -38,7 +42,6 @@ public class PostGenerator extends DataGenerator {
                 value = value.replace("[[privacy]]", String.valueOf(privacy));
                 value = value.replace("[[created_by_account_id]]", String.valueOf(accountId));
                 values.add(value);
-                this.postId = postIndex;
             }
         }
         return values;
