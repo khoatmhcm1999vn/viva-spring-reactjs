@@ -39,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NonUniqueResultException;
 import javax.servlet.http.HttpServletRequest;
+import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -58,16 +59,23 @@ public class AccountServiceImpl implements AccountService {
     private DeviceService deviceService;
 
     /**
-     * Bo qua buoc xac thuc email khi dang ky.
+     * Bo qua cac buoc xac thuc qua email.
      *
      * Dung khi khong gui duoc email (Microsoft Graph chua co credential). Bat len thi
-     * tai khoan moi duoc tao o trang thai ACTIVE luon, khong can ma 6 so.
+     * tai khoan moi duoc tao o trang thai ACTIVE luon, khong can ma 6 so, va luong quen
+     * mat khau nhan ma ngay trong response thay vi qua email.
      *
      * Mac dinh FALSE. Chi bat o profile dev. KHONG bao gio bat tren production: no
-     * cho phep dang ky bang email cua nguoi khac ma khong can chung minh quyen so huu.
+     * cho phep dang ky bang email cua nguoi khac, va dat lai mat khau cua bat ky ai chi
+     * can biet email.
      */
     @Value("${vivacon.verification.bypass:false}")
     private boolean bypassEmailVerification;
+
+    @Value("${vivacon.verification_token.expiration}")
+    private long verificationTokenExpirationInMilliseconds;
+
+    private SecureRandom secureRandom = new SecureRandom();
 
     public AccountServiceImpl(AccountRepository accountRepository,
                               RoleRepository roleRepository,
@@ -193,11 +201,28 @@ public class AccountServiceImpl implements AccountService {
     public Account resendVerificationToken(String email) {
         Optional<Account> account = accountRepository.findByEmail(email);
         if (account.isPresent()) {
+            if (bypassEmailVerification) {
+                return issueVerificationTokenWithoutEmail(account.get());
+            }
             applicationEventPublisher.publishEvent(new GeneratingVerificationTokenEvent(this, account.get()));
             return account.get();
         } else {
             throw new RecordNotFoundException("The request verification token is invalid because of wrong email");
         }
+    }
+
+    /**
+     * Cap ma xac thuc ngay trong request thay vi qua event @Async gui email, de controller
+     * tra ma ve cho frontend va luong quen mat khau bo qua buoc nhap ma.
+     *
+     * CHI dung khi vivacon.verification.bypass bat: luc do ai biet email cua mot tai khoan
+     * cung dat lai duoc mat khau cua no. Chap nhan duoc o dev, khong bao gio o production.
+     */
+    private Account issueVerificationTokenWithoutEmail(Account account) {
+        String code = String.format("%06d", secureRandom.nextInt(1000000));
+        account.setVerificationToken(code);
+        account.setVerificationExpiredDate(Instant.now().plusMillis(verificationTokenExpirationInMilliseconds));
+        return accountRepository.saveAndFlush(account);
     }
 
     @Override

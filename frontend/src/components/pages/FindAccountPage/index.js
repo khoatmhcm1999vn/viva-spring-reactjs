@@ -92,6 +92,16 @@ export default function FindAccountPage(props) {
     setLoading(true);
     resendToken(email)
       .then((res) => {
+        // Backend chi tra verificationToken khi bat vivacon.verification.bypass (dev):
+        // khong co email nao duoc gui, nen bo qua man hinh nhap ma va sang thang buoc
+        // dat mat khau moi. Khi bypass tat, body rong va ta giu luong cu qua /verify.
+        const bypassToken = res.data && res.data.verificationToken;
+        if (res.status === 200 && bypassToken) {
+          setTimeout(() => {
+            history.push("/forgot-password", bypassToken);
+          }, 1000);
+          return;
+        }
         if (res.status === 200) {
           setSnackbarState({
             open: true,

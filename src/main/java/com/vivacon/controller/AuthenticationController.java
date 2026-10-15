@@ -45,6 +45,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -145,7 +146,13 @@ public class AuthenticationController {
                         SettingType.PRIVACY_ON_NEW_DEVICE_LOCATION).toString());
                 if (isNotifyOnNewDeviceLocation) {
 
-                    boolean isDeviceAlreadyExist = deviceService.verifyDevice(request, account, VerifyDeviceContext.LOGIN);
+                    // Context LOGIN gap thiet bi la thi gui ma qua email va tra 1003. Khi
+                    // bypass bat, email khong gui duoc, nen dung VERIFY: ghi nhan thiet bi
+                    // moi va cho dang nhap luon, khong sinh ma.
+                    VerifyDeviceContext deviceContext = bypassEmailVerification
+                            ? VerifyDeviceContext.VERIFY
+                            : VerifyDeviceContext.LOGIN;
+                    boolean isDeviceAlreadyExist = deviceService.verifyDevice(request, account, deviceContext);
                     if (isDeviceAlreadyExist) {
                         AuthenticationResponse authenticationResponse = generateAuthenticationResponse(userDetail.getUsername(),
                                 userDetail.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
@@ -233,7 +240,13 @@ public class AuthenticationController {
     @ApiOperation(value = "Resend verification token")
     @PostMapping("/account/verification_token")
     public ResponseEntity<Object> resendVerificationToken(@Email @RequestBody String email) {
-        accountService.resendVerificationToken(email);
+        Account account = accountService.resendVerificationToken(email);
+        if (bypassEmailVerification) {
+            // Khong co email nao duoc gui, nen tra ma ve de frontend bo qua man hinh
+            // nhap ma (FindAccountPage). Ma nay dat lai duoc mat khau, vi vay chi tra ve
+            // khi bypass bat; o production body van rong nhu cu.
+            return ResponseEntity.ok().body(Map.of("verificationToken", account.getVerificationToken()));
+        }
         return ResponseEntity.ok().body(null);
     }
 

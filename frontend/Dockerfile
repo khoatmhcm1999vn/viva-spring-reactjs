@@ -1,7 +1,15 @@
 # ============================================================================
 # Giai doan 1: build static
 # ============================================================================
-FROM node:16-bullseye-slim AS build
+# Ban day du, KHONG phai -slim: can san python3, make, g++ cho node-gyp.
+# "stompjs" khai bao "websocket" la optional dependency, va websocket keo theo
+# utf-8-validate / bufferutil. Tren linux-arm64 (Docker tren Mac Apple Silicon) khong co
+# ban prebuilt nen node-gyp phai bien dich; image slim khong co Python, npm lang le bo
+# qua optional dependency hong, roi webpack chet voi
+# "Can't resolve 'websocket' in .../stompjs/lib".
+# Khong cai bang apt-get duoc: bullseye da het han, debian-security tra 404.
+# Chi la stage build, image nginx cuoi cung khong bi anh huong.
+FROM node:16-bullseye AS build
 
 WORKDIR /app
 
