@@ -8,6 +8,7 @@ import com.vivacon.dto.response.OutlineAccount;
 import com.vivacon.dto.sorting_filtering.PageDTO;
 import com.vivacon.entity.Account;
 import com.vivacon.entity.Role;
+import com.vivacon.entity.enum_type.AccountStatus;
 import com.vivacon.exception.RecordNotFoundException;
 import com.vivacon.mapper.AccountMapper;
 import com.vivacon.mapper.PageMapper;
@@ -26,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NonUniqueResultException;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -71,6 +73,11 @@ public class AdminAccountServiceImpl implements AdminAccountService {
                     .password(passwordEncoder.encode(registrationRequest.getPassword()))
                     .role(roleRepository.findByName(RoleType.ADMIN.toString()))
                     .active(true)
+                    // Thieu hai truong nay thi tao admin luon that bai: created_at la
+                    // NOT NULL (loi bi bat thanh "already existing"), con accountStatus
+                    // null lam switch trong /login nem NullPointerException.
+                    .createdAt(LocalDateTime.now())
+                    .accountStatus(AccountStatus.ACTIVE)
                     .build();
             Account savedAccount = accountRepository.saveAndFlush(account);
             return savedAccount;

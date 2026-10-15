@@ -58,6 +58,13 @@ vivacon:
     # ky duoc bang email cua nguoi khac ma khong can chung minh quyen so huu.
     # CHI dung o dev. Profile prod dat false tuong minh.
     bypass: true
+  security:
+    # Luu mat khau dang CHU THUONG thay vi BCrypt, de doi mat khau bang cach sua thang
+    # cot account.password trong database. Hash BCrypt da co san van dang nhap duoc.
+    #
+    # CANH BAO: ai doc duoc database, ban dump hay log SQL deu doc duoc mat khau.
+    # Khong dung profile nay voi database dung chung (Supabase). Profile prod dat false.
+    plaintext-passwords: true
   jwt:
     # CANH BAO: ai co secret_salt la tu ky duoc JWT hop le cho bat ky user nao,
     # ke ca ADMIN. Day la bi mat quan trong nhat trong file nay.

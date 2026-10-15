@@ -62,6 +62,14 @@ Layered by technical concern. Entry point `VivaconApplication.java`.
   and allowed (no `1003`), and `POST /account/verification_token` returns
   `{"verificationToken": ...}` so `FindAccountPage` skips `/verify`. That response lets anyone
   who knows an email reset its password, which is why it must stay dev-only.
+- `vivacon.security.plaintext-passwords` (`true` in dev, `false` in prod) swaps the
+  `PasswordEncoder` bean for `security/DevPlaintextPasswordEncoder`: new passwords are
+  stored as plain text so they can be edited in `account.password`, while existing BCrypt
+  hashes still match. All encode/match calls go through that one bean
+  (`HTTPSecurityConfiguration.passwordEncoder()`); never hash or compare passwords elsewhere.
+- Changing password while logged in (`PUT /account/password`) never sends email; it only
+  checks the old password. The endpoint has no `@Valid`, so `ChangePasswordRequest`
+  annotations are not enforced (frontend sends `confirmNewPassword`, not `matchingNewPassword`).
 - Email goes through Microsoft Graph (`MS_OAUTH_*`), not SMTP; `spring-boot-starter-mail`
   is dead weight.
 - The `prod` Maven profile builds a frontend from `../Vivacon-UI`, which does not exist.

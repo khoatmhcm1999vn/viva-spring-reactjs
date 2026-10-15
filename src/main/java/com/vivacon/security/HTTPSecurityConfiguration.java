@@ -49,15 +49,23 @@ public class HTTPSecurityConfiguration extends WebSecurityConfigurerAdapter {
      */
     private String[] allowedOrigins;
 
+    /**
+     * Luu mat khau dang chu thuong thay vi BCrypt, de sua thang trong database khi dev.
+     * Mac dinh FALSE, chi bat o profile dev. Xem DevPlaintextPasswordEncoder.
+     */
+    private boolean plaintextPasswords;
+
     @Autowired
     public HTTPSecurityConfiguration(UserDetailServiceImpl userDetailsService,
                                      JWTRequestFilter jwtRequestFilter,
                                      AuthenticationEntryPointImpl authenticationEntryPointHandler,
-                                     @Value("${vivacon.frontend.allowed-origins:}") String[] allowedOrigins) {
+                                     @Value("${vivacon.frontend.allowed-origins:}") String[] allowedOrigins,
+                                     @Value("${vivacon.security.plaintext-passwords:false}") boolean plaintextPasswords) {
         this.userDetailsService = userDetailsService;
         this.jwtRequestFilter = jwtRequestFilter;
         this.authenticationEntryPointHandler = authenticationEntryPointHandler;
         this.allowedOrigins = allowedOrigins;
+        this.plaintextPasswords = plaintextPasswords;
     }
 
     @Bean
@@ -74,6 +82,11 @@ public class HTTPSecurityConfiguration extends WebSecurityConfigurerAdapter {
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
+        if (plaintextPasswords) {
+            logger.warn("vivacon.security.plaintext-passwords dang BAT: mat khau moi duoc luu dang chu thuong. "
+                    + "Chi dung cho dev, khong bao gio bat tren production.");
+            return new DevPlaintextPasswordEncoder();
+        }
         return new BCryptPasswordEncoder();
     }
 
