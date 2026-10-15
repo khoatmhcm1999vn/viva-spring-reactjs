@@ -25,7 +25,7 @@ import { useTranslation } from "react-i18next";
 import { detectImages } from "api/imageModerationService";
 import { handleCheckImageRange } from "utils/resolveData";
 import CustomModal from "../CustomModal";
-import { ignoreApiError } from "utils/apiError";
+import { ignoreApiError, resolveApiErrorMessage } from "utils/apiError";
 // const fs = require("fs");
 
 const TabPanel = (props) => {
@@ -77,7 +77,21 @@ const CreatePostModal = (props) => {
       pictures.map((item) => {
         data.append("files", item.file);
       });
-      const { data: attachments } = await uploadImages(data);
+      // Truoc day khong co try/catch: upload loi (vi du Cloudinary chua co credential,
+      // backend tra 500) lam promise reject, setLoading(false) khong bao gio chay va
+      // vong xoay quay mai khong bao loi.
+      let attachments;
+      try {
+        ({ data: attachments } = await uploadImages(data));
+      } catch (err) {
+        setLoading(false);
+        setSnackbarState({
+          open: true,
+          content: `${trans("createPost.uploadFailed")} (${resolveApiErrorMessage(err)})`,
+          type: "FAIL",
+        });
+        return;
+      }
 
       // const mockData = [
       //   {
@@ -97,16 +111,29 @@ const CreatePostModal = (props) => {
       //   },
       // ];
       let resultCheckedImages = [];
-      await Promise.all(
-        attachments.map(async (img) => {
-          const res = await detectImages(img);
-          //console.log({ res });
-          const checkedImage = handleCheckImageRange(img.url, res.data);
-          if (checkedImage.maliciousRange.length > 0) {
-            resultCheckedImages.push(checkedImage);
-          }
-        })
-      );
+      // Kiem duyet anh bang SightEngine chi chay khi da cau hinh. Ban build Docker khong
+      // nhung REACT_APP_DETECT_IMAGES_* nen truoc day goi axios.get(undefined).
+      if (process.env.REACT_APP_DETECT_IMAGES_API_URL) {
+        try {
+          await Promise.all(
+            attachments.map(async (img) => {
+              const res = await detectImages(img);
+              const checkedImage = handleCheckImageRange(img.url, res.data);
+              if (checkedImage.maliciousRange.length > 0) {
+                resultCheckedImages.push(checkedImage);
+              }
+            })
+          );
+        } catch (err) {
+          setLoading(false);
+          setSnackbarState({
+            open: true,
+            content: `${trans("createPost.moderationFailed")} (${resolveApiErrorMessage(err)})`,
+            type: "FAIL",
+          });
+          return;
+        }
+      }
       if (resultCheckedImages.length === 0) {
         handlePost({
           privacy,

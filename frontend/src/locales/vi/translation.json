@@ -69,7 +69,9 @@
     "confirm": "Xác nhận",
     "no": "Không",
     "yes": "Đồng ý",
-    "successfully": "Tạo bài đăng thành công"
+    "successfully": "Tạo bài đăng thành công",
+    "uploadFailed": "Không tải ảnh lên được. Kiểm tra cấu hình lưu ảnh (Cloudinary)",
+    "moderationFailed": "Không kiểm duyệt được ảnh"
   },
   "privacy": {
     "public": "Công khai",

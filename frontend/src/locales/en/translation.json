@@ -69,7 +69,9 @@
     "confirm": "Confirm",
     "no": "No",
     "yes": "Yes",
-    "successfully": "Create a post successfully"
+    "successfully": "Create a post successfully",
+    "uploadFailed": "Could not upload images. Check the image storage (Cloudinary) settings",
+    "moderationFailed": "Could not check the images"
   },
   "privacy": {
     "public": "Public",
