@@ -12,6 +12,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -25,7 +27,21 @@ public class FileUtils {
 
     public static File convertMultiPartFileToFile(MultipartFile multipartFile) {
 
-        File file = new File(multipartFile.getOriginalFilename());
+        // Moi file nam trong mot thu muc tam rieng nhung giu ten goc (actualName lay tu
+        // file.getName()). Truoc day file ghi thang vao thu muc lam viec theo ten goc, nen
+        // hai anh trung ten trong cung request (hoac hai nguoi cung upload "image.jpg")
+        // ghi de va xoa mat file cua nhau: Cloudinary bao "No such file" va API tra 400.
+        // Chi lay phan ten, bo duong dan, de ten file khong tro ra ngoai thu muc tam.
+        String originalName = Paths.get(String.valueOf(multipartFile.getOriginalFilename()))
+                .getFileName().toString();
+        File file;
+        try {
+            Path tempDirectory = Files.createTempDirectory("vivacon-upload-");
+            file = tempDirectory.resolve(originalName).toFile();
+        } catch (IOException ex) {
+            logger.error(String.format("Error creating a temporary directory %s", ex.getMessage()));
+            throw new UploadAttachmentException("Can not convert " + multipartFile.getName() + " to file - some error in file format");
+        }
         try (OutputStream outputStream = new FileOutputStream(file)) {
             outputStream.write(multipartFile.getBytes());
         } catch (IOException ex) {
@@ -70,6 +86,8 @@ public class FileUtils {
     public static void deleteFile(File file) {
         try {
             Files.delete(file.toPath());
+            // Xoa luon thu muc tam rieng cua file (tao trong convertMultiPartFileToFile).
+            Files.deleteIfExists(file.toPath().getParent());
         } catch (IOException ex) {
             logger.error("Failed to delete the file {}", ex.getMessage());
         }

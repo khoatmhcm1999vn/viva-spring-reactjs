@@ -113,7 +113,11 @@ const CreatePostModal = (props) => {
       let resultCheckedImages = [];
       // Kiem duyet anh bang SightEngine chi chay khi da cau hinh. Ban build Docker khong
       // nhung REACT_APP_DETECT_IMAGES_* nen truoc day goi axios.get(undefined).
-      if (process.env.REACT_APP_DETECT_IMAGES_API_URL) {
+      // REACT_APP_SKIP_IMAGE_MODERATION=true bo qua han buoc nay de demo local nhanh,
+      // khi key SightEngine het han hoac bi chan.
+      const skipModeration =
+        process.env.REACT_APP_SKIP_IMAGE_MODERATION === "true";
+      if (process.env.REACT_APP_DETECT_IMAGES_API_URL && !skipModeration) {
         try {
           await Promise.all(
             attachments.map(async (img) => {

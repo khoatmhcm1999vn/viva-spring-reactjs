@@ -1,0 +1,12 @@
+# Cau hinh DEMO / chay o may local. Duoc nap khi .env co
+#   COMPOSE_FILE=docker-compose.yml:docker-compose.override.yml:docker-compose.local.yml
+# (xem .env.example). Tren server deploy thi KHONG dung file nay.
+#
+# Chay backend voi profile dev (bo xac thuc email, mat khau luu chu thuong, co Swagger)
+# nhung giu cong 8080 trong container de healthcheck, nginx va port mapping van khop.
+# Profile dev mac dinh chay cong 8090, thieu SERVER_PORT o day la nginx goi truot.
+services:
+  backend:
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SERVER_PORT: "8080"

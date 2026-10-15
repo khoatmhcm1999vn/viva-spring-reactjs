@@ -23,7 +23,8 @@ Select JDK 11 per shell: `export JAVA_HOME=$(/usr/libexec/java_home -v 11)`.
 - `.env` (gitignored, mode 600) was generated from `.env.example` with random
   `DB_PASSWORD` / `JWT_SECRET_SALT`, and sets
   `COMPOSE_FILE=docker-compose.yml:docker-compose.override.yml:docker-compose.local.yml`.
-- `docker-compose.local.yml` is local-only (listed in `.git/info/exclude`): runs the backend
+- `docker-compose.local.yml` is tracked (demo config; `.env.example` now defaults to `dev`
+  plus this `COMPOSE_FILE`, deploy must switch back to `prod`): runs the backend
   with profile `dev` (verification bypass, since no mail is configured) and
   `SERVER_PORT=8080` so the healthcheck, nginx and port mapping still match.
 - A fresh volume has an empty `role` table; registration needs

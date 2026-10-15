@@ -44,6 +44,10 @@ server {
 
     # Frontend goi duong dan tuong doi /api/v1/... nen khong can biet backend o dau.
     location /api/ {
+        # Mac dinh nginx chi nhan body 1 MB, nen upload anh (POST /api/v1/attachments)
+        # bi tra 413 ngay tai day, chua toi backend. Mot bai co the co nhieu anh, moi
+        # anh toi da 10 MB (spring.servlet.multipart.max-file-size).
+        client_max_body_size 50m;
         proxy_pass http://backend_upstream;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
