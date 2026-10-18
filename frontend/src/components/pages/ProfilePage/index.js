@@ -290,6 +290,9 @@ const ProfilePage = (props) => {
   }, [pageNumber, currentModalType]);
 
   useEffect(() => {
+    // Lan render dau userProfile con la {}: khong co id thi goi ra
+    // /recommend/profile/undefined va backend tra 400.
+    if (!userProfile.id) return;
     handleGetSuggestedProfile();
   }, [userProfile]);
 
