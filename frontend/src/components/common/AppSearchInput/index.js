@@ -17,13 +17,24 @@ import ReactLoading from "react-loading";
 import CustomModal from "../CustomModal";
 import { ignoreApiError } from "utils/apiError";
 
+// Bo cac phan tu null: ban cu luu duoc [null] khi bam Enter luc chua co ket qua,
+// va mot phan tu null trong danh sach lam trang trang khi render.
+const getRecentSearchList = () => {
+  try {
+    const list = JSON.parse(localStorage.getItem("recent_search"));
+    return Array.isArray(list) ? list.filter(Boolean) : [];
+  } catch (e) {
+    return [];
+  }
+};
+
 const AppSearchInput = () => {
   const [searchText, setSearchText] = useState("");
   const [resultList, setResultList] = useState([]);
   const [isStartSearch, setStartSearch] = useState(false);
   const [focusIndex, setFocusIndex] = useState(0);
   const [recentSearchList, setRecentSearchList] = useState(
-    JSON.parse(localStorage.getItem("recent_search")) || []
+    getRecentSearchList()
   );
   const [fetchInfo, setFetchInfo] = useState({});
   const [showRecentSearch, setShowRecentSearch] = useState(false);
@@ -88,6 +99,8 @@ const AppSearchInput = () => {
     }
     if (event.key === "Enter") {
       event.preventDefault();
+      // Chua co ket qua (dang doi 2 giay hoac khong tim thay) thi khong lam gi.
+      if (!resultList[focusIndex]) return;
       setSearchText("");
       event.target.blur();
       saveResult(resultList[focusIndex]);
@@ -99,6 +112,7 @@ const AppSearchInput = () => {
   };
 
   const accessUserProfile = (list) => {
+    if (!list[focusIndex]) return;
     setSearchText("");
     saveResult(list[focusIndex]);
     hideResultList();
@@ -112,17 +126,14 @@ const AppSearchInput = () => {
   };
 
   const saveResult = (account) => {
-    const currSavingList =
-      JSON.parse(localStorage.getItem("recent_search")) || [];
-    const res = saveSearchList(currSavingList, account);
+    if (!account) return;
+    const res = saveSearchList(getRecentSearchList(), account);
     localStorage.setItem("recent_search", JSON.stringify(res));
   };
 
   const handleShowRecentSearch = (text) => {
     if (text === "") {
-      setRecentSearchList(
-        JSON.parse(localStorage.getItem("recent_search")) || []
-      );
+      setRecentSearchList(getRecentSearchList());
       setShowRecentSearch(true);
     } else {
       setShowRecentSearch(false);
@@ -131,9 +142,7 @@ const AppSearchInput = () => {
 
   const handleDeleteRecentSearchItem = (item, event) => {
     if (event && event.stopPropagation) event.stopPropagation();
-    const currSavingList =
-      JSON.parse(localStorage.getItem("recent_search")) || [];
-    const filtered = currSavingList.filter(
+    const filtered = getRecentSearchList().filter(
       (searchItem) => searchItem.id !== item.id
     );
     setRecentSearchList(filtered);
