@@ -56,6 +56,10 @@ vivacon:
     # bang email cua nguoi khac ma khong can chung minh quyen so huu.
     # Chi duoc bat o profile dev khi khong gui duoc email.
     bypass: false
+  security:
+    # Dat trong TUONG MINH: bo qua JWT chi danh cho dev. JWTRequestFilter tu choi
+    # khoi dong neu gia tri nay khac rong o profile prod.
+    dev-auth-username: ""
   jwt:
     # CANH BAO: ai co secret_salt la tu ky duoc JWT hop le cho bat ky user nao,
     # ke ca ADMIN. Day la bi mat quan trong nhat trong file nay.

@@ -76,6 +76,11 @@ vivacon:
     # CANH BAO: ai doc duoc database, ban dump hay log SQL deu doc duoc mat khau.
     # Khong dung profile nay voi database dung chung (Supabase). Profile prod dat false.
     plaintext-passwords: true
+    # BO QUA JWT khi test API bang Swagger/Postman: request KHONG gui header
+    # Authorization duoc coi nhu da dang nhap bang username nay (vd: admin).
+    # Request co gui token van xac thuc JWT nhu thuong. De trong la tat.
+    # Lay tu .env hoac bien moi truong DEV_AUTH_USERNAME. Profile prod cam bat.
+    dev-auth-username: ${DEV_AUTH_USERNAME:}
   jwt:
     # CANH BAO: ai co secret_salt la tu ky duoc JWT hop le cho bat ky user nao,
     # ke ca ADMIN. Day la bi mat quan trong nhat trong file nay.

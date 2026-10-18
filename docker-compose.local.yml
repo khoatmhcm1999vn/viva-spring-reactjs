@@ -10,3 +10,5 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: dev
       SERVER_PORT: "8080"
+      # Bo qua JWT khi test Swagger: dat DEV_AUTH_USERNAME=admin trong .env. Trong = tat.
+      DEV_AUTH_USERNAME: ${DEV_AUTH_USERNAME:-}

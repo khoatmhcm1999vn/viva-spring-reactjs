@@ -3,6 +3,9 @@ package com.vivacon.security;
 import com.vivacon.common.utility.JwtUtils;
 import io.jsonwebtoken.JwtException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.security.authentication.AccountStatusException;
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -38,10 +41,28 @@ public class JWTRequestFilter extends OncePerRequestFilter {
 
     private UserDetailsService userDetailsService;
 
+    /**
+     * CHI DUNG KHI DEV: request KHONG co header Authorization se duoc coi nhu da dang nhap
+     * bang username nay, de goi API tu Swagger/Postman ma khong can lay JWT.
+     * Request co gui token van di duong xac thuc JWT binh thuong.
+     * De trong (mac dinh) la tat. Bat o profile prod thi app tu choi khoi dong.
+     */
+    private String devAuthUsername;
+
     @Autowired
-    public JWTRequestFilter(JwtUtils jwtTokenUtil, UserDetailsService userDetailsService) {
+    public JWTRequestFilter(JwtUtils jwtTokenUtil, UserDetailsService userDetailsService,
+                            @Value("${vivacon.security.dev-auth-username:}") String devAuthUsername,
+                            Environment environment) {
         this.jwtUtils = jwtTokenUtil;
         this.userDetailsService = userDetailsService;
+        this.devAuthUsername = devAuthUsername == null ? "" : devAuthUsername.trim();
+        if (!this.devAuthUsername.isEmpty()) {
+            if (environment.acceptsProfiles(Profiles.of("prod"))) {
+                throw new IllegalStateException("vivacon.security.dev-auth-username khong duoc bat o profile prod");
+            }
+            logger.warn("vivacon.security.dev-auth-username dang BAT: request khong co JWT duoc coi la user '"
+                    + this.devAuthUsername + "'. Chi dung cho dev.");
+        }
     }
 
     /**
@@ -65,13 +86,10 @@ public class JWTRequestFilter extends OncePerRequestFilter {
                     String token = getTokenFromRequest(request);
                     if (Objects.nonNull(token)) {
                         if (jwtUtils.validate(token)) {
-                            String username = jwtUtils.getUsername(token);
-                            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                            statusUserDetailsChecker.check(userDetails);
-                            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                            SecurityContextHolder.getContext().setAuthentication(authentication);
+                            authenticate(jwtUtils.getUsername(token), request, statusUserDetailsChecker);
                         }
+                    } else if (!devAuthUsername.isEmpty() && !StringUtils.hasText(request.getHeader(AUTHORIZATION_HEADER))) {
+                        authenticate(devAuthUsername, request, statusUserDetailsChecker);
                     } else {
                         throw new JwtException(ACCESS_TOKEN_MISSING);
                     }
@@ -85,6 +103,14 @@ public class JWTRequestFilter extends OncePerRequestFilter {
             }
             filterChain.doFilter(request, response);
         }
+    }
+
+    private void authenticate(String username, HttpServletRequest request, AccountStatusUserDetailsChecker statusUserDetailsChecker) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        statusUserDetailsChecker.check(userDetails);
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
     private boolean checkoutWSAccess(String uri) {
