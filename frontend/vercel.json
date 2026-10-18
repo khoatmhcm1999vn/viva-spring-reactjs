@@ -1,5 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "git": {
+    "deploymentEnabled": false
+  },
   "framework": "create-react-app",
   "installCommand": "npm install --force",
   "buildCommand": "CI=false npm run build",
