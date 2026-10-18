@@ -3,6 +3,9 @@
 Hướng dẫn dựng lại toàn bộ demo (frontend, backend, database có dữ liệu mẫu) trên một
 máy Mac khác bằng Docker. Không cần cài Java, Maven hay Node: mọi thứ build trong Docker.
 
+Chạy trên **Windows**: làm theo file này kèm các chỗ khác ghi trong [WINDOWS.md](WINDOWS.md)
+(bắt buộc sửa `COMPOSE_FILE` trong `.env`).
+
 ## 0. Cần cài sẵn
 
 - **Docker Desktop** (bản cho chip Apple hoặc Intel, tuỳ máy), đã mở và đang chạy.
