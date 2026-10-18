@@ -29,6 +29,7 @@ import InfoIcon from "@mui/icons-material/Info";
 import ReportDetailModal from "../ReportDetailModal";
 import PostOptionModal from "../PostOptionModal";
 import UsernameContainer from "../UsernameContainer";
+import { ignoreApiError } from "utils/apiError";
 
 const PostDetailsModal = ({ index, dataList, title, reportId, isOnModal }) => {
   const [currentIndex, setCurrentIndex] = useState(index);
@@ -103,20 +104,24 @@ const PostDetailsModal = ({ index, dataList, title, reportId, isOnModal }) => {
     setCurrentReportID(reportId);
   }, [reportId]);
 
+  // Chi dashboard admin (PostReportPage) truyen reportId. Mo bai viet o newsfeed,
+  // profile, hashtag... thi khong co report nao de tai: truoc day van goi
+  // /postReport/undefined va nhan 400.
   useEffect(() => {
-    getDetailPostReport(currentReportID).then((res) =>
-      setCommentReport(res.data)
-    );
+    if (!reportId || !currentReportID) return;
+    getDetailPostReport(currentReportID)
+      .then((res) => setCommentReport(res.data))
+      .catch(ignoreApiError);
   }, [currentReportID]);
 
   const handleIncreaseIndex = () => {
     setCurrentIndex(currentIndex + 1);
-    setCurrentReportID(dataList[currentIndex + 1].id);
+    if (reportId) setCurrentReportID(dataList[currentIndex + 1].id);
   };
 
   const handleDecreaseIndex = () => {
     setCurrentIndex(currentIndex - 1);
-    setCurrentReportID(dataList[currentIndex - 1].id);
+    if (reportId) setCurrentReportID(dataList[currentIndex - 1].id);
   };
 
   const handleOpenReportModal = (userInfo) => {

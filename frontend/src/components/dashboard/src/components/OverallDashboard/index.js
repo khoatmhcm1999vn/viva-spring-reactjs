@@ -26,6 +26,7 @@ import {
 // cung bi che boi state cuc bo "const [timeSection, setTimeSection] = useState(...)".
 import { limitPerPage, PERIOD, timeSectionList } from "constant/types";
 import RightSide from "../RigtSide";
+import { ignoreApiError } from "utils/apiError";
 import ReactApexChart from "react-apexcharts";
 
 const OverallDashboard = () => {
@@ -41,7 +42,8 @@ const OverallDashboard = () => {
 
   const [topTrendingHashTag, setTopTrendingHashTag] = useState([]);
   const [limit, setLimit] = useState(5);
-  const [timeSection, setTimeSection] = useState("YEAR");
+  // Phai khop enum TimeSection cua backend (so nhieu: YEARS). "YEAR" bi 400.
+  const [timeSection, setTimeSection] = useState(PERIOD.YEARS.toUpperCase());
 
   useEffect(() => {
     if (summaryPeriod === PERIOD.MONTHS) {
@@ -92,9 +94,9 @@ const OverallDashboard = () => {
   }, []);
 
   useEffect(() => {
-    getTopHashTagQuantityInTime({ timeSection, limit }).then((res) =>
-      setTopTrendingHashTag(res.data)
-    );
+    getTopHashTagQuantityInTime({ timeSection, limit })
+      .then((res) => setTopTrendingHashTag(res.data))
+      .catch(ignoreApiError);
   }, [limit, timeSection]);
 
   //console.log(topTrendingHashTag);
