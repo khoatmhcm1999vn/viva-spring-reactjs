@@ -19,6 +19,7 @@ target
 # Secret cua may ca nhan. TUYET DOI khong dua vao image:
 # credential that duoc truyen vao luc chay bang bien moi truong.
 config
+.env
 
 # Log, tai lieu, va nhung thu chi dung o may dev
 logs

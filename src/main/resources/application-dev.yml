@@ -6,11 +6,21 @@ server:
 spring:
   application:
   name: Vivacon
+  config:
+    # Doc chung file .env cua docker compose (dang KEY=VALUE, doc nhu .properties), nen
+    # chay backend tren host khong can set bien moi truong hay tao config/ rieng.
+    # Duong dan tinh tu thu muc dang chay: phai chay tu goc repo. Khong co file thi bo qua
+    # (trong container khong co .env, gia tri den tu bien moi truong cua compose).
+    # Thu tu uu tien: bien moi truong > ./config/application-dev.yml > .env > file nay.
+    import: optional:file:.env[.properties]
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/vivacon?useSSL=false&useUnicode=true
-    username: postgres
-    # Lay tu ./config/application-dev.yml hoac bien moi truong DB_PASSWORD.
+    # DB_PORT la cong compose publish Postgres ra host (mac dinh 5433), dung cai backend
+    # tren host can. Trong container, SPRING_DATASOURCE_URL cua compose ghi de dong nay.
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5433}/${POSTGRES_DB:vivacon}?useSSL=false&useUnicode=true
+    # Giong compose: DB_USERNAME, khong co thi POSTGRES_USER, khong co nua thi postgres.
+    username: ${DB_USERNAME:${POSTGRES_USER:postgres}}
+    # Tu .env hoac bien moi truong DB_PASSWORD.
     # Rong thi Hikari khong ket noi duoc va app chet ngay luc boot.
     password: ${DB_PASSWORD:}
   jpa:
