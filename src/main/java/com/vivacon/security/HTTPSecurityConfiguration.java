@@ -152,7 +152,10 @@ public class HTTPSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, API_V1 + "/account/password").permitAll()
                 .antMatchers(HttpMethod.DELETE, API_V1 + "/comment/{id}").access("@resourceRestrictionService.isAccessibleToCommentResource(#id)")
                 .antMatchers(HttpMethod.DELETE, API_V1 + "/post/{id}").access("@resourceRestrictionService.isAccessibleToPostResource(#id)")
-                .antMatchers(API_V1 + "/conversation/{id}/messages").access("@resourceRestrictionService.isAccessibleToConversationResource(#id)")
+                // Truoc day viet "/messages" (so nhieu) trong khi endpoint that la
+                // GET /conversation/{id}/message, nen luat nay khong bao gio khop va bat
+                // ky ai dang nhap cung doc duoc tin nhan cua hoi thoai khac.
+                .antMatchers(API_V1 + "/conversation/{id}/message").access("@resourceRestrictionService.isAccessibleToConversationResource(#id)")
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);

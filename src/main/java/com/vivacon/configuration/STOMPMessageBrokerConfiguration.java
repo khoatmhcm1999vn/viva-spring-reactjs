@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.vivacon.common.utility.JwtUtils;
+import com.vivacon.exception.UnauthorizedWebSocketException;
+import com.vivacon.security.StompSubscriptionAuthorizer;
+import com.vivacon.security.UserDetailImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,20 +21,24 @@ import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.converter.MessageConverter;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
+import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.StompWebSocketEndpointRegistration;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +54,8 @@ public class STOMPMessageBrokerConfiguration implements WebSocketMessageBrokerCo
 
     private JwtUtils jwtUtils;
 
+    private StompSubscriptionAuthorizer subscriptionAuthorizer;
+
     /**
      * Cac origin duoc phep bat tay SockJS, phan cach bang dau phay.
      *
@@ -61,9 +70,11 @@ public class STOMPMessageBrokerConfiguration implements WebSocketMessageBrokerCo
     @Autowired
     public STOMPMessageBrokerConfiguration(UserDetailsService userDetailService,
                                            JwtUtils jwtUtils,
+                                           StompSubscriptionAuthorizer subscriptionAuthorizer,
                                            @Value("${vivacon.frontend.allowed-origins:}") String[] allowedOrigins) {
         this.userDetailService = userDetailService;
         this.jwtUtils = jwtUtils;
+        this.subscriptionAuthorizer = subscriptionAuthorizer;
         this.allowedOrigins = allowedOrigins;
     }
 
@@ -178,17 +189,49 @@ public class STOMPMessageBrokerConfiguration implements WebSocketMessageBrokerCo
         @Override
         public Message<?> preSend(Message<?> message, MessageChannel channel) {
             StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-            if (!ObjectUtils.isEmpty(accessor)) {
-                List<String> tokenList = accessor.getNativeHeader(STOMP_AUTHORIZATION_HEADER);
-                if (tokenList != null && !tokenList.isEmpty()) {
-                    String token = tokenList.get(0);
-                    UserDetails userDetails = userDetailService.loadUserByUsername(jwtUtils.getUsername(token));
-                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                    accessor.setUser(usernamePasswordAuthenticationToken);
-                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-                }
+            if (ObjectUtils.isEmpty(accessor)) {
+                return message;
+            }
+
+            List<String> tokenList = accessor.getNativeHeader(STOMP_AUTHORIZATION_HEADER);
+            String token = (tokenList != null && !tokenList.isEmpty()) ? tokenList.get(0) : null;
+            StompCommand command = accessor.getCommand();
+
+            // Truoc day thieu token thi van cho qua, va moi message deu permitAll. Gio
+            // CONNECT bat buoc JWT hop le (dung chu ky, con han, tai khoan con hoat dong).
+            if (StringUtils.hasText(token)) {
+                authenticate(accessor, token);
+            } else if (StompCommand.CONNECT.equals(command)) {
+                throw new UnauthorizedWebSocketException();
+            }
+
+            if (StompCommand.SUBSCRIBE.equals(command)) {
+                subscriptionAuthorizer.checkSubscription(currentUser(accessor), accessor.getDestination());
+            } else if (StompCommand.SEND.equals(command) && currentUser(accessor) == null) {
+                throw new UnauthorizedWebSocketException();
             }
             return message;
+        }
+
+        private void authenticate(StompHeaderAccessor accessor, String token) {
+            // validate() nem JwtException khi sai chu ky / het han / sai dinh dang.
+            jwtUtils.validate(token);
+            UserDetails userDetails = userDetailService.loadUserByUsername(jwtUtils.getUsername(token));
+            new AccountStatusUserDetailsChecker().check(userDetails);
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            accessor.setUser(authentication);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
+
+        private UserDetailImpl currentUser(StompHeaderAccessor accessor) {
+            Principal principal = accessor.getUser();
+            if (principal instanceof UsernamePasswordAuthenticationToken) {
+                Object details = ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+                if (details instanceof UserDetailImpl) {
+                    return (UserDetailImpl) details;
+                }
+            }
+            return null;
         }
     }
 }
