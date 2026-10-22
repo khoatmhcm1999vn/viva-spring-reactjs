@@ -1,3 +1,7 @@
+# Mac dinh la prod. Truoc day la dev, nen chay jar ma quen truyen profile la bat
+# vivacon.verification.bypass, mat khau luu chu thuong va DEV_AUTH_USERNAME (bo qua
+# JWT). Prod thieu secret thi chet ngay luc boot, la cach that bai an toan.
+# Chay dev o may: SPRING_PROFILES_ACTIVE=dev (compose local da dat san).
 spring:
   profiles:
-    active: dev
+    active: ${SPRING_PROFILES_ACTIVE:prod}

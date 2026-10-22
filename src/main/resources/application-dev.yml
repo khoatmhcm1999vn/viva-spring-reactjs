@@ -87,7 +87,7 @@ vivacon:
     # Lay tu ./config/application-dev.yml hoac bien moi truong JWT_SECRET_SALT.
     # Rong thi app van boot nhung moi lan login se loi khi ky token.
     secret_salt: ${JWT_SECRET_SALT:}
-    jwt_validity: 36000000 # 1000 * 60 * 60 - 1 Hour
+    jwt_validity: 36000000 # 1000 * 60 * 60 * 10 - 10 gio (comment cu ghi nham "1 Hour")
     jwt_issuer: Vivacon_Khoa_Truc_Hung
     refresh_expiration: 360000000 # 1000 * 60 * 60 * 100- 100 Hour
   verification_token:

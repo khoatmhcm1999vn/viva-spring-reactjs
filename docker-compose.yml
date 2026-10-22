@@ -16,6 +16,15 @@
 # "vivacon-services" (chay tu E:\JavaProj\Vivacon-Services) cung dung Postgres.
 name: vivacon
 
+# Mac dinh driver json-file cua Docker KHONG gioi han dung luong: log cua container
+# tich mai den khi day dia VM. Moi service duoi day dung chung gioi han nay:
+# toi da 3 file x 10MB.
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
   db:
     image: postgres:14
@@ -51,6 +60,7 @@ services:
     # Gioi han RAM. Mac dinh vua cho mot VM nho (~3-4 GB); may to hon thi nang len
     # trong .env chu khong sua file nay.
     mem_limit: ${DB_MEM_LIMIT:-640m}
+    logging: *default-logging
 
   backend:
     build:
@@ -104,6 +114,7 @@ services:
     # la 75% cua gioi han cgroup; khong co gioi han thi JVM lay 75% RAM CA MAY va
     # tren VM 3.3 GB no se chen Postgres ra khoi bo nho.
     mem_limit: ${BACKEND_MEM_LIMIT:-1200m}
+    logging: *default-logging
 
   frontend:
     build:
@@ -122,6 +133,7 @@ services:
       - "${FRONTEND_PORT:-8081}:80"
     # nginx phuc vu file tinh, khong can nhieu.
     mem_limit: ${FRONTEND_MEM_LIMIT:-128m}
+    logging: *default-logging
 
 volumes:
   vivacon-db-data:

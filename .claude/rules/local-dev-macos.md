@@ -57,6 +57,8 @@ Select JDK 11 per shell: `export JAVA_HOME=$(/usr/libexec/java_home -v 11)`.
 - Run the backend **from the repo root**: `GeolocationConfiguration` opens
   `GeoLite2-City.mmdb` relative to the working directory, and logback writes `./logs`
   (override with `LOGS_PATH`).
+- `application.yml` defaults to **prod** (`${SPRING_PROFILES_ACTIVE:prod}`), so a host run
+  needs `SPRING_PROFILES_ACTIVE=dev` (or IntelliJ "Active profiles: dev").
 - Dev profile (`application-dev.yml`): port 8090, datasource
   `jdbc:postgresql://localhost:5432/vivacon`, user `postgres`, password from
   `DB_PASSWORD`, `vivacon.verification.bypass: true`, allowed origins

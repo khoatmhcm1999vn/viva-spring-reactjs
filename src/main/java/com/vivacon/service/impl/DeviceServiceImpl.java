@@ -87,7 +87,8 @@ public class DeviceServiceImpl implements DeviceService {
     private String extractIp(HttpServletRequest request) {
         String clientIp;
         String clientXForwardedForIp = request.getHeader("x-forwarded-for");
-        logger.info(" clientXForwarded : " + clientXForwardedForIp);
+        // debug, khong phai info: IP la du lieu ca nhan, khong ghi vao log prod.
+        logger.debug(" clientXForwarded : " + clientXForwardedForIp);
         if (clientXForwardedForIp != null) {
             clientIp = parseXForwardedHeader(clientXForwardedForIp);
         } else {
@@ -103,7 +104,7 @@ public class DeviceServiceImpl implements DeviceService {
     private String getDevice(String userAgent) {
         String deviceDetails = "UNKNOWN";
         Client client = parser.parse(userAgent);
-        logger.info("User agent " + userAgent + " client user agent : " + client.userAgent + " client os " + client.os + " client device " + client.device);
+        logger.debug("User agent " + userAgent + " client user agent : " + client.userAgent + " client os " + client.os + " client device " + client.device);
         if (client.userAgent != null && client.os != null) {
             deviceDetails = client.userAgent.family + " " + client.userAgent.major + "." + client.userAgent.minor;
         }

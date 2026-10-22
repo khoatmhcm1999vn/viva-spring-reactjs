@@ -23,6 +23,10 @@ spring:
     # Lay tu bien moi truong DB_PASSWORD (hoac SPRING_DATASOURCE_PASSWORD).
     # Rong thi Hikari khong ket noi duoc va app chet ngay luc boot.
     password: ${DB_PASSWORD:}
+    hikari:
+      # Mac dinh Hikari la 10. Session pooler cua Supabase gioi han so ket noi theo
+      # goi, va app chi chay 1 instance, nen 5 la du ma khong chiem het pool.
+      maximum-pool-size: ${DB_POOL_SIZE:5}
   jpa:
     generate-ddl: true
     hibernate:
@@ -39,7 +43,9 @@ spring:
     multipart:
       enabled: true
       max-file-size: 10MB
-      max-request-size: 10MB
+      # Tong ca request: mot bai dang nhieu anh. Khop dev va client_max_body_size cua
+      # nginx (50m). Truoc day la 10MB nen bai nhieu anh loi o prod ma dev van chay.
+      max-request-size: 50MB
       location: ${java.io.tmpdir}
 
 vivacon:
@@ -66,7 +72,7 @@ vivacon:
     # Prod BAT BUOC dung salt khac dev, va phai dai/ngau nhien.
     # Set bang bien moi truong JWT_SECRET_SALT.
     secret_salt: ${JWT_SECRET_SALT:}
-    jwt_validity: 36000000 # 1000 * 60 * 60 - 1 Hour
+    jwt_validity: 36000000 # 1000 * 60 * 60 * 10 - 10 gio (comment cu ghi nham "1 Hour")
     jwt_issuer: Vivacon_Khoa_Truc_Hung
     refresh_expiration: 360000000 # 1000 * 60 * 60 * 100- 100 Hour
   verification_token:
@@ -88,6 +94,14 @@ vivacon:
       refresh-token: ${MS_OAUTH_REFRESH_TOKEN:}
       tenant: consumers
       scope: https://graph.microsoft.com/Mail.Send offline_access
+
+# Swagger UI va /v3/api-docs bi TAT o prod: URL_WHITELIST cho qua khong can JWT, nen
+# bat o prod la cong khai toan bo danh sach API tren host public. Dev van bat.
+springfox:
+  documentation:
+    enabled: false
+    swagger-ui:
+      enabled: false
 
 # bucket va region khong phai bi mat nen giu lai day.
 # Hai key credential lay tu bien moi truong (Docker: -e AWS_ACCESS_KEY_ID=...)

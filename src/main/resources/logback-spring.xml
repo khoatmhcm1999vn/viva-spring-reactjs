@@ -23,13 +23,16 @@
             <Pattern>%d %p %C{1.} [%t] %m%n</Pattern>
         </encoder>
 
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- rollover daily and when the file reaches 1 MegaBytes -->
+        <!--
+            Truoc day khong co maxHistory/totalSizeCap: file archived tich mai khong xoa,
+            tren VM la day dia. Gio xoay theo ngay va khi file dat 10MB, giu 7 ngay va
+            tong toi da 200MB, file cu nhat bi xoa truoc.
+        -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>${LOGS}/archived/spring-boot-logger-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-
-            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>1MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>7</maxHistory>
+            <totalSizeCap>200MB</totalSizeCap>
         </rollingPolicy>
     </appender>
 
@@ -37,8 +40,18 @@
         <appender-ref ref="OUR_CONSOLE"/>
     </root>
 
-    <logger name="com.vivacon" level="DEBUG" additivity="false">
-        <appender-ref ref="OUR_CONSOLE"/>
-        <appender-ref ref="OUR_ROLLING_FILE"/>
-    </logger>
+    <!-- Prod: INFO. DEBUG cua com.vivacon in chi tiet noi bo va du lieu nguoi dung (IP, User-Agent). -->
+    <springProfile name="prod">
+        <logger name="com.vivacon" level="INFO" additivity="false">
+            <appender-ref ref="OUR_CONSOLE"/>
+            <appender-ref ref="OUR_ROLLING_FILE"/>
+        </logger>
+    </springProfile>
+
+    <springProfile name="!prod">
+        <logger name="com.vivacon" level="DEBUG" additivity="false">
+            <appender-ref ref="OUR_CONSOLE"/>
+            <appender-ref ref="OUR_ROLLING_FILE"/>
+        </logger>
+    </springProfile>
 </configuration>

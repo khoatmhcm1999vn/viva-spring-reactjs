@@ -18,7 +18,9 @@
 
 services:
   cloudflared:
-    image: cloudflare/cloudflared:latest
+    # Ghim version thay vi :latest, de moi lan pull khong lang le doi ban. Nang cap
+    # bang cach dat CLOUDFLARED_VERSION trong .env (danh sach tag o Docker Hub).
+    image: cloudflare/cloudflared:${CLOUDFLARED_VERSION:-2026.9.3}
     container_name: vivacon-cloudflared
     restart: unless-stopped
     depends_on:
@@ -54,3 +56,8 @@ services:
       # Mo metric de doc duoc trang thai tunnel tu trong mang noi bo.
       TUNNEL_METRICS: 0.0.0.0:2000
     mem_limit: ${TUNNEL_MEM_LIMIT:-128m}
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

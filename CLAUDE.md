@@ -41,7 +41,7 @@ GeoLite2-City.mmdb           MaxMind DB, read relative to the process working di
 
 ```bash
 export JAVA_HOME=$(/usr/libexec/java_home -v 11)   # JDK 11 required
-sh mvnw spring-boot:run        # dev profile, :8090  (mvnw is not executable in git; use `sh`)
+SPRING_PROFILES_ACTIVE=dev sh mvnw spring-boot:run   # dev profile, :8090 (default profile is prod; mvnw is not executable in git, use `sh`)
 sh mvnw clean package          # jar -> target/Vivacon-0.0.1-SNAPSHOT.jar
 sh mvnw test                   # only a context-load test; needs a reachable Postgres
 
