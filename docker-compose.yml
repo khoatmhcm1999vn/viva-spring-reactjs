@@ -52,6 +52,8 @@ services:
       - ./container/prepare/schema/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
       - ./container/prepare/functions/message_functions.sql:/docker-entrypoint-initdb.d/02-message-functions.sql:ro
       - ./container/prepare/functions/statistic_function.sql:/docker-entrypoint-initdb.d/03-statistic-functions.sql:ro
+      # Bang role trong thi khong dang ky duoc tai khoan; seed 3 role ma code tim theo ten.
+      - ./container/prepare/migrations/002_seed_roles.sql:/docker-entrypoint-initdb.d/04-seed-roles.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-vivacon}"]
       interval: 5s

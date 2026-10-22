@@ -1,69 +1,46 @@
 
 -- postQuantityStatisticInRecentMonths
 DROP FUNCTION if exists postQuantityStatisticInRecentMonths;
-CREATE
-OR REPLACE FUNCTION postQuantityStatisticInRecentMonths()
-RETURNS TABLE
-(month integer,
-year integer,
-count bigint)
-as $$
-
-BEGIN
-
-Drop view if exists month_year;
-CREATE
-OR REPLACE VIEW month_year AS
-SELECT extract(MONTH FROM CURRENT_DATE - (val * INTERVAL '1 month')) ::integer AS month,
-			extract(YEAR FROM CURRENT_DATE - (val * INTERVAL '1 month'))::integer AS year
-FROM (VALUES (0), (1), (2), (3), (4), (5), (6), (7), (8), (9), (10), (11)) AS tempValues(val);
-
-RETURN QUERY
-select m.month as month, m.year as year, count(i.id) as count
-from (select * from post p) as i
-    right join month_year m
-	on extract (MONTH FROM i.created_at) = m.month and extract (YEAR FROM i.created_at) = m.year
-group by m.month, m.year
-order by m.year asc, m.month asc;
-
-END;
-$$
-LANGUAGE plpgsql;
+-- 6 ham thong ke (post/user x thang/quy/nam) dung CTE thay vi tao VIEW vinh vien,
+-- xem container/prepare/migrations/001_stats_functions_without_views.sql.
+CREATE OR REPLACE FUNCTION postQuantityStatisticInRecentMonths()
+RETURNS TABLE (month integer, year integer, count bigint)
+LANGUAGE sql STABLE
+AS $$
+WITH month_year AS (
+    SELECT extract(MONTH FROM CURRENT_DATE - (val * INTERVAL '1 month'))::integer AS month,
+           extract(YEAR FROM CURRENT_DATE - (val * INTERVAL '1 month'))::integer AS year
+    FROM (VALUES (0), (1), (2), (3), (4), (5), (6), (7), (8), (9), (10), (11)) AS tempValues(val)
+)
+SELECT m.month, m.year, count(i.id)
+FROM post i
+    RIGHT JOIN month_year m
+    ON extract(MONTH FROM i.created_at) = m.month AND extract(YEAR FROM i.created_at) = m.year
+GROUP BY m.month, m.year
+ORDER BY m.year ASC, m.month ASC;
+$$;
 
 --SELECT * FROM postQuantityStatisticInRecentMonths()
 
 
 -- postQuantityStatisticInQuarters
 DROP FUNCTION if exists postQuantityStatisticInQuarters;
-CREATE
-OR REPLACE FUNCTION postQuantityStatisticInQuarters()
-RETURNS TABLE
-(quarter integer,
-year integer,
-count bigint)
-as $$
-
-BEGIN
-
-Drop view if exists quarter_year;
-CREATE
-OR REPLACE VIEW quarter_year AS
-SELECT 
-	extract(QUARTER FROM CURRENT_DATE - (val * INTERVAL '3 month'))::integer AS quarter, 
-	extract(YEAR FROM CURRENT_DATE - (val * INTERVAL '3 month')) ::integer AS year
-FROM (VALUES (0), (1), (2), (3)) AS tempValues(val);
-
-RETURN QUERY
-select m.quarter as quarter, m.year as year, count(i.id) as count
-from (select * from post p) as i
-    right join quarter_year m
-	on extract (QUARTER FROM i.created_at) = m.quarter and extract (YEAR FROM i.created_at) = m.year
-group by m.quarter, m.year
-order by m.year asc, m.quarter asc;
-
-END;
-$$
-LANGUAGE plpgsql;
+CREATE OR REPLACE FUNCTION postQuantityStatisticInQuarters()
+RETURNS TABLE (quarter integer, year integer, count bigint)
+LANGUAGE sql STABLE
+AS $$
+WITH quarter_year AS (
+    SELECT extract(QUARTER FROM CURRENT_DATE - (val * INTERVAL '3 month'))::integer AS quarter,
+           extract(YEAR FROM CURRENT_DATE - (val * INTERVAL '3 month'))::integer AS year
+    FROM (VALUES (0), (1), (2), (3)) AS tempValues(val)
+)
+SELECT m.quarter, m.year, count(i.id)
+FROM post i
+    RIGHT JOIN quarter_year m
+    ON extract(QUARTER FROM i.created_at) = m.quarter AND extract(YEAR FROM i.created_at) = m.year
+GROUP BY m.quarter, m.year
+ORDER BY m.year ASC, m.quarter ASC;
+$$;
 
 --SELECT * FROM postQuantityStatisticInQuarters()
 
@@ -71,33 +48,21 @@ LANGUAGE plpgsql;
 -- postQuantityStatisticInYears
 DROP FUNCTION if exists postQuantityStatisticInYears;
 
-CREATE
-OR REPLACE FUNCTION postQuantityStatisticInYears()
-RETURNS TABLE
-(month integer,
-year integer,
-count bigint)
-as $$
-
-BEGIN
-
-Drop view if exists list_year;
-CREATE
-OR REPLACE VIEW list_year AS
-SELECT extract(YEAR FROM CURRENT_DATE - (val * INTERVAL '12 month')) ::integer AS year
-FROM (VALUES (0), (1)) AS tempValues(val);
-
-RETURN QUERY
-select 0 as month, m.year as year, count(i.id) as count
-from (select * from post p) as i
-    right join list_year m
-on extract (YEAR FROM i.created_at) = m.year
-group by m.year
-order by m.year asc;
-
-END;
-$$
-LANGUAGE plpgsql;
+CREATE OR REPLACE FUNCTION postQuantityStatisticInYears()
+RETURNS TABLE (month integer, year integer, count bigint)
+LANGUAGE sql STABLE
+AS $$
+WITH list_year AS (
+    SELECT extract(YEAR FROM CURRENT_DATE - (val * INTERVAL '12 month'))::integer AS year
+    FROM (VALUES (0), (1)) AS tempValues(val)
+)
+SELECT 0, m.year, count(i.id)
+FROM post i
+    RIGHT JOIN list_year m
+    ON extract(YEAR FROM i.created_at) = m.year
+GROUP BY m.year
+ORDER BY m.year ASC;
+$$;
 
 --SELECT * FROM postQuantityStatisticInYears()
 
@@ -251,34 +216,22 @@ LANGUAGE plpgsql;
 
 -- userQuantityStatisticInRecentMonths
 DROP FUNCTION if exists userQuantityStatisticInRecentMonths;
-CREATE
-OR REPLACE FUNCTION userQuantityStatisticInRecentMonths()
-RETURNS TABLE
-(month integer,
-year integer,
-count bigint)
-as $$
-
-BEGIN
-
-Drop view if exists month_year;
-CREATE
-OR REPLACE VIEW month_year AS
-SELECT extract(MONTH FROM CURRENT_DATE - (val * INTERVAL '1 month')) ::integer AS month,
-			extract(YEAR FROM CURRENT_DATE - (val * INTERVAL '1 month'))::integer AS year
-FROM (VALUES (0), (1), (2), (3), (4), (5), (6), (7), (8), (9), (10), (11)) AS tempValues(val);
-
-RETURN QUERY
-select m.month as month, m.year as year, count(i.id) as count
-from (select * from account a) as i
-    right join month_year m
-	on extract (MONTH FROM i.created_at) = m.month and extract (YEAR FROM i.created_at) = m.year
-group by m.month, m.year
-order by m.year asc, m.month asc;
-
-END;
-$$
-LANGUAGE plpgsql;
+CREATE OR REPLACE FUNCTION userQuantityStatisticInRecentMonths()
+RETURNS TABLE (month integer, year integer, count bigint)
+LANGUAGE sql STABLE
+AS $$
+WITH month_year AS (
+    SELECT extract(MONTH FROM CURRENT_DATE - (val * INTERVAL '1 month'))::integer AS month,
+           extract(YEAR FROM CURRENT_DATE - (val * INTERVAL '1 month'))::integer AS year
+    FROM (VALUES (0), (1), (2), (3), (4), (5), (6), (7), (8), (9), (10), (11)) AS tempValues(val)
+)
+SELECT m.month, m.year, count(i.id)
+FROM account i
+    RIGHT JOIN month_year m
+    ON extract(MONTH FROM i.created_at) = m.month AND extract(YEAR FROM i.created_at) = m.year
+GROUP BY m.month, m.year
+ORDER BY m.year ASC, m.month ASC;
+$$;
 
 --SELECT * FROM userQuantityStatisticInRecentMonths()
 
@@ -286,35 +239,22 @@ LANGUAGE plpgsql;
 
 -- userQuantityStatisticInQuarters
 DROP FUNCTION if exists userQuantityStatisticInQuarters;
-CREATE
-OR REPLACE FUNCTION userQuantityStatisticInQuarters()
-RETURNS TABLE
-(quarter integer,
-year integer,
-count bigint)
-as $$
-
-BEGIN
-
-Drop view if exists quarter_year;
-CREATE
-OR REPLACE VIEW quarter_year AS
-SELECT 
-	extract(QUARTER FROM CURRENT_DATE - (val * INTERVAL '3 month'))::integer AS quarter, 
-	extract(YEAR FROM CURRENT_DATE - (val * INTERVAL '3 month')) ::integer AS year
-FROM (VALUES (0), (1), (2), (3)) AS tempValues(val);
-
-RETURN QUERY
-select m.quarter as quarter, m.year as year, count(i.id) as count
-from (select * from account a) as i
-    right join quarter_year m
-	on extract (QUARTER FROM i.created_at) = m.quarter and extract (YEAR FROM i.created_at) = m.year
-group by m.quarter, m.year
-order by m.year asc, m.quarter asc;
-
-END;
-$$
-LANGUAGE plpgsql;
+CREATE OR REPLACE FUNCTION userQuantityStatisticInQuarters()
+RETURNS TABLE (quarter integer, year integer, count bigint)
+LANGUAGE sql STABLE
+AS $$
+WITH quarter_year AS (
+    SELECT extract(QUARTER FROM CURRENT_DATE - (val * INTERVAL '3 month'))::integer AS quarter,
+           extract(YEAR FROM CURRENT_DATE - (val * INTERVAL '3 month'))::integer AS year
+    FROM (VALUES (0), (1), (2), (3)) AS tempValues(val)
+)
+SELECT m.quarter, m.year, count(i.id)
+FROM account i
+    RIGHT JOIN quarter_year m
+    ON extract(QUARTER FROM i.created_at) = m.quarter AND extract(YEAR FROM i.created_at) = m.year
+GROUP BY m.quarter, m.year
+ORDER BY m.year ASC, m.quarter ASC;
+$$;
 
 --SELECT * FROM userQuantityStatisticInQuarters()
 
@@ -322,33 +262,21 @@ LANGUAGE plpgsql;
 -- userQuantityStatisticInYears
 DROP FUNCTION if exists userQuantityStatisticInYears;
 
-CREATE
-OR REPLACE FUNCTION userQuantityStatisticInYears()
-RETURNS TABLE
-(month integer,
-year integer,
-count bigint)
-as $$
-
-BEGIN
-
-Drop view if exists list_year;
-CREATE
-OR REPLACE VIEW list_year AS
-SELECT extract(YEAR FROM CURRENT_DATE - (val * INTERVAL '12 month')) ::integer AS year
-FROM (VALUES (0), (1)) AS tempValues(val);
-
-RETURN QUERY
-select 0 as month, m.year as year, count(i.id) as count
-from (select * from account a) as i
-    right join list_year m
-on extract (YEAR FROM i.created_at) = m.year
-group by m.year
-order by m.year asc;
-
-END;
-$$
-LANGUAGE plpgsql;
+CREATE OR REPLACE FUNCTION userQuantityStatisticInYears()
+RETURNS TABLE (month integer, year integer, count bigint)
+LANGUAGE sql STABLE
+AS $$
+WITH list_year AS (
+    SELECT extract(YEAR FROM CURRENT_DATE - (val * INTERVAL '12 month'))::integer AS year
+    FROM (VALUES (0), (1)) AS tempValues(val)
+)
+SELECT 0, m.year, count(i.id)
+FROM account i
+    RIGHT JOIN list_year m
+    ON extract(YEAR FROM i.created_at) = m.year
+GROUP BY m.year
+ORDER BY m.year ASC;
+$$;
 
 --SELECT * FROM userQuantityStatisticInYears()
 
